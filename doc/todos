@@ -1,0 +1,63 @@
+- methode memory (variable, xmx, xms, ...) einfuegen, die bei windows automatisch das " rausschmeisst
+- Highlevel komponenten erstellen für jdk, jenkins, ....
+- executable für Verzeichnisse unterstützen und dann das komplette bin der jdks executable machen
+- Matrixjobs koennen nicht einzeln aufgerufen werden, da kein Sammeltask fuer alle untertasks erstellt wird
+- Konfigurationen muessen evaluiert werden und dürfen per default kein null enthalten
+- Download Repo darf nicht auf dem hudson selbst liegen, da sonst beim Piken der Builknoten der Master nicht gleichzeitig
+  rebootet werden darf
+- Fehler: /home/nightly/jenkins war root ->alles auf DefaultUser
+- Remotetasks parallel machen
+- Beim Aurufen der remote tasks erst alle Connections checken, danach anfang
+- Starten nur eines dedizierten Environments auf einem bestimmten Host
+
+- Aufteilung der Buildfiles ermöglichen, indem Autoinstall mit n Buildfiles zurecht kommt
+- Umbenennung Environment in Plan
+- ComponentPlans sollen n andere Plans enthalten, Weitergabe Parameter einfach
+- Defaults verbessern
+- Validierung des Modells
+
+
+
+
+3. Transaktionale und reversible Änderungen  (TODO)
+
+
+- TransactionService.startTransaction () zieht eine Installationsnummer
+- Jeder Task erhöht die Installationsnummer, weil er eine Transaktion startet
+- Für die Transaktion gibt es verschiedene UseCases:
+     * Hinzufügen einer Datei
+     * Löschen einer Datei
+     * Ändern einer Datei
+     * Einspielen eines Installationspakets
+     * Update eines Installationspakets
+     * Löschen eines Installationspakets
+      ......
+- Wie werden diese Aktionen revertbar gemacht?
+- Wie halten wir den Aufwand in den Plugins minimal
+
+
+4. Anforderungen von Wettbewerb
+4.0. Allgemein
+- Konvertierung von Puppet/Chef/cfengine nach Pike???????
+4.1. Puppet
+- Verschlüsselung der Kommunikation
+- Webfrontend
+- Abhängigkeiten zwischen Aufgaben können explizit modelliert werden
+4.2.Chef
+- "Dry Run" Mode for Testing Potential Changes
+- Automatic System Discovery
+
+4.3. Alleinstellungsmerkman
+- Parallelisierung
+- Hierarchische Hoststruktur (Gruppen?)
+    * Jump Buildknoten ...... konkret 1,2,3,4
+    * NProd Buildknoten ...... konkret 1,2,3,4
+
+
+
+DONE
+- Löschen des CacheFiles bei Downloadfehler
+- Homeverzeichnis soll auf das Homeverzeichnis des defaultUsers gesetzt werden
+- chown über die heruntergeladenen Files
+- Download: Fortschrittsanzeige
+- Fortschritt der Remotinstanz an Aufrufer weitermelden

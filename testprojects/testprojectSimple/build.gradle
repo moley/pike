@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        ivy {
+            url "http://nexus.intra.vsa.de:8081/nexus/content/groups/public/"
+
+        }
+        maven {
+            url "http://nexus.intra.vsa.de:8081/nexus/content/groups/public/"
+        }
+    }
+
+    dependencies {
+        classpath files('../pike/build/libs/pike-0.1.jar')
+        classpath 'sshtools:j2ssh-core:0.2.9'
+    }
+}
+
+apply {
+        plugin 'groovy'
+        plugin 'idea'
+    }
+
+apply from: "configureHost.gradle"
+
+
+
+
+
+

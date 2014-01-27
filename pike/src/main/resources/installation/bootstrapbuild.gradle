@@ -1,0 +1,11 @@
+/**
+ * This file is called on every configured node of your model
+ */
+
+buildscript {
+    dependencies {
+        classpath fileTree (dir: 'plugins', includes: ['*.jar'])
+    }
+}
+
+apply from: "descriptions/configureHost.gradle"
