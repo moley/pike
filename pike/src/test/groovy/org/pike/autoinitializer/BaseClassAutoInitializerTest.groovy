@@ -40,4 +40,26 @@ class BaseClassAutoInitializerTest {
         Assert.assertEquals ("Variable2(ubuntu) not initialized", linux.variable2, ubuntu.variable2)
 
     }
+
+    @Test
+    public void notInitFromBase () {
+        ClassExtends linux = new ClassExtends()
+        linux.name="linux"
+        linux.variable2="variable2"
+        linux.variable1="variable1"
+        linux.createInstaller = Boolean.TRUE
+        linux.autoInitializedParameter = Boolean.TRUE
+
+        ClassExtends ubuntu = new ClassExtends()
+        ubuntu.name="Ubuntu"
+        ubuntu.parent = linux
+
+        BaseClassAutoInitializer autoInitializer = new BaseClassAutoInitializer()
+        autoInitializer.initialize(ubuntu, "parent")
+
+        Assert.assertEquals ("Autoinitialized boolean is not set", ubuntu.autoInitializedParameter, linux.autoInitializedParameter)
+        Assert.assertNull("Not initializable attribute was initialized", ubuntu.createInstaller)
+
+
+    }
 }

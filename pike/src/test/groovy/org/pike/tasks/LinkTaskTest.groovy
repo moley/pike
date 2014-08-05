@@ -25,17 +25,13 @@ import java.nio.file.Paths
  */
 class LinkTaskTest {
 
-    File dummyPathTo = new File ("tmp/gradle1.5")
-    File dummyPathToOld = new File ("tmp/gradle1.0")
-    File dummyPathFrom = new File ("tmp/gradle")
+    File tmpPath = Files.createTempDirectory('LinkTaskTest').toFile()
+    File dummyPathTo = new File (tmpPath, "gradle1.5")
+    File dummyPathToOld = new File (tmpPath, "gradle1.0")
+    File dummyPathFrom = new File (tmpPath, "gradle")
 
     @Before
     public void before () {
-
-        File tmp = new File ("tmp")
-        if (tmp.exists())
-          FileUtils.deleteDirectory(tmp)
-
         if (! dummyPathTo.exists())
             dummyPathTo.mkdirs()
 
@@ -43,24 +39,13 @@ class LinkTaskTest {
             dummyPathToOld.mkdirs()
     }
 
-    @After
-    public void after () {
-        if (dummyPathToOld.exists())
-          FileUtils.forceDelete(dummyPathToOld)
-
-        if (dummyPathFrom.exists())
-          FileUtils.forceDelete(dummyPathFrom)
-
-        if (dummyPathTo.exists())
-          FileUtils.forceDelete(dummyPathTo)
-    }
 
     @Test
     public void testToIsAvailable () {
 
         LinkWorker task = new LinkWorker()
-        task.from = dummyPathFrom.absolutePath
-        task.to = dummyPathTo.absolutePath
+        task.fromPath = dummyPathFrom
+        task.toPath = dummyPathTo
 
         Operatingsystem os = new Operatingsystem("linux")
         os.tmpdir = "/tmp"
@@ -81,8 +66,8 @@ class LinkTaskTest {
     public void testChangeLink () {
 
         LinkWorker task = new LinkWorker()
-        task.from = dummyPathFrom.absolutePath
-        task.to = dummyPathTo.absolutePath
+        task.fromPath = dummyPathFrom
+        task.toPath = dummyPathTo
 
         Files.createSymbolicLink(dummyPathFrom.toPath(), dummyPathToOld.toPath())
 
@@ -110,14 +95,14 @@ class LinkTaskTest {
     @Test
     public void testLinkChanged () {
 
-        Path dummyPathFromAsPath = Paths.get(dummyPathFrom.absolutePath)
-        Path dummyPathToOldAsPath = Paths.get(dummyPathToOld.absolutePath)
+        Path dummyPathFromAsPath = dummyPathFrom.toPath()
+        Path dummyPathToOldAsPath = dummyPathToOld.toPath()
 
         Files.createSymbolicLink(dummyPathFromAsPath, dummyPathToOldAsPath)
 
         LinkWorker task = new LinkWorker()
-        task.from = dummyPathFrom.absolutePath
-        task.to = dummyPathTo.absolutePath
+        task.fromPath = dummyPathFrom
+        task.toPath = dummyPathTo
 
         Operatingsystem os = new Operatingsystem("linux")
         os.tmpdir = "/tmp"

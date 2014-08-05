@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.autoinstall.AutoinstallTask
 import org.pike.remotetasks.StartRemoteBuildTask
 
 /**
@@ -16,7 +15,6 @@ import org.pike.remotetasks.StartRemoteBuildTask
  */
 class RemoteTaskTest {
 
-    private String TASKAUTOINSTALL = "autoinstall"
     private String TASKCONFIGUREREMOTE = "configureRemotes"
 
     /**
@@ -26,7 +24,7 @@ class RemoteTaskTest {
      */
     private Project prepareProject (final String taskname, final String paramHost, final String paramEnv = null) {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
-        project.gradle.startParameter.taskNames.add(taskname)
+        project.gradle.startParameter.taskNames = [taskname]
         project.apply plugin: 'pike'
 
         project.hosts {
@@ -66,9 +64,6 @@ class RemoteTaskTest {
         return project
     }
 
-    private AutoinstallTask getAutoinstallTask (final Project project) {
-        return project.tasks.findByName(TASKAUTOINSTALL)
-    }
 
     private StartRemoteBuildTask getRemoteBuildTask (final Project project) {
         return project.tasks.findByName(TASKCONFIGUREREMOTE)
@@ -80,7 +75,7 @@ class RemoteTaskTest {
      * @param param param to be called as additional task
      * @return project
      */
-    private AutoinstallTask prepareInvalidProject (final String param) {
+    private StartRemoteBuildTask prepareInvalidProject (final String param) {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.gradle.startParameter.taskNames.add("autoinstall")
         project.apply plugin: 'pike'
@@ -91,7 +86,7 @@ class RemoteTaskTest {
             }
         }
 
-        AutoinstallTask task = project.tasks.findByName("autoinstall")
+        StartRemoteBuildTask task = project.tasks.findByName(TASKCONFIGUREREMOTE)
         task.setHost(param)
 
         return task
@@ -100,42 +95,42 @@ class RemoteTaskTest {
     @Test
     public void buildGroup () {
         //building test remains in building 3 hosts
-        AutoinstallTask task = getAutoinstallTask(prepareProject(TASKAUTOINSTALL, "test"))
+        StartRemoteBuildTask task = getRemoteBuildTask(prepareProject(TASKCONFIGUREREMOTE, "test"))
         Assert.assertEquals(3, task.hostsToBuild.size())
-        Assert.assertEquals("autoinstall", task.project.gradle.startParameter.taskNames.get(0))
+        Assert.assertEquals(TASKCONFIGUREREMOTE, task.project.gradle.startParameter.taskNames.get(0))
     }
 
     @Test
     public void buildHost () {
         //building test remains in building 3 hosts
-        AutoinstallTask task = getAutoinstallTask(prepareProject(TASKAUTOINSTALL, "myhost"))
+        StartRemoteBuildTask task = getRemoteBuildTask(prepareProject(TASKCONFIGUREREMOTE, "myhost"))
         Assert.assertEquals(1, task.hostsToBuild.size())
-        Assert.assertEquals("autoinstall", task.project.gradle.startParameter.taskNames.get(0))
+        Assert.assertEquals(TASKCONFIGUREREMOTE, task.project.gradle.startParameter.taskNames.get(0))
     }
 
     @Test(expected = IllegalStateException.class)
     public void buildEverythingIsForbidden () {
         //building test remains in building 3 hosts
-        AutoinstallTask task = getAutoinstallTask(prepareProject(TASKAUTOINSTALL, ""))
+        StartRemoteBuildTask task = getRemoteBuildTask(prepareProject(TASKCONFIGUREREMOTE, ""))
         task.hostsToBuild
     }
 
     @Test(expected = IllegalStateException.class)
     public void buildNothing () {
         //building test remains in building 3 hosts
-        AutoinstallTask task = getAutoinstallTask(prepareProject(TASKAUTOINSTALL, "rotz"))
+        StartRemoteBuildTask task = getRemoteBuildTask(prepareProject(TASKCONFIGUREREMOTE, "rotz"))
         task.hostsToBuild
     }
 
     @Test(expected = IllegalStateException.class)
     public void buildProjectWithNodeNameAndGroupEquals () {
-        AutoinstallTask task = prepareInvalidProject("test") //name and group named equal
+        StartRemoteBuildTask task = prepareInvalidProject("test") //name and group named equal
         task.hostsToBuild
     }
 
     @Test(expected = IllegalStateException.class)
     public void buildProjectWithNodeHostnameAndGroupEquals () {
-        AutoinstallTask task = prepareInvalidProject("test")   //hostname and group named equal
+        StartRemoteBuildTask task = prepareInvalidProject("test")   //hostname and group named equal
         task.hostsToBuild
     }
 

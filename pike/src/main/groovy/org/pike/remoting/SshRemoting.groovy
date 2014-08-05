@@ -11,6 +11,7 @@ import com.sshtools.j2ssh.connection.Channel
 import com.sshtools.j2ssh.connection.ChannelEventAdapter
 import com.sshtools.j2ssh.connection.ChannelState
 import com.sshtools.j2ssh.session.SessionChannelClient
+import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.pike.autoinstall.AlwaysTrueHostKeyVerification
 import org.pike.autoinstall.PropertyChangeProgressLogging
@@ -25,10 +26,14 @@ import org.pike.os.LinuxProvider
  * Time: 10:51
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 class SshRemoting implements IRemoting{
 
     private SshClient client
     private Operatingsystem os
+    private String hostname
+
+    private boolean isConfigured
 
 
 
@@ -40,9 +45,14 @@ class SshRemoting implements IRemoting{
      * @param project  project
      * @param host     current host
      */
-    public SshRemoting (Project project, Host host) {
+    public void configure (Project project, Host host) {
+        if (isConfigured)
+            return
+        isConfigured = true
 
-       String hostname = host.hostname
+        log.info("Configure remoting for host ${host.name}")
+
+        hostname = host.hostname
         if (! hostname.contains(".") && project.defaults.defaultdomain != null)
             hostname = host.hostname + "." + project.defaults.defaultdomain
 
@@ -51,13 +61,13 @@ class SshRemoting implements IRemoting{
         String realPikeUser = host.pikeuser != null ? host.pikeuser : project.defaults.pikeuser
         String realPikePassword = host.pikepassword != null ? host.pikepassword : project.defaults.pikepassword
 
-
-
         SshConnectionProperties props = new SshConnectionProperties()
         props.username = realPikeUser
         props.host = host.ip//hostname
+        if (host.pikeport != null)
+		  props.port = host.pikePortInt
 
-        println ("Connecting to host <" + hostname + ">, ip <" + host.ip + "> with credentials " + realPikeUser + "-" + realPikePassword)
+        println ("Connecting to host <${hostname}>, ip <${host.ip}>, port <${host.pikeport}> with credentials " + realPikeUser + "-" + realPikePassword)
 
         client = new SshClient()
         client.connect(props, new AlwaysTrueHostKeyVerification())
@@ -70,7 +80,6 @@ class SshRemoting implements IRemoting{
             @Override
             String changePassword(String s) {
                 println ("Change password " + s)
-
             }
         }
 
@@ -138,7 +147,7 @@ class SshRemoting implements IRemoting{
 
             toDir = toDir.replace("C:", "")      //sftp-rootdir
             toDir = toDir.replace("\\", "/")
-            println ("Copy " + from.absolutePath + " to " + toDir)
+            println ("Upload " + from.absolutePath + " to "+ hostname + "-" + toDir)
             sftpClient.put(from.absolutePath, toDir)
         }
 

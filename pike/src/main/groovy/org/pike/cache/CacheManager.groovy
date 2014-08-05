@@ -1,5 +1,7 @@
 package org.pike.cache
 
+import groovy.util.logging.Slf4j
+import org.gradle.api.GradleException
 import org.pike.model.operatingsystem.Operatingsystem
 
 /**
@@ -9,47 +11,68 @@ import org.pike.model.operatingsystem.Operatingsystem
  * Time: 11:52
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 class CacheManager {
 
-    public File getCacheFile (final Operatingsystem os, final String url, final File tmpDir, final File cacheDir) {
-        return getCacheFile(os, url, tmpDir, cacheDir, false)
+    static File cacheDir
+
+
+    public File getCacheFile (final Operatingsystem os, final String url) {
+        return getCacheFile(os, url, false)
+    }
+
+    private File getCacheDir () {
+        if (cacheDir == null) {
+            File userHome = new File (System.getProperty("user.home"))
+            File pikeHome = new File (userHome, ".pike")
+            cacheDir = new File (pikeHome, 'cache')
+        }
+
+        return cacheDir
     }
 
 
-    public File getCacheFile (final Operatingsystem os, final String url, final File tmpDir, final File cacheDir, final boolean overwrite) {
+    public File getCacheFile (final Operatingsystem os, final String url, final boolean overwrite) {
+
 
         //TODO make generic
         System.properties.putAll( ["http.proxyHost":"proxy.vsa.de", "http.proxyPort":"8080", "http.nonProxyHosts" : "*vsa.de"] )
 
 
-        File toDir = cacheDir != null ? cacheDir : tmpDir
+        File toDir = getCacheDir()
 
         if (toDir == null)
             throw new IllegalStateException("You did not installPike a cachedir nor a tempdir for your host, I don't know were to save downloaded artefact to")
 
-        File downloadedFile = toDir != null ? getCacheFile(toDir, url) : tmpDir
+        File downloadedFile = getCacheFile(toDir, url)
+        try {
 
-        if (overwrite && downloadedFile.exists())
-          downloadedFile.delete()
+            if (overwrite && downloadedFile.exists())
+                downloadedFile.delete()
 
 
-        if (downloadedFile.exists()) {
-            println ("Cachefile " + downloadedFile.absolutePath + " exists")
-            if (downloadedFile.length() > 0) {
-                println ("Cachefile " + downloadedFile.absolutePath + " has length > 0")
-                return downloadedFile
-            }
+            if (downloadedFile.exists()) {
+                if (log.debugEnabled)
+                    log.debug("Cachefile " + downloadedFile.absolutePath + " exists")
+                if (downloadedFile.length() > 0) {
+                    if (log.debugEnabled)
+                        log.debug("Cachefile " + downloadedFile.absolutePath + " has length > 0")
+                    return downloadedFile
+                }
+            } else
+                println("Downloading file $downloadedFile.absolutePath")
+
+            //Download to cache
+            downloadedFile.parentFile.mkdirs()
+
+            def file = new FileOutputStream(downloadedFile)
+            def out = new BufferedOutputStream(file)
+            out << new URL(url).openStream()
+            out.close()
+
+        } catch (Exception e) {
+            throw new GradleException("Error get cached file from $url", e)
         }
-
-        //Download to cache
-        if (! downloadedFile.parentFile.exists())
-          downloadedFile.parentFile.mkdirs()
-
-        def file = new FileOutputStream(downloadedFile)
-        def out = new BufferedOutputStream(file)
-        out << new URL(url).openStream()
-        out.close()
-
 
         return downloadedFile
     }

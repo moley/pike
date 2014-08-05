@@ -25,7 +25,7 @@ class UserEnvDefaultPathTest {
     }
 
     @Test
-    public void testLinux () {
+    public void path () {
 
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
@@ -40,13 +40,10 @@ class UserEnvDefaultPathTest {
 
         String content = "# pike    BEGIN (DEFAULTPATH GROOVY_HOME)\n" +
                 "export PATH=GROOVY_HOME:\$PATH\n" +
-                "# pike    END (DEFAULTPATH GROOVY_HOME)"
+                "# pike    END (DEFAULTPATH GROOVY_HOME)\n"
         Assert.assertEquals(content, text)
 
     }
 
-    @Test@Ignore
-    public void testWindows () {
-        //TODO
-    }
+
 }

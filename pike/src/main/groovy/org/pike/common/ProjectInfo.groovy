@@ -15,7 +15,6 @@ import org.pike.model.host.Host
 @Slf4j
 class ProjectInfo {
 
-    public final static String CHECKMODELTASK = "checkModel"
 
     /**
      * getter returns all groups defined in all hosts, to be logged if a wrong
@@ -39,7 +38,7 @@ class ProjectInfo {
 
         //if default ist configured than use this
         if (currentHost != null) {
-            println ("Checking currenthost from defaults " + currentHost)
+            log.info ("Checking currenthost from defaults " + currentHost)
             return host.name.equalsIgnoreCase(currentHost) || host.hostname.equalsIgnoreCase(currentHost)
         }
 
@@ -59,11 +58,15 @@ class ProjectInfo {
             log.error("IP could not be determined")
         }
 
-        boolean nameMatches = host.name.equalsIgnoreCase(determinedHostName) || host.hostname.equalsIgnoreCase(determinedHostName)
-        boolean ipMatches = host.ip.equalsIgnoreCase(ipAdress)
+        boolean nameMatches = host.name.equalsIgnoreCase(determinedHostName) || (host.hostname != null && host.hostname.equalsIgnoreCase(determinedHostName))
+        boolean ipMatches = host.ip != null && host.ip.equalsIgnoreCase(ipAdress)
 
-        println ("Checking currenthost <" + determinedHostName + "><" + ipAdress +
+        if (log.isDebugEnabled())
+          log.debug("Checking currenthost <" + determinedHostName + "><" + ipAdress +
                 ">, expected <" + host.name +"><" + host.hostname + "><" + host.ip)
+
+        if (nameMatches || ipMatches)
+          log.info("Host " + host.name + " matches current host - (name $nameMatches - ipMatches $ipMatches)")
 
         return nameMatches || ipMatches
     }

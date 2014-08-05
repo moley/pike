@@ -5,16 +5,15 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.pike.autoinstall.AutoinstallTask
-import org.pike.common.ProjectInfo
 import org.pike.holdertasks.*
+import org.pike.info.InfoHostsTask
+import org.pike.logging.LogConfigurator
 import org.pike.model.defaults.Defaults
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.model.host.HostGroup
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.remotetasks.StartRemoteBuildTask
-import org.pike.tasks.CheckModelTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -35,49 +34,17 @@ public class PikePlugin implements Plugin<Project> {
 
     private Logger log
 
-    public static String LOGPATH = "logs"
-
-
-    /**
-     * Method configured logging with an configuration file
-     * @param project  project
-     * @param logConfFile  configuration file
-     */
-    private static void configureLoggingByFile (final Project project, final File logConfFile) {
-        println ("Using " + logConfFile.absolutePath + " to configure logging")
-
-        def loggerfactory = loadClass(project, "org.slf4j.LoggerFactory")
-        def joranconfigurator = loadClass(project, "ch.qos.logback.classic.joran.JoranConfigurator")
-        def context = loggerfactory.getILoggerFactory();
-
-        def configurator = joranconfigurator.newInstance()
-        configurator.setContext(context)
-        configurator.doConfigure(logConfFile)
-
-    }
-
-    /**
-     * load a class with gradle classloader
-     * @param project project
-     * @param fqn  fqn of class
-     * @return class
-     */
-    private static Class loadClass (final Project project, final String fqn) {
-        ClassLoader gradleClassloader = project.gradle.class.classLoader
-        return gradleClassloader.loadClass(fqn)
-    }
-
     /**
      * {@inheritDoc}
      */
     public void apply(Project project) {
-        File logfile = project.file("logback.xml")
-        if (logfile.exists())
-          configureLoggingByFile(project, logfile)
-        else
-          println ("No logback configuration $logfile.absolutePath available")
+
+        LogConfigurator.configureLogging(project)
 
         log = LoggerFactory.getLogger(PikePlugin.class)
+        log.info("Info testlog")
+        log.debug("Debug testlog")
+        log.trace("Trace testLog")
 
         log.info("Applying " + getClass().name)
 
@@ -86,27 +53,25 @@ public class PikePlugin implements Plugin<Project> {
         configureContainerTasks(project) // must be first
 
         configureRemoteTasks(project)
-        configureAutoinstallFeatures(project)
+        configureInfoTasks(project)
         configureModel(project)
     }
 
-    /**
-     * configures autoinstall features
-     * @param project project
-     */
-    public void configureAutoinstallFeatures (Project project) {
-        AutoinstallTask autoinstallTask = project.tasks.create("autoinstall", AutoinstallTask)
-        autoinstallTask.group = PIKE_REMOTE_GROUP
-        autoinstallTask.dependsOn project.tasks.resolveModel
-        autoinstallTask.dependsOn project.tasks.assemble
-        autoinstallTask.description = "Installs pike runtime on all hosts configured in the model"
+    public configureInfoTasks (Project project) {
+        log.info("Configure task 'hosts' ")
+        InfoHostsTask infoHostsTask = project.tasks.create('hosts', InfoHostsTask)
+        infoHostsTask.group = PIKE_REMOTE_GROUP
+        infoHostsTask.description = 'Shows infos about all hosts'
     }
+
+
 
     /**
      * configures remote task to start a build on all hosts
      * @param project
      */
     public void configureRemoteTasks (Project project) {
+        log.info("Configure task 'configureRemotes' ")
         StartRemoteBuildTask startremotebuildTask = project.tasks.create("configureRemotes", StartRemoteBuildTask)
         startremotebuildTask.group = PIKE_REMOTE_GROUP
         startremotebuildTask.dependsOn project.tasks.resolveModel
@@ -118,9 +83,8 @@ public class PikePlugin implements Plugin<Project> {
      * @param project project
      */
     public void configureContainerTasks (Project project) {
-        log.debug("configure container tasks")
-
         //Task holds all the installPike sub tasks of all current modelelements
+        log.info("Configure task 'install' ")
         InstallTask installTask = project.tasks.create("install", InstallTask)
         installTask.description = "Installs all environments configured for the current host"
         installTask.group = PIKE_REMOTE_GROUP
@@ -128,6 +92,7 @@ public class PikePlugin implements Plugin<Project> {
 
 
         //Task holds all the deinstall sub tasks of all current modelelements
+        log.info("Configure task 'deinstall' ")
         DeinstallTask deinstallTask = project.tasks.create("deinstall", DeinstallTask)
         deinstallTask.description = "Deinstalls all environments configured for the current host"
         deinstallTask.group = PIKE_REMOTE_GROUP
@@ -141,21 +106,18 @@ public class PikePlugin implements Plugin<Project> {
 
         //task is triggered first to checkenv model and make some resolving things
 
+        log.info("Configure task 'resolveModel' ")
         ResolveModelTask resolveModelTask = project.tasks.create("resolveModel", ResolveModelTask)
 
+        log.info("Configure task 'deriveTasks' ")
         DeriveTasksTask deriveTasksTask = project.tasks.create("deriveTasks", DeriveTasksTask)
         deriveTasksTask.dependsOn resolveModelTask
 
-        CheckModelTask checkmodelTask = project.tasks.create(ProjectInfo.CHECKMODELTASK, CheckModelTask)
-        checkmodelTask.dependsOn deriveTasksTask
-
         for (DefaultTask nextContainerTast : containerTasks) {
-            nextContainerTast.dependsOn checkmodelTask
+            if (log.debugEnabled)
+                log.debug("Task ${nextContainerTast} dependsOn ${deriveTasksTask}")
+            nextContainerTast.dependsOn deriveTasksTask
         }
-
-
-
-
     }
 
     /**
@@ -163,6 +125,7 @@ public class PikePlugin implements Plugin<Project> {
      * @param project project
      */
     public void configureModel (Project project) {
+        log.info("Creating extensions for the model")
         project.plugins.apply(BasePlugin)
 
         def operatingsystems = project.container(Operatingsystem)

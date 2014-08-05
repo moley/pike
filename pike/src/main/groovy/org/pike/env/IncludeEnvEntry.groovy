@@ -26,17 +26,24 @@ class IncludeEnvEntry implements IEnvEntry{
         if (operatingsystem.provider instanceof WindowsProvider)
             throw new IllegalStateException("Include is not yet implemented in windows")
 
-        String includeLine = "source $includeFile.absolutePath"
+        String includeLine = getIncludeLine()
         if (toDevNull)
             includeLine += " >/dev/null"
 
         serializedValue.add(includeLine)
     }
 
+    private String getIncludeLine () {
+        return  "source $includeFile.absolutePath"
+    }
+
     @Override
-    String getKey() {
+    String getPikeKey() {
         return "INCLUDE" + includeFile.absolutePath
     }
 
-
+    @Override
+    boolean isOriginEntry(Operatingsystem operatingsystem, String originEntry) {
+        return originEntry.contains(getIncludeLine())
+    }
 }

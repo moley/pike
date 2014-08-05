@@ -49,7 +49,6 @@ public class PathEntry extends UserEnvEntry {
             osProvider.executeGlobalConf(pathnameKey, pathnameValue, pathnameAddon)
     }
 
-    @Override
     public void serialize(Operatingsystem operatingsystem, Collection<String> serialized, final boolean global = false) {
 
         if (pathvalue == null)
@@ -65,9 +64,12 @@ public class PathEntry extends UserEnvEntry {
     }
 
     @Override
-    String getKey() {
+    String getPikeKey() {
         return "PATH $pathname"
     }
 
-
+    @Override
+    boolean isOriginEntry(Operatingsystem operatingsystem, String originEntry) {
+        return originEntry.contains(pathname) && originEntry.contains('=')
+    }
 }

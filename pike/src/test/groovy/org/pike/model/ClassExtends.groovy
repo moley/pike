@@ -1,5 +1,7 @@
 package org.pike.model
 
+import org.pike.autoinitializer.NoAutoInitializing
+
 /**
  * Created with IntelliJ IDEA.
  * User: OleyMa
@@ -12,6 +14,11 @@ class ClassExtends {
     String name
     String variable1
     String variable2
+
+    @NoAutoInitializing
+    Boolean createInstaller
+
+    Boolean autoInitializedParameter
 
     ClassExtends parent
 }

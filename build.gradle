@@ -1,19 +1,14 @@
-
 buildscript {
     repositories {
-//        jcenter()
 	maven { url "http://repo1.maven.org/maven2" }
     }
+}
 
- /**   dependencies {
-       classpath 'org.gradle.api.plugins:gradle-vagrant-plugin:0.2'
-    }**/
+subprojects {
+   apply {
+      plugin 'eclipse'
+   }
 }
-/**
-apply {
-   plugin 'vagrant'
-}
-**/
 allprojects {
 
     version=0.1
@@ -21,9 +16,8 @@ allprojects {
     group = 'org.pike'
 
     apply {
-        plugin 'groovy'
         plugin 'idea'
-        plugin 'eclipse'
+        plugin 'groovy'
         plugin 'jacoco'
     }
 
@@ -89,46 +83,6 @@ for (File f : projectDir.listFiles()) {
     }
 }
 
-
-def testIdeaTasks = []
-testprojects.each {
-    String testDir = it;
-
-    def newTaskIdea = tasks.add(name: "idea" + testDir, type: GradleBuild) {
-        dir = testDir
-        tasks = ['cleanIdea', 'ideaModule']
-    }
-    testIdeaTasks.add(newTaskIdea)
-}
-
-
-
-
-tasks.ideaProject.dependsOn(testIdeaTasks)
-tasks.ideaProject.dependsOn("cleanIdeaProject");
-
-idea {
-    project {
-        ipr {
-            withXml {
-                //We have to put in the testprojects by hand, because we can't them inject otherwise
-                Node node = it.asNode()
-                node.children().each {
-                    if (it.attribute("name") == "ProjectModuleManager") {
-                        for (String s : testprojects) {
-                            String filepath = '$PROJECT_DIR$/' + s + "/" + s + ".iml"
-                            it.children()[0].appendNode("module", [fileurl: 'file://' + filepath, filepath: filepath])
-                        }
-
-                    }
-                }
-                //Attaches the CVS support to the projecr
-                it.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = "CVS"
-            }
-        }
-    }
-
-}
 
 jacocoTestReport {
     reports {

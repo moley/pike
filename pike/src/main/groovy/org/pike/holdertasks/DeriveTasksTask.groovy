@@ -19,11 +19,14 @@ class DeriveTasksTask extends DefaultTask {
 
         @TaskAction
         public void deriveTasks () {
+            log.info("Configure all tasks")
             Host currentHost = ProjectInfo.getCurrentHost(project)
             project.tasks.withType(DelegatingTask).each { DelegatingTask task ->
-                log.debug("Configure task " + task.name)
+                if (log.debugEnabled)
+                  log.debug("Configure task " + task.name)
                 task.configure(currentHost)
             }
+            log.info("Configuration of tasks completed")
         }
 
 }

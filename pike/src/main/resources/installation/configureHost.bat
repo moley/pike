@@ -3,7 +3,7 @@ echo Starting pike in path %~pd0
 
 SET GRADLE_HOME=%~pd0%\gradle
 
-SET JAVA_HOME=%~pd0%\jdk
+SET JAVA_HOME=%~pd0%\jre
 
 SET PATH=%GRADLE_HOME%\bin:%JAVA_HOME%\bin:%PATH%
 

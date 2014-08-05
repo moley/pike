@@ -6,8 +6,9 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
-import org.pike.TestUtils
+import org.pike.test.TestUtils
 
 /**
  * Tests configuration of logging
@@ -34,6 +35,6 @@ class ConfigureLoggingTest {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").withProjectDir(tmpPath).build()
         project.apply plugin: 'pike'
 
-        Assert.assertTrue (logfile.text.contains("Applying"))
+        Assert.assertTrue (logfile.text.contains("Debug testlog"))
     }
 }

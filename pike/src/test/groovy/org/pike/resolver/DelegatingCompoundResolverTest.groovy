@@ -4,12 +4,10 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.ModelLogger
-import org.pike.TestUtils
+import org.pike.test.TestUtils
 import org.pike.model.A
 import org.pike.model.B
 import org.pike.model.C
-import org.pike.tasks.CheckModelTask
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,6 +17,8 @@ import org.pike.tasks.CheckModelTask
  * To change this template use File | Settings | File Templates.
  */
 class DelegatingCompoundResolverTest {
+
+
 
     @Test
     public void resolveTheRealLife () {
@@ -49,15 +49,15 @@ class DelegatingCompoundResolverTest {
         project.environments {
             gradle {
                 download {
-                    from = "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
-                    to = "${operatingsystem.programdir}"
+                    from "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
+                    to "${operatingsystem.programdir}"
                 }
             }
 
             buildnode2 {
                 download {
-                    from = "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
-                    to = "${operatingsystem.programdir}"
+                    from "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
+                    to "${operatingsystem.programdir}"
                 }
             }
         }

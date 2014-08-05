@@ -1,6 +1,7 @@
 package org.pike.model.environment
 
 import groovy.util.logging.Log
+import groovy.util.logging.Slf4j
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -20,7 +21,7 @@ import org.pike.tasks.DelegatingTask
  * Time: 08:16
  * To change this template use File | Settings | File Templates.
  */
-@Log
+@Slf4j
 public class Environment extends NamedElement{
 
     Project project
@@ -51,7 +52,8 @@ public class Environment extends NamedElement{
 
         for (String nextMatrix: matrixIds.keySet()) {
             String value = matrixIds.get(nextMatrix)
-            log.fine("Add matrix " + nextMatrix + "->" + value)
+            if (log.debugEnabled)
+              log.debug("Add matrix " + nextMatrix + "->" + value)
             matrixParams.put(nextMatrix, value)
         }
     }
@@ -80,13 +82,16 @@ public class Environment extends NamedElement{
             return
 
         if (createdTaskNames.isEmpty()) {
+          log.info("Creating tasks from environment definitions")
+
           for (String matrixParamKey: matrixParams.keySet()) {
             String matrixParamValue = matrixParams.get(matrixParamKey)
             for (TaskContext nextContext : TaskContext.values()) {
 
                 String nameToUpper = name.charAt(0).toUpperCase().toString() + name.substring(1)
                 String taskName = nextContext.name() + nameToUpper + matrixParamKey
-                log.fine("Creating task " + taskName)
+                if (log.infoEnabled)
+                  log.info("Creating task " + taskName)
                 DelegatingTask genericTaskObject = project.task([type:DelegatingTask], taskName) as DelegatingTask
                 genericTaskObject.group = TASKGROUP_PLANS
 
@@ -97,14 +102,15 @@ public class Environment extends NamedElement{
                 genericTaskObject.project = project
                 genericTaskObject.paramkey = matrixParamKey
                 genericTaskObject.paramvalue = matrixParamValue
-                genericTaskObject.dependsOn project.tasks.checkModel
+                genericTaskObject.dependsOn project.tasks.deriveTasks
 
                 Task holdertasks = project.tasks.findByName(nextContext.name())
                 if (holdertasks == null)
                     throw new IllegalStateException("No holdertask for context " + nextContext.name() + " found")
 
                 holdertasks.dependsOn genericTaskObject
-                log.fine("Adding dependency from holdertask " + holdertasks.name + " to " + genericTaskObject.name)
+                if (log.debugEnabled)
+                  log.debug("Adding dependency from holdertask " + holdertasks.name + " to " + genericTaskObject.name)
 
                 createdTaskNames.add(genericTaskObject.name)
             }
@@ -127,7 +133,8 @@ public class Environment extends NamedElement{
     Class getWorkerClass (final String workername) {
 
         String classname = "org.pike.worker." + workername[0].toUpperCase() + workername.substring(1) + "Worker"
-        log.fine("create taskclass <" + classname + "> from dsl name " + workername)
+        if (log.debugEnabled)
+          log.debug("create taskclass <" + classname + "> from dsl name " + workername)
 
         try {
           Class clazz = getClass().getClassLoader().loadClass(classname)

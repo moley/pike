@@ -1,21 +1,15 @@
 package org.pike.worker
 
+import com.google.common.io.Files
 import org.apache.commons.io.FileUtils
-import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
-import org.pike.TestUtils
-import org.pike.common.ProjectInfo
+import org.pike.test.TestUtils
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
-import org.pike.tasks.DummyCacheManager
-import org.pike.worker.DownloadWorker
-
-import javax.annotation.security.RolesAllowed
+import org.pike.cache.DummyCacheManager
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,28 +20,16 @@ import javax.annotation.security.RolesAllowed
  */
 class DownloadWorkerTest {
 
-
-    File dummyPathTo = new File ("tmp/downloadtasktest")
-
-    @Before
-    public void before () {
-        FileUtils.deleteDirectory(dummyPathTo)
-
-    }
-
-    @After
-    public void after () {
-        FileUtils.deleteQuietly(dummyPathTo)
-    }
-
     @Test
     public void testReallife () {
 
+        File dummyPathTo = Files.createTempDir()
         File dummyZip = TestUtils.projectfile("pike", "src/test/resources/testzip.zip")
 
         DownloadWorker downloadworker = new DownloadWorker()
-        downloadworker.cacheManager = new DummyCacheManager(dummyZip)
-        downloadworker.to = dummyPathTo.absolutePath
+        downloadworker.cacheManager = new DummyCacheManager()
+        downloadworker.toPath = dummyPathTo
+        downloadworker.from = dummyZip.absolutePath
         downloadworker.setUser("")
 
         Operatingsystem os = new Operatingsystem("linux")
@@ -58,8 +40,6 @@ class DownloadWorkerTest {
         downloadworker.defaults = defaults
 
         String executable = "rootpath3/somefile"
-
-
 
         downloadworker.executable(executable)
 

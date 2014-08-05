@@ -1,6 +1,5 @@
 package org.pike.worker
 
-import groovy.util.logging.Log
 import groovy.util.logging.Slf4j
 import org.pike.env.AliasEntry
 import org.pike.env.DefaultPathEntry
@@ -9,6 +8,9 @@ import org.pike.env.IncludeEnvEntry
 import org.pike.env.PathEntry
 import org.pike.env.PropertyEntry
 import org.pike.os.IOperatingsystemProvider
+import org.pike.worker.properties.Chapter
+import org.pike.worker.properties.Entry
+import org.pike.worker.properties.Propertyfile
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,13 +20,15 @@ import org.pike.os.IOperatingsystemProvider
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-abstract class AbstractEnvironmentWorker extends UndoableWorker  {
+abstract class AbstractEnvironmentWorker extends PikeWorker  {
 
     String file
 
     Collection <IEnvEntry> entries = new ArrayList<IEnvEntry>()
 
     protected global = false
+
+    String chapter
 
 
     public void alias (final String from, final String to) {
@@ -85,8 +89,6 @@ abstract class AbstractEnvironmentWorker extends UndoableWorker  {
     @Override
     void install() {
 
-        IOperatingsystemProvider osProvider = operatingsystem.provider
-
         File fileAsFile
 
         if (file != null) {
@@ -98,55 +100,52 @@ abstract class AbstractEnvironmentWorker extends UndoableWorker  {
         }
 
         boolean readExistingFile = fileAsFile != null && fileAsFile.exists()
+        IOperatingsystemProvider osProvider = operatingsystem.provider
+        Propertyfile propertyfile = readExistingFile ? new Propertyfile(osProvider, fileAsFile) : new Propertyfile(osProvider)
 
-        List<String> contentOfFile = readExistingFile ? fileAsFile.text.split(NEWLINE).toList() : new ArrayList<String>()
+        Collection<Chapter> chapters = propertyfile.getChapters(chapter)
+
+        if (chapters.isEmpty()) {
+            Chapter newChapter = new Chapter(propertyfile, chapter)
+            chapters.add(newChapter)
+            propertyfile.chapters.add(newChapter)
+        }
+
         for (IEnvEntry nextEntry: entries) {
 
-            log.debug("Configuring " + nextEntry.key + (fileAsFile != null ? " in file " + fileAsFile.absolutePath: "without file"))
-
-            String startKey = osProvider.commentPrefix + "pike    BEGIN (${nextEntry.key})"
-            String endKey   = osProvider.commentPrefix + "pike    END (${nextEntry.key})"
-            //check if it already installed
-
-            int existingFrom = contentOfFile.indexOf(startKey)
-            int existingEnd = contentOfFile.indexOf(endKey)
-
-            if (existingFrom >= 0 && existingEnd < 0)
-                throw new IllegalStateException("STARTMarker found without an ENDMarker for " + nextEntry.key + " in toFile " + file)
-
-            if (existingFrom < 0 && existingEnd >= 0)
-                throw new IllegalStateException("ENDMarker found without and STARTMarker for " + nextEntry.key + " in toFile " + file)
-
-            //Removing existing
-            if (existingFrom >= 0) {
-                for (int i = existingEnd; i >= existingFrom; i--)
-                    contentOfFile.remove(i)
-            }
-            else
-                existingFrom = contentOfFile.size() //if not existing, than append to end
-
-            //Add
             Collection<String> serializedValue = new ArrayList<String>()
             nextEntry.serialize(operatingsystem, serializedValue, global)
-            serializedValue.add(0, startKey)
-            serializedValue.add(endKey)
 
-            for (String nextSerialized : serializedValue.reverse())
-                contentOfFile.add(existingFrom, nextSerialized.toString())
+            for (Chapter nextChapter: chapters) {
 
+                //If we find a already piked entry, than adapt it
+                Entry foundEntry = nextChapter.findEntryByPikeKey(nextEntry)
+                if (foundEntry != null)
+                    foundEntry.replaceContent(serializedValue)
+                else {
+                    //Comment original value
+                    Entry originEntry = nextChapter.findOriginEntry(operatingsystem, nextEntry)
+                    if (originEntry != null)
+                        originEntry.comment(operatingsystem)
+
+                    //Add a new entry
+                    if (foundEntry == null) {
+                        foundEntry = new Entry(nextChapter, serializedValue, nextEntry.pikeKey)
+                        nextChapter.addEntry(foundEntry)
+                    }
+                }
+            }
         }
 
         if (fileAsFile)
-          fileAsFile.text = contentOfFile.join(NEWLINE)
+          fileAsFile.text = propertyfile.toString()
     }
 
-    @Override
-    void deinstall() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+    public boolean uptodate () {
+        log.info("Worker $name is not uptodate due to TODO")
+        return false
+    } //TODO
 
-    @Override
-    boolean uptodate() {
-        return false  //To change body of implemented methods use File | Settings | File Templates.
-    }
+
+
 }

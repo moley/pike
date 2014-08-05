@@ -10,7 +10,7 @@ import groovy.util.logging.Slf4j
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-class RemoveWorker extends UndoableWorker{
+class RemoveWorker extends PikeWorker{
 
     private Collection<File> files = new ArrayList<File>()
 
@@ -22,18 +22,14 @@ class RemoveWorker extends UndoableWorker{
     void install() {
         for (File next: files) {
             if (next.exists()) {
-                log.debug("Remove file " + next.getAbsolutePath())
-                next.delete()
+                boolean removed = next.delete()
+                log.info("Remove file " + next.absolutePath + " - removed: " + removed)
             }
             else
               log.warn("File " + next.absolutePath + " doesn't exist, can't remove it")
         }
     }
 
-    @Override
-    void deinstall() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     boolean uptodate() {

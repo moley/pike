@@ -88,4 +88,9 @@ class LinuxProvider extends AbstractOsProvider {
         //TODO sometimes we want to administrate linux systems from a windows host.
         //Than we have to replace windows things with linux delimiters
     }
+
+    @Override
+    String adaptLineDelimiters(String originText) {
+        return originText
+    }
 }

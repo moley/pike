@@ -33,7 +33,7 @@ class UserEnvWorkerIncludeTest {
 
         String content = "# pike    BEGIN (INCLUDE/etc/hallo)\n" +
                 "source /etc/hallo >/dev/null\n" +
-                "# pike    END (INCLUDE/etc/hallo)"
+                "# pike    END (INCLUDE/etc/hallo)\n"
         Assert.assertEquals(content, text)
 
     }

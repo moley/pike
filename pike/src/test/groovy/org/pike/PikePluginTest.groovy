@@ -1,17 +1,15 @@
 package org.pike
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
 import org.pike.common.TaskContext
 import org.pike.model.environment.Environment
 import org.pike.tasks.DelegatingTask
-
+import org.pike.test.TestUtils
 import org.pike.worker.DownloadWorker
-
-import java.util.logging.Level
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +23,7 @@ class PikePluginTest {
     @Test
     public void autocreateTasks () {
 
-        Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.apply plugin: 'pike'
 
         project.defaults {
@@ -34,6 +32,11 @@ class PikePluginTest {
         }
 
         project.operatingsystems {
+
+            linux {
+
+            }
+
             suse {
                 parent = linux
             }

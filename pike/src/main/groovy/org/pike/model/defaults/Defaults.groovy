@@ -27,6 +27,8 @@ class Defaults {
      */
     String pikepassword
 
+	String pikeport
+
     String pikeuser
 
     /**

@@ -38,9 +38,13 @@ class DefaultPathEntry extends UserEnvEntry{
     }
 
     @Override
-    String getKey() {
+    String getPikeKey() {
         return "DEFAULTPATH " +  addpath
     }
 
-
+    @Override
+    boolean isOriginEntry(Operatingsystem operatingsystem, String originEntry) {
+        IOperatingsystemProvider osProvider = operatingsystem.provider
+        return originEntry.contains('PATH') && originEntry.contains(osProvider.getOsDependendPath(addpath))
+    }
 }

@@ -1,0 +1,26 @@
+
+apply {
+    plugin 'pike'
+}
+
+
+
+//Pike - Model
+project.defaults {
+    defaultuser = 'nightly'
+    rootpath = '${currentPath}/build/tests'
+    pikeuser = '${user}'
+    pikepassword = 'Momopomo351977'
+    pikegradle = 'http://services.gradle.org/distributions/gradle-2.0-all.zip'
+}
+
+apply from: 'configurations/operatingsystems.gradle'
+apply from: 'configurations/hosts.gradle'
+apply from: 'configurations/env.gradle'
+
+
+
+
+
+
+

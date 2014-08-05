@@ -1,5 +1,6 @@
 package org.pike.remoting
 
+import org.gradle.api.Project
 import org.pike.autoinstall.PropertyChangeProgressLogging
 import org.pike.model.host.Host
 
@@ -12,11 +13,37 @@ import org.pike.model.host.Host
  */
 public interface IRemoting {
 
+    /**
+     * upload a file
+     * @param toDir   to remote dir
+     * @param from    from file
+     * @param logging  progress logging
+     */
     void upload (String toDir, File from, PropertyChangeProgressLogging logging)
 
+    /**
+     * execute a command
+     * @param cmd
+     * @return
+     */
     RemoteResult execCmd(String cmd)
 
+    /**
+     * disconnect
+     */
     void disconnect ()
 
+    /**
+     * checks if the connection is connected to the host
+     * @param host host
+     * @return true: connected, false: not connected
+     */
     boolean connectedToHost (Host host)
+
+    /**
+     * configures the connection
+     * @param project  project
+     * @param host host to connect to
+     */
+    void configure (Project project, Host host)
 }

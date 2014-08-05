@@ -4,8 +4,8 @@
 
 buildscript {
     dependencies {
-        classpath fileTree (dir: 'plugins', includes: ['*.jar'])
+        classpath fileTree (dir: 'libs', includes: ['*.jar'])
     }
 }
 
-apply from: "descriptions/configureHost.gradle"
+apply from: "pike.gradle"

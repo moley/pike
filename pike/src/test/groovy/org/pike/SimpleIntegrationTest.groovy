@@ -1,12 +1,12 @@
 package org.pike
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
 import org.pike.holdertasks.InstallTask
+import org.pike.test.TestUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -75,8 +75,8 @@ class SimpleIntegrationTest {
                         '16':'1.6.0_27'])
 
                 download {
-                    from = "http://hudson.intra.vsa.de:8080/userContent/tools/jdk${paramvalue}.zip"
-                    to = operatingsystem.programdir
+                    from "http://hudson.intra.vsa.de:8080/userContent/tools/jdk${paramvalue}.zip"
+                    to operatingsystem.programdir
                     executable ("jdk${paramvalue}/bin/java")
                     executable ("jdk${paramvalue}/jre/bin/java")
                 }
@@ -86,9 +86,7 @@ class SimpleIntegrationTest {
 
         TestUtils.prepareModel(project)
 
-        Collection <String> expectedTasks = ["autoinstall",
-                        "checkModel",
-                "checkenv",
+        Collection <String> expectedTasks = ["checkenv",
                 "checkenvConfincludes",
                 "checkenvJdks16",
                 "checkenvJdks17",
@@ -105,7 +103,7 @@ class SimpleIntegrationTest {
                 "installJdks17"]
 
         for (String nextExpected : expectedTasks) {
-            Assert.assertNotNull(project.tasks.findByName(nextExpected))
+            Assert.assertNotNull("Task $nextExpected not found", project.tasks.findByName(nextExpected))
         }
 
 

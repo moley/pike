@@ -1,5 +1,6 @@
 package org.pike.model.operatingsystem
 
+import org.pike.autoinitializer.NoAutoInitializing
 import org.pike.common.NamedElement
 import org.pike.os.IOperatingsystemProvider
 
@@ -30,9 +31,18 @@ public class Operatingsystem extends NamedElement{
 
 
 
+
+
     Operatingsystem parent
 
     IOperatingsystemProvider provider
+
+    //internal fields
+    File gradlePrepareInstallationPath
+    File jrePrepareInstallationPath
+
+    @NoAutoInitializing
+    Boolean createInstaller
 
 
     private void configureProvider (final String name) {

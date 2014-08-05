@@ -25,7 +25,7 @@ class UserEnvWorkerAliasTest {
     }
 
     @Test
-    public void testLinux () {
+    public void alias () {
 
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
@@ -40,13 +40,10 @@ class UserEnvWorkerAliasTest {
 
         String content = "# pike    BEGIN (ALIASl)\n" +
                 "alias l='ls -l'\n" +
-                "# pike    END (ALIASl)"
+                "# pike    END (ALIASl)\n"
         Assert.assertEquals(content, text)
 
     }
 
-    @Test@Ignore
-    public void testWindows () {
-        //TODO
-    }
+
 }

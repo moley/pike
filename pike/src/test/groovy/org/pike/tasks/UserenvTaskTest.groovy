@@ -1,15 +1,14 @@
 package org.pike.tasks
 
+import com.google.common.io.Files
 import org.apache.commons.io.FileUtils
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.pike.TestUtils
-import org.pike.worker.PropertyWorker
+import org.pike.test.TestUtils
 import org.pike.worker.UserenvWorker
 
 /**
@@ -26,7 +25,7 @@ class UserenvTaskTest {
     private File propFile = new File ("tmp", propFilePath).absoluteFile
 
     private Project configureProject () {
-        Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        Project project = ProjectBuilder.builder().withName("autocreateTasksTest").withProjectDir(Files.createTempDir())build()
         project.apply plugin: 'pike'
 
         project.defaults {
@@ -68,7 +67,7 @@ class UserenvTaskTest {
     }
 
     @Test
-    public void testUpdate () {
+    public void testUpdateAlreadyPikedEntry () {
 
         String content =    "# pike    BEGIN (PATH GRADLE_HOME)\n" +
                             "export GRADLE_HOME=/home/${user}/swarm/tools/oldgradle\n" +
@@ -81,6 +80,9 @@ class UserenvTaskTest {
 
         propFile.parentFile.mkdirs()
         propFile << content
+
+        println (">Before: " + propFile.text+"<")
+
 
         Project project = configureProject()
 
@@ -104,6 +106,7 @@ class UserenvTaskTest {
 
         Project project = configureProject()
 
+
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
@@ -115,19 +118,19 @@ class UserenvTaskTest {
 
         List<String> text = propFile.text.split(UserenvWorker.NEWLINE)
 
-        println (">" + propFile.text+"<")
+        println (">After: " + propFile.text+"<")
 
         checkFile(text, "java")
 
     }
 
     private void checkFile (final List<String> text, String pathend) {
-        Assert.assertEquals (0, text.indexOf("# pike    BEGIN (PATH GRADLE_HOME)"))
 
-        Assert.assertEquals (4, text.indexOf('# pike    BEGIN (PATH JAVA_HOME)'))
+        Assert.assertEquals ("Pikeentry PATH GRADLE_HOME not found in line 0 (${text})", 0, text.indexOf("# pike    BEGIN (PATH GRADLE_HOME)"))
+        Assert.assertEquals ("Pikeentry PATH GRADLE_HOME not found in line 4 (${text})", 4, text.indexOf('# pike    BEGIN (PATH JAVA_HOME)'))
 
         String javahomeString = "export JAVA_HOME=/home/${user}/swarm/tools/" + pathend
-        Assert.assertEquals ("line $javahomeString not found", 5, text.indexOf(javahomeString))
+        Assert.assertEquals ("line $javahomeString not found in $text", 5, text.indexOf(javahomeString))
 
         Assert.assertEquals (6, text.indexOf('export PATH=$JAVA_HOME/bin:$PATH'))
         Assert.assertEquals (7, text.indexOf('# pike    END (PATH JAVA_HOME)'))

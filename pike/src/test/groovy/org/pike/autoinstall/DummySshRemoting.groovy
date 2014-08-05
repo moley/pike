@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.pike.model.host.Host
 import org.pike.remoting.IRemoting
 import org.pike.remoting.RemoteResult
-import org.pike.remoting.SshRemoting
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,5 +46,10 @@ class DummySshRemoting implements IRemoting {
     public boolean connectedToHost (Host host) {
         commands.add("check connection to Host")
         return true
+    }
+
+    @Override
+    void configure(Project project, Host host) {
+
     }
 }

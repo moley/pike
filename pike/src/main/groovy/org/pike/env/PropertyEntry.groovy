@@ -44,9 +44,12 @@ class PropertyEntry extends UserEnvEntry {
     }
 
     @Override
-    String getKey() {
+    String getPikeKey() {
         return "PROPERTY $propertyname"
     }
 
-
+    @Override
+    boolean isOriginEntry(Operatingsystem operatingsystem, String originEntry) {
+        return originEntry.contains(propertyname) && originEntry.contains(divider)
+    }
 }

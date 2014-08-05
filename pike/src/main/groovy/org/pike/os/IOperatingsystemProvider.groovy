@@ -47,5 +47,7 @@ public interface IOperatingsystemProvider {
 
     void adaptLineDelimiters (final File originfile, final File adaptedfile)
 
+    String adaptLineDelimiters (String originText)
+
 
 }

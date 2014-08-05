@@ -25,6 +25,7 @@ class ResolveModelTask extends DefaultTask{
 
     @TaskAction
     public resolveModel () {
+        log.info("Resolving model")
 
         ModelLogger.logConfiguration("preAutoInitializing", project, true)
         autoinitializeParents()
@@ -33,6 +34,22 @@ class ResolveModelTask extends DefaultTask{
         resolveModelElements()
 
         ModelLogger.logConfiguration("postConfigureTasks", project, false)
+        log.info("Model is resolved")
+
+        checkModel()
+
+
+    }
+
+    private void checkModel () {
+        log.info("Check model")
+
+        for (Host nextHost : project.hosts) {
+            if (nextHost.operatingsystem == null)
+                throw new IllegalStateException("You have to configure a operatingsystem for host ${nextHost.name}")
+        }
+
+        log.info("Model is checked")
 
     }
 
@@ -40,11 +57,15 @@ class ResolveModelTask extends DefaultTask{
      * autoinitialize properties from base item
      */
     private void autoinitializeParents () {
-        log.debug("autoinitializeParents")
+        if (log.debugEnabled)
+          log.debug("autoinitializeParents")
         BaseClassAutoInitializer autoinitializer = new BaseClassAutoInitializer()
-        log.debug("after (" + project.operatingsystems + ")")
+
+        if (log.debugEnabled)
+          log.debug("after (" + project.operatingsystems + ")")
         for (Operatingsystem nextOs: project.operatingsystems) {
-            log.debug("Complete fields from baseclass in object " + nextOs)
+            if (log.debugEnabled)
+              log.debug("Complete fields from baseclass in object " + nextOs)
             autoinitializer.initialize(nextOs, "parent")
         }
     }

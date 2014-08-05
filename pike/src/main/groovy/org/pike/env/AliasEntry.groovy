@@ -24,13 +24,23 @@ class AliasEntry implements IEnvEntry{
         void serialize (Operatingsystem operatingsystem, Collection<String> serializedValue, final boolean global) {
             if (operatingsystem.provider instanceof WindowsProvider)
                 throw new IllegalStateException("Alias is not yet implemented in windows")
-            serializedValue.add("alias $aliasFrom='$aliasTo'")
+            serializedValue.add("$key='$aliasTo'")
         }
 
         @Override
-        String getKey() {
+        String getPikeKey() {
             return "ALIAS" + aliasFrom
         }
 
 
+    private String getKey () {
+        return "alias $aliasFrom"
+    }
+
+
+
+    @Override
+    boolean isOriginEntry(Operatingsystem operatingsystem, String originEntry) {
+        return originEntry.trim().startsWith(key)
+    }
 }

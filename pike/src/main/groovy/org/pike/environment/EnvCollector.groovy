@@ -17,8 +17,12 @@ import org.pike.model.host.Host
 @Slf4j
 class EnvCollector {
 
+    Set<String> disableMessage = new HashSet<String>()
+
     public boolean isEnvironmentActive (final Project project, final String name) {
-        log.debug("Check if environment " + name + " is active...")
+        if (log.debugEnabled)
+          log.debug("Check if environment " + name + " is active...")
+
         NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
         Defaults defaults = project.extensions.defaults
         String availableHosts = ""
@@ -26,12 +30,21 @@ class EnvCollector {
         for (Host nextHost: hosts) {
             availableHosts+= " " + nextHost.name
 
-            log.debug("check host " + nextHost.name + ", currenthost = " + defaults.currentHost)
+            if (log.debugEnabled)
+              log.debug("check host " + nextHost.name + ", currenthost = " + defaults.currentHost)
+
             if (ProjectInfo.isCurrentHost(project, nextHost))
                 return nextHost.isEnvironmentActive(project, name)
         }
 
-        log.info("Current host " + defaults.currentHost + " not found in configuration (available hosts " + availableHosts.trim() + "), so we deactivate environment "+ name)
+        if (! disableMessage.contains(name)) {
+            if (defaults.currentHost == null)
+              log.info("Current host is " + defaults.currentHost + ", so we disable environment " + name)
+            else
+              log.info("Current host " + defaults.currentHost + " not found in configuration (available hosts " + availableHosts.trim() + "), so we disable environment " + name)
+        }
+        disableMessage.add(name)
+
         return false
     }
 }

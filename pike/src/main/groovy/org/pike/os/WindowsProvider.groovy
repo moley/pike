@@ -65,7 +65,7 @@ class WindowsProvider extends AbstractOsProvider{
 
     @Override
     String getSetEnvPrefix() {
-        return "@SET "
+        return "SET "
     }
 
     @Override
@@ -113,6 +113,10 @@ class WindowsProvider extends AbstractOsProvider{
         }
 
         return isLocalFile ? normalizedPath.replace("/", "\\"): normalizedPath
+    }
+
+    String adaptLineDelimiters (String originText) {
+        return originText.replace('\n', '\r\n')
     }
 
     @Override

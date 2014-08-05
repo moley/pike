@@ -1,20 +1,16 @@
 package org.pike.tasks
 
+import com.google.common.io.Files
 import org.apache.commons.io.FileUtils
-import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
-import org.pike.TestUtils
-import org.pike.common.ProjectInfo
+import org.pike.cache.DummyCacheManager
+import org.pike.test.TestUtils
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.worker.DownloadWorker
-
-import javax.annotation.security.RolesAllowed
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,28 +21,17 @@ import javax.annotation.security.RolesAllowed
  */
 class DownloadTaskTest {
 
-
-    File dummyPathTo = new File ("tmp/downloadtasktest")
-
-    @Before
-    public void before () {
-        FileUtils.deleteDirectory(dummyPathTo)
-
-    }
-
-    @After
-    public void after () {
-        FileUtils.deleteQuietly(dummyPathTo)
-    }
-
     @Test
     public void testReallife () {
 
         File dummyZip = TestUtils.projectfile("pike", "src/test/resources/testzip.zip")
+        File dummyPathTo = Files.createTempDir()
 
         DownloadWorker task = new DownloadWorker()
-        task.cacheManager = new DummyCacheManager(dummyZip)
-        task.to = dummyPathTo.absolutePath
+        task.cacheManager = new DummyCacheManager()
+        task.toPath = dummyPathTo
+        task.from = dummyZip.absolutePath
+
 
         Operatingsystem os = new Operatingsystem("linux")
         os.tmpdir = "/tmp"
@@ -64,7 +49,7 @@ class DownloadTaskTest {
         task.install()
 
         File executableFile = new File (dummyPathTo, executable)
-        Assert.assertTrue ("Executable toFile was not made executable", executableFile.canExecute())
+        Assert.assertTrue ("Executable ${executableFile.absolutePath} was not made executable", executableFile.canExecute())
 
         Assert.assertTrue ("Task is not uptodate after installation", task.uptodate())
 

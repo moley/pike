@@ -9,6 +9,7 @@ import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.IOperatingsystemProvider
 import org.pike.os.WindowsProvider
 import org.pike.remoting.IRemoting
+import org.pike.remoting.LocalRemoting
 import org.pike.remoting.SshRemoting
 import org.pike.worker.PikeWorker
 
@@ -22,45 +23,10 @@ import org.pike.worker.PikeWorker
 @Slf4j
 class AutoinstallWorker extends PikeWorker {
 
-    private HashMap <Host, IRemoting> connections = new HashMap<Host, IRemoting>()
-
     private CacheManager cachemanager = new CacheManager()
 
     private File injectDir = new File ("build/injectToInstallation")
 
-    static IRemoting injectedRemoting //TODO Mocking
-
-
-    public IRemoting createRemoting (Project project, Host nextHost) {
-      this.project = project
-
-      if (injectedRemoting != null)
-        return injectedRemoting
-      else
-      return new SshRemoting(project, nextHost)
-    }
-
-    /**
-     * gets remoting instance of the given host
-     * @param project       project
-     * @param nextHost      host to determine remoting instance
-     * @return remoting instance
-     */
-    public IRemoting getRemoting (Project project, Host nextHost) {
-        IRemoting remoting = connections.get(nextHost)
-        if (remoting == null || ! remoting.connectedToHost(nextHost)) {
-            remoting = createRemoting(project, nextHost)
-            if (log.debugEnabled) {
-              log.debug("Establish connection to  " + nextHost + "-" + nextHost.operatingsystem)
-              log.debug("- Using remote pikedir " + getPikeDirRemote(nextHost))
-              log.debug("- Using remote tempdir " + getTmpDirRemote(nextHost))
-              log.debug("- Using localcache dir " + getLocalCacheDir())
-            }
-            connections.put(nextHost, remoting)
-        }
-
-        return remoting
-    }
 
     /**
      * copies url to local build folder toFile
@@ -96,9 +62,10 @@ class AutoinstallWorker extends PikeWorker {
     }
 
     public File getLocalCacheDir () {
-        return new File ("").getAbsoluteFile()
+        return new File ("build/cache").getAbsoluteFile()
     }
     public String getPikeDirRemote (final Host host) {
+     log.info("determine pike dir remote " + host.operatingsystem.pikedir)
      String pikeDir = host.operatingsystem.pikedir
       if (pikeDir == null)
         throw new IllegalStateException("PikeDir on host " + host.hostname + " not set")
@@ -107,14 +74,15 @@ class AutoinstallWorker extends PikeWorker {
 
     public String getTmpDirRemote (final Host host) {
       IOperatingsystemProvider osProvider = host.operatingsystem.provider
-      String tmpDir = osProvider.addPath(host.operatingsystem.pikedir, "tmp")
+      String pikedir = getPikeDirRemote(host)
+      String tmpDir = osProvider.addPath(pikedir, "tmp")
       return tmpDir
     }
 
     public void initializePaths (final Project project, Host host) {
         log.debug("initialize paths on host " + host.name)
 
-        IRemoting remoting = getRemoting(project, host)
+        IRemoting remoting = host.remotingImpl
 
         String pikeDir = getPikeDirRemote(host)
 
@@ -163,8 +131,8 @@ class AutoinstallWorker extends PikeWorker {
     }
 
     public void uploadBootstrapScripts (final Project project, Host host, final PropertyChangeProgressLogging progressLogging) {
-        log.debug("upload bootstrapScripts to host " + host.name)
-        IRemoting remoting = getRemoting(project, host)
+        progressLogging.start("Uploading bootstrap scripts to host ${host.name}")
+        IRemoting remoting = host.remotingImpl
 
         //Inject boostrap Scripts vom Plugin pike
         if (! injectDir.exists())
@@ -183,7 +151,7 @@ class AutoinstallWorker extends PikeWorker {
 
     public void uploadPlugins (final Project project, final Host host, final PropertyChangeProgressLogging progressLogging) {
         log.debug ("upload plugins to host " + host.name)
-        IRemoting remoting = getRemoting(project, host)
+        IRemoting remoting = host.remotingImpl
 
         String pikeDirRemote = getPikeDirRemote(host)
 
@@ -196,78 +164,39 @@ class AutoinstallWorker extends PikeWorker {
         }
     }
 
-    private File getLocalTmpDir () {
-        return new File ("/tmp")
-    }
+
 
     public void uploadProjectDescriptions (final Project project, Host host, final PropertyChangeProgressLogging progressLogging) {
-        log.debug ("upload project descriptions to host " + host.name)
-        IRemoting remoting = getRemoting(project, host)
-
+        progressLogging.start("Uploading project descriptions to host ${host.name}")
+        IRemoting remoting = host.remotingImpl
 
         IOperatingsystemProvider provider = host.operatingsystem.provider
         String pikeDirDescs = provider.addPath(getPikeDirRemote(host), "descriptions")
 
-        remoting.upload(pikeDirDescs, new File ("configureHost.gradle"), progressLogging)
+        File pikeGradle =  project.file('pike.gradle')
+        if (! pikeGradle.exists())
+            throw new IllegalStateException(pikeGradle.absolutePath + " does not exist")
+
+
+        remoting.upload(pikeDirDescs, pikeGradle, progressLogging)
     }
 
-    public void uploadGradle (final Project project, Host host, final Defaults defaults, final PropertyChangeProgressLogging progressLogging) {
-        log.debug ("upload gradle to " + host.name)
-
-        IRemoting remoting = getRemoting(project, host)
-
-        if (defaults.pikegradle == null)
-            throw new IllegalStateException("PikeGradle not set. Please use a valid download link to gradle zip toFile")
-
-        progressLogging.progressLogger.progress("Download bootstrap gradle from ${defaults.pikegradle}")
-        File downloadedGradle = cachemanager.getCacheFile(host.operatingsystem, defaults.pikegradle, localTmpDir, localCacheDir)
-
-        log.debug ("- Using gradle " + downloadedGradle.absolutePath)
-
-        IOperatingsystemProvider osProvider = host.operatingsystem.provider
-        String uploadedGradle = osProvider.addPath(getTmpDirRemote(host), downloadedGradle.name)
-        progressLogging.progressLogger.progress("Upload bootstrap gradle to host  ${host.name}")
-        remoting.upload(uploadedGradle, downloadedGradle, progressLogging)
-    }
-
-    public void uploadJre (final Project project, Host host, final PropertyChangeProgressLogging progressLogging) {
-        log.debug ("upload jre to host " + host.name)
-
-        IRemoting remoting = getRemoting(project, host)
-
-        if (host.operatingsystem.pikejre == null)
-            throw new IllegalStateException("PikeJre not set. Please use a valid download link to bootstrap jre zip toFile")
-
-        progressLogging.progressLogger.progress("Download bootstrap jre from ${host.operatingsystem.pikejre}")
-        File downloadedJre = cachemanager.getCacheFile(host.operatingsystem, host.operatingsystem.pikejre, localTmpDir, localCacheDir)
-
-        log.debug ("- Using jre " + downloadedJre.absolutePath)
-        IOperatingsystemProvider provider = host.operatingsystem.provider
-        String uploadedJre = provider.addPath(getTmpDirRemote(host) , downloadedJre.name)
-        progressLogging.progressLogger.progress("Upload bootstrap jre to host  ${host.name}")
-        remoting.upload(uploadedJre, downloadedJre, progressLogging)
-    }
-
-    public void disconnectConnections () {
-        for (IRemoting nextRemoting : connections.values()) {
-            nextRemoting.disconnect()
+    public void disconnectConnections (final Collection<Host> hosts) {
+        for (Host next: hosts) {
+            next.remotingImpl.disconnect()
+            next.remotingImpl = null
         }
     }
 
-    public void installPike(Project project, Host host, PropertyChangeProgressLogging propertyChangeProgressLogging) {
-        log.debug ("installPike pike on host " + host.name)
-        IRemoting remoting = getRemoting(project, host)
 
-        IOperatingsystemProvider osProvider = host.operatingsystem.provider
 
-        String pikeDir = getPikeDirRemote(host)
-        String command = ""
+    @Override
+    void install() {  //TODO make the official one
 
-        command = addCommand(osProvider, command, osProvider.bootstrapCommandChangePath, pikeDir)
+    }
 
-        command = addCommand(osProvider, command, osProvider.bootstrapCommandInstall, pikeDir)
-        log.debug ("Complete command to installPike pike: " + command)
-        remoting.execCmd(command)
-
+    @Override
+    boolean uptodate() {
+        return false
     }
 }

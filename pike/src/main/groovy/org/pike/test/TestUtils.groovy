@@ -1,9 +1,8 @@
-package org.pike
+package org.pike.test
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.junit.Assert
-import org.pike.common.ProjectInfo
+import org.gradle.tooling.GradleConnector
 import org.pike.holdertasks.DeriveTasksTask
 import org.pike.holdertasks.ResolveModelTask
 
@@ -14,9 +13,21 @@ import org.pike.holdertasks.ResolveModelTask
  * Time: 23:41
  * To change this template use File | Settings | File Templates.
  */
-class TestUtils {
+public class TestUtils {
 
     private final static String OS = System.getProperty("os.name")
+
+    private static File gradleHome = new File ("/Users/OleyMa/programs/gradle-2.0")
+
+    public static String CURRENT_DIST = 'gradle-2.0-all.zip'
+
+    /**
+     * gradle connector from tooling api
+     * @return
+     */
+    public static GradleConnector getGradleConnector () {
+        return GradleConnector.newConnector().useInstallation(gradleHome) //TODO with gradle wrapper
+    }
 
 
     public static void prepareModel (final Project project) {
@@ -24,8 +35,9 @@ class TestUtils {
         ResolveModelTask resolveModelTask = project.tasks.resolveModel
         resolveModelTask.resolveModel()
 
-        DeriveTasksTask checkmodelTask = project.tasks.deriveTasks
-        checkmodelTask.deriveTasks()
+        DeriveTasksTask deriveTasksTask = project.tasks.deriveTasks
+        deriveTasksTask.deriveTasks()
+
     }
 
     public static File projectfile (final String project, final String relativeFile) {

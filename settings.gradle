@@ -1,1 +1,1 @@
-include 'pike', 'jenkins'
+include 'pike', 'jenkins', 'sonar', 'autoinstall', 'vagrant'

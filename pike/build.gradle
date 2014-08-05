@@ -1,5 +1,4 @@
 
 dependencies {
   compile 'sshtools:j2ssh-core:0.2.9'
-  testCompile 'org.virtualbox:vboxjws:4.2.8'
 }

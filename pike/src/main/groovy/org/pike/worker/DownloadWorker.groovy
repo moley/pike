@@ -1,13 +1,11 @@
 package org.pike.worker
 
-import groovy.util.logging.Log
+import groovy.io.FileType
 import groovy.util.logging.Slf4j
-import org.pike.cache.CacheManager
 import org.pike.os.IOperatingsystemProvider
 import org.pike.os.WindowsProvider
 import org.pike.utils.FileUtils
-
-import java.util.zip.ZipFile
+import org.pike.utils.ZipUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,19 +15,21 @@ import java.util.zip.ZipFile
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-class DownloadWorker extends UndoableWorker {
+class DownloadWorker extends PikeWorker {
 
     String from
-    String to
+    File toPath
     boolean overwrite = false
     boolean adaptLineDelimiters = false
 
 
     Collection <String> executables = new ArrayList<String>()
 
-    CacheManager cacheManager = new CacheManager()
-
     FileUtils fileutils = new FileUtils()
+
+    ZipUtils ziputils = new ZipUtils()
+
+    File downloadedFile
 
     /**
      * define files to make executable
@@ -45,26 +45,51 @@ class DownloadWorker extends UndoableWorker {
     public void executable () {
         fileFlags = "755";
     }
+
+    public void to (String to) {
+        this.toPath = toFile(to)
+    }
+
+    public void from (String from) {
+        this.from = from
+    }
     @Override
     public void install() {
 
-        log.debug("Installing from " + from + " to " + to + " (Overwrite: " + overwrite + ", Adapt linedelimiters: " + adaptLineDelimiters + ")")
+        if (log.debugEnabled)
+          log.debug("Installing from " + from + " to " + toPath.absolutePath + " (Overwrite: " + overwrite + ", Adapt linedelimiters: " + adaptLineDelimiters + ")")
 
-        File downloadedFile = cacheManager.getCacheFile(operatingsystem, from, tempDir, cacheDir, overwrite)
+        downloadedFile = cacheManager.getCacheFile(operatingsystem, from, overwrite)
 
-        File toPath = toFile(to)
+
         if (! toPath.exists()) {
             toPath.mkdirs()
-            log.debug("Make dir " + toPath.absolutePath)
+            if (log.debugEnabled)
+              log.debug("Make dir " + toPath.absolutePath)
         }
 
         if  (downloadedFile.name.toLowerCase().endsWith(".zip")) {
-          log.debug("Unzip " + downloadedFile.absolutePath + " to " + toPath.absolutePath)
-          def ant = new AntBuilder()   // create an antbuilder
-          ant.unzip(  src: downloadedFile.absolutePath,
-                dest: toPath.absolutePath ,
-                overwrite:true )
-          adaptFileFlags(toPath)
+
+            if (log.debugEnabled)
+                log.debug("Unzip " + downloadedFile.absolutePath + " to " + toPath.absolutePath)
+            def ant = new AntBuilder()   // create an antbuilder
+            ant.unzip(src: downloadedFile.absolutePath,
+                    dest: toPath.absolutePath,
+                    overwrite: true)
+
+            for (File next : ziputils.getRootpaths(toPath, downloadedFile)) {
+                next.eachFileRecurse(FileType.DIRECTORIES) {
+                    if(it.name == 'bin') {
+                        if (log.infoEnabled)
+                            log.info("Adapting file flags for detected binpath $it.absolutePath")
+                        adaptFileFlags(it, user, group, 'a+x')
+                    }
+                }
+
+                if (log.infoEnabled)
+                    log.info("Adapting file flags for next rootpath $next")
+                adaptFileFlags(next, user, group, fileFlags)
+            }
 
           if (adaptLineDelimiters)
               throw new IllegalStateException("The feature adaptLineDelimiters is currently not supported for zipfile")
@@ -72,9 +97,10 @@ class DownloadWorker extends UndoableWorker {
         else {
             String [] nameTokens = from.split("/")
             File toFile = new File(toPath, nameTokens[nameTokens.length - 1])
-            log.debug("Copy " + downloadedFile.absolutePath + " to " + toFile.absolutePath)
+            if (log.debugEnabled)
+              log.debug("Copy " + downloadedFile.absolutePath + " to " + toFile.absolutePath)
             fileutils.copyFile(downloadedFile, toFile)
-            adaptFileFlags(toFile)
+            adaptFileFlags(toFile, user, group, fileFlags)
 
             if (adaptLineDelimiters) {
                 IOperatingsystemProvider osProvider = operatingsystem.provider
@@ -84,16 +110,10 @@ class DownloadWorker extends UndoableWorker {
 
 
         if (! (operatingsystem.provider instanceof WindowsProvider)) {
-          log.debug("adaptFileFlags in os " + operatingsystem.provider)
+
           for (String nextExecutable : executables) {
-            File executableFile = new File (toPath, nextExecutable)
-            if (toFile(executableFile.absolutePath).exists()) {
-              String excommand = "chmod -R a+x " + executableFile.absolutePath
-              log.debug(excommand)
-              Runtime.getRuntime().exec(excommand) //TODO Libmethod for Handling external returncode
-            }
-            else
-              log.warn("File " + executableFile.absolutePath + " not available, cannot adaptFileFlags")
+              File next = new File (toPath, nextExecutable)
+              adaptFileFlags(next, user, group, 'a+x')
           }
         }
 
@@ -101,34 +121,23 @@ class DownloadWorker extends UndoableWorker {
 
     }
 
-    final Collection<File> unzippedFiles (final File zipfile, final File parentPath) {
 
-        Set <File> allRoots = new HashSet<File>()
-        ZipFile file = new ZipFile(zipfile)
-        file.entries().each { entry ->
-            String rootPath = entry.name.substring(0, entry.name.indexOf("/"))
-            allRoots.add(new File (parentPath, rootPath))
-        }
-
-        return allRoots
-
-    }
-
-    @Override
-    public void deinstall() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     public boolean uptodate() {
-        File downloadedFile = cacheManager.getCacheFile(operatingsystem, from, tempDir, cacheDir)
+        File downloadedFile = cacheManager.getCacheFile(operatingsystem, from)
 
-        if  (downloadedFile.getName().endsWith(".zip")) {
-          Collection <File> files = unzippedFiles(downloadedFile, toFile(to))
-          return files.iterator().next().exists()
+        if  (downloadedFile.name.toUpperCase().endsWith(".ZIP")) {
+          Collection <File> files = ziputils.unzippedFiles(downloadedFile, toPath)
+          File firstFile = files.iterator().next()
+          boolean firstFileExists = firstFile.exists()
+          if (firstFileExists && log.isInfoEnabled())
+            log.info("Worker $name not uptodate due to file ${firstFile.absolutePath} does not exist")
+          return firstFileExists
         }
 
         //Check if files has changed
+        log.info("Worker $name not uptodate due to TODO ")
         return false
     }
 

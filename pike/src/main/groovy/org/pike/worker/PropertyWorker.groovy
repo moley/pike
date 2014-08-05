@@ -12,7 +12,7 @@ import org.pike.utils.SequencedProperties
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-class PropertyWorker extends UndoableWorker {
+class PropertyWorker extends PikeWorker {
 
     String file
 
@@ -57,8 +57,6 @@ class PropertyWorker extends UndoableWorker {
 
         File propFile = toFile(file)
 
-        log.debug("Handle propertyfile " + propFile.absolutePath)
-
         if (! propFile.exists()) {
 
             if (addProperties.isEmpty())
@@ -73,7 +71,7 @@ class PropertyWorker extends UndoableWorker {
 
         for (Object nextToAdd : addProperties.keySet()) {
             Object value = addProperties.get(nextToAdd)
-            log.debug("Using key value " + nextToAdd + "->" + value)
+            log.info("Configuring " + nextToAdd + "->" + value + " in file " + propFile.absolutePath)
             readProps.put(nextToAdd.toString(), value.toString())
         }
 
@@ -81,11 +79,6 @@ class PropertyWorker extends UndoableWorker {
             readProps.remove(nextToRemove)
 
         readProps.store(new FileOutputStream(propFile), null)
-    }
-
-    @Override
-    void deinstall() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -105,4 +98,6 @@ class PropertyWorker extends UndoableWorker {
 
         return detailinfo
     }
+
+
 }

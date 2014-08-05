@@ -3,14 +3,11 @@ package org.pike.worker
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.pike.TestUtils
-import org.pike.common.ProjectInfo
-import org.pike.holdertasks.DeriveTasksTask
 import org.pike.tasks.DelegatingTask
+import org.pike.test.TestUtils
 
 /**
  * Created with IntelliJ IDEA.

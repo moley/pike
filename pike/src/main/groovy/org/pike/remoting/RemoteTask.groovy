@@ -97,6 +97,10 @@ class RemoteTask extends PikeTask {
         }
 
         if (allHostsToBeBuild.isEmpty()) {
+
+            if (project.hosts.size() == 1)
+                return project.hosts
+
             Set<String> validValues = new HashSet<String>()
             NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
             for (Host nextHost: hosts) {
@@ -108,7 +112,9 @@ class RemoteTask extends PikeTask {
             String validValuesText = ""
             for (String nextValidValue : validValues.sort())
                 validValuesText += nextValidValue + "\n"
-            throw new IllegalStateException("You have to parameterize a hostname or a group to call the action for\n Valid are: \n" + validValuesText)
+            throw new IllegalStateException("You have to parameterize a hostname or a group to call the action for\n " +
+                                            "Valid are: \n" + validValuesText + "\n" +
+                                            "Example call: gradle configureRemote --host=HOSTNAME")
         }
 
         return allHostsToBeBuild

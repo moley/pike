@@ -6,10 +6,9 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.ConfigureUtil
 import org.pike.common.TaskContext
-
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
-import org.pike.worker.UndoableWorker
+import org.pike.worker.PikeWorker
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,7 +21,7 @@ import org.pike.worker.UndoableWorker
 class DelegatingTask extends DefaultTask {
 
 
-    List <UndoableWorker> workers = new ArrayList<UndoableWorker>()
+    List <PikeWorker> workers = new ArrayList<PikeWorker>()
 
     TaskContext context
 
@@ -36,7 +35,7 @@ class DelegatingTask extends DefaultTask {
 
     public void addWorkerClass (final Class undoableWorkerClass, final Closure autoconfigClosure, final String name) {
         log.fine("Adding worker " + undoableWorkerClass + "to delegating task " + name)
-        UndoableWorker worker = undoableWorkerClass.newInstance()
+        PikeWorker worker = undoableWorkerClass.newInstance()
         worker.name = name
         worker.autoconfigClosure = autoconfigClosure
         worker.context = context
@@ -52,7 +51,7 @@ class DelegatingTask extends DefaultTask {
      * @param host
      */
     public void configure (final Host host) {
-        for (UndoableWorker worker: workers) {
+        for (PikeWorker worker: workers) {
           worker.host = host
           worker.operatingsystem = host.operatingsystem
           if (worker.autoconfigClosure != null)
@@ -84,23 +83,23 @@ class DelegatingTask extends DefaultTask {
     public void install () {
         log.info("Calling installPike of task " + name)
         log.info(getDetailInfo())
-        for (UndoableWorker worker:workers) {
-            worker.install()
+        for (PikeWorker worker:workers) {
+            if (! worker.uptodate()) {
+                println ("Worker $worker.name is not uptodate")
+                worker.install()
+            }
+            else
+              println ("Worker $worker.name is uptodate, skip")
         }
-        log.info("_______________" + UndoableWorker.NEWLINE + UndoableWorker.NEWLINE)
+        log.info("_______________" + PikeWorker.NEWLINE + PikeWorker.NEWLINE)
     }
 
     /**
      * deinstall all workers of the task
      */
     public void deinstall () {
-        log.info("Calling deinstall of task " + name)
-        log.info(getDetailInfo())
+        throw new IllegalStateException("NYI")
 
-        for (UndoableWorker worker:workers) {
-            worker.deinstall()
-        }
-        log.info("_______________" + UndoableWorker.NEWLINE + UndoableWorker.NEWLINE)
     }
 
     /**
@@ -112,7 +111,7 @@ class DelegatingTask extends DefaultTask {
 
         boolean isUpToDate = true
 
-        for (UndoableWorker worker:workers) {
+        for (PikeWorker worker:workers) {
             boolean workerIsUptodate = worker.uptodate()
             String uptoDateString = workerIsUptodate ? "...is uptodate" : "... is not uptodate"
             log.info("Worker " + worker.name + uptoDateString)
@@ -125,8 +124,8 @@ class DelegatingTask extends DefaultTask {
     }
 
     public  String getDetailInfo() {
-        String completeString = "Task " + name + UndoableWorker.NEWLINE
-        for (UndoableWorker worker:workers) {
+        String completeString = "Task " + name + PikeWorker.NEWLINE
+        for (PikeWorker worker:workers) {
             completeString+= worker.detailInfo
         }
         return completeString

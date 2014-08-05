@@ -1,6 +1,7 @@
 package org.pike.resolver
 
 import groovy.util.logging.Log
+import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 
 /**
@@ -10,7 +11,7 @@ import org.gradle.api.Project
  * Time: 01:22
  * To change this template use File | Settings | File Templates.
  */
-@Log
+@Slf4j
 class DelegatingCompoundResolver {
 
 
@@ -55,7 +56,8 @@ class DelegatingCompoundResolver {
         else
             collectedObjects.add(object)
 
-            log.fine ("Resolve variables in object of type " + object.getClass())
+            if (log.debugEnabled)
+              log.debug ("Resolve variables in object of type " + object.getClass())
 
             Collection<MetaMethod> filteredMethods = object.metaClass.methods.findAll {it->
                 it.name.startsWith("set") &&
@@ -64,7 +66,8 @@ class DelegatingCompoundResolver {
             }
 
             for (MetaMethod setter: filteredMethods) {
-                log.fine ("- Resolving setter " + setter.name)
+                if (log.debugEnabled)
+                    log.debug ("- Resolving setter " + setter.name)
 
                 String getterName = setter.name.replaceFirst("set", "get")
 
@@ -76,19 +79,26 @@ class DelegatingCompoundResolver {
 
             for (MetaProperty next : object.metaClass.properties) {
 
-                if (next.type.package == null) //simple types
-                    continue
+                try {
 
-                if (next.type.package.name.startsWith("org.pike")) {  //object reference of a model element
-                    if (next.getProperty(object) != null)
-                      collectResolveItems(collectedObjects, resolveItems, project, next.getProperty(object))
-                }
-                else if (next.getProperty(object) in Collection) { //collection
-                    Collection collection = next.getProperty(object)
-                    for (Object nextInCollection: collection) {
-                        if (nextInCollection != null)
-                          collectResolveItems(collectedObjects, resolveItems, project, nextInCollection)
+                    if (next.type.package == null) //simple types
+                        continue
+
+                    if (next.type.package.name.startsWith('org.pike.model')) {  //object reference of a model element
+                        if (next.getProperty(object) != null)
+                            collectResolveItems(collectedObjects, resolveItems, project, next.getProperty(object))
+                    } else if (next.getProperty(object) in Collection) { //collection
+                        Collection collection = next.getProperty(object)
+                        for (Object nextInCollection : collection) {
+                            if (nextInCollection != null)
+                                collectResolveItems(collectedObjects, resolveItems, project, nextInCollection)
+                        }
                     }
+
+                } catch (GroovyRuntimeException e) {
+                    String enrichedMessage = "In object ${object} ${e.toString()}"
+                    log.error(enrichedMessage, e)
+                    throw new GroovyRuntimeException(enrichedMessage, e)
                 }
             }
 

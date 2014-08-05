@@ -2,8 +2,6 @@ package org.pike.remotetasks
 
 import groovy.util.logging.Log4j
 import org.gradle.api.GradleException
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.internal.tasks.options.Option
 import org.gradle.api.tasks.TaskAction
 import org.gradle.logging.ProgressLoggerFactory
@@ -12,9 +10,9 @@ import org.pike.autoinstall.PropertyChangeProgressLogging
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.os.IOperatingsystemProvider
+import org.pike.remoting.IRemoting
 import org.pike.remoting.RemoteResult
 import org.pike.remoting.RemoteTask
-import org.pike.remoting.SshRemoting
 
 /**
  * Created with IntelliJ IDEA.
@@ -48,16 +46,18 @@ class StartRemoteBuildTask extends RemoteTask {
           return "install"
     }
 
+
+
     @TaskAction
     public void startRemoteBuild () {
 
         Collection <RemoteResult> results = new ArrayList<RemoteResult>()
 
-        for (Host nextHost: getHostsToBuild()) {
+        Collection<Host> hosts = getHostsToBuild()
 
-            println ("Start remote build on host " + nextHost + "- Operatingsystem " + nextHost.operatingsystem.name + "- Group " + group + " with env " + getEnv())
+        for (Host nextHost: hosts) {
 
-            SshRemoting remoting = new SshRemoting(project, nextHost)
+            println ("Start remote build on host " + nextHost.name + "- Operatingsystem " + nextHost.operatingsystem.name + "- Group " + group + " with env " + getEnv())
 
             PropertyChangeProgressLogging progressLogging = new PropertyChangeProgressLogging(services.get(ProgressLoggerFactory), StartRemoteBuildTask)
 
@@ -70,6 +70,9 @@ class StartRemoteBuildTask extends RemoteTask {
                 if (pikeDir == null)
                     throw new IllegalStateException("PikeDir on host " + nextHost.hostname + " not set")
 
+                nextHost.remotingImpl.configure(project, nextHost)
+
+                logic.operatingsystem = nextHost.operatingsystem
                 logic.uploadBootstrapScripts(project, nextHost, progressLogging)
                 logic.uploadProjectDescriptions(project, nextHost, progressLogging)
                 logic.uploadPlugins(project, nextHost, progressLogging)
@@ -82,18 +85,25 @@ class StartRemoteBuildTask extends RemoteTask {
                 command = logic.addCommand(osProvider, command, osProvider.bootstrapCommandChangePath, pikeDirRemote)
                 command = logic.addCommand(osProvider, command, osProvider.bootstrapCommandStartConfigure, pikeDirRemote)
                 command += " " + getEnv()
+                if (project.logger.debugEnabled)
+                    command += " --debug"
+
+                if (project.logger.infoEnabled)
+                    command += " --info"
+
                 println ("Complete command to configure remotely: " + command)
-                remoting.execCmd(command)
+                nextHost.remotingImpl.execCmd(command)
 
 
 
             } catch (Exception e) {
                 log.error("Could not installPike host $nextHost due to error ${e.toString()}", e)
             } finally {
-                remoting.disconnect()
                 progressLogging.end()
             }
         }
+
+        logic.disconnectConnections(hosts)
 
         int numberOfErrors = 0
         String errorMessage = ""

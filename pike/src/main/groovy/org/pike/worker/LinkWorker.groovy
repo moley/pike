@@ -14,55 +14,54 @@ import java.nio.file.Path
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-class LinkWorker extends UndoableWorker {
-    String from
-    String to
+class LinkWorker extends PikeWorker {
+    File fromPath
+    File toPath
+
+    void from (final String path) {
+        fromPath= toFile(path)
+    }
+
+    void to (final String path) {
+      toPath = toFile(path)
+    }
 
 
     @Override
     void install() {
-        log.debug("Linking from " + from + " to " + to)
 
-        Path fromPath = toPath (from)
-        log.debug("Resolved from : " + fromPath.toString())
 
-        Path toPath = toPath (to)
-        log.debug("Resolved to : " + fromPath.toString())
+        Files.deleteIfExists(fromPath.toPath())
 
-        Files.deleteIfExists(fromPath)
+        log.info("Linking from " + fromPath.absolutePath + " to " + toPath.absolutePath)
 
-        log.debug("Linking from " + fromPath.toString() + " to " + toPath.toString());
+        Files.createSymbolicLink(fromPath.toPath(), toPath.toPath())
 
-        Files.createSymbolicLink(fromPath, toPath)
-
-        adaptFileFlags(fromPath.toFile())
-    }
-
-    @Override
-    void deinstall() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        adaptFileFlags(fromPath, user, group, fileFlags)
     }
 
     @Override
     boolean uptodate() {
-        log.debug("Check link " + toPath (to).toFile().absolutePath )
-        Path from = toPath (from)
-        Path to = toPath (to)
 
-        if (! from.toFile().exists())
+
+        if (! fromPath.exists())
             return false
 
-        if (! Files.isSymbolicLink(from))
+        if (! Files.isSymbolicLink(fromPath.toPath()))
             return false
 
-        Path linkTo = Files.readSymbolicLink(from)
-        return linkTo.toFile().absolutePath.equals(to.toFile().absolutePath)
+        Path linkTo = Files.readSymbolicLink(fromPath.toPath())
+        boolean updated = linkTo.toFile().absolutePath.equals(toPath.absolutePath)
+
+        log.info("Check link " + toPath.absolutePath  + "- updated ${updated}")
+
+        return updated
     }
 
     public String getDetailInfo () {
         String detailinfo = super.getDetailInfo()
-        detailinfo += "    - from         : " + toPath (from) + NEWLINE
-        detailinfo += "    - to           : " + toPath (to) + NEWLINE
+        detailinfo += "    - from         : " + fromPath.absolutePath + NEWLINE
+        detailinfo += "    - to           : " + toPath.absolutePath + NEWLINE
         return detailinfo
     }
 }

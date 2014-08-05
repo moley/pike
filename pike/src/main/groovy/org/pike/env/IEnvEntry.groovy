@@ -24,6 +24,16 @@ public interface IEnvEntry {
      * and has to be merged
      * @return key
      */
-    public String getKey ()
+    public String getPikeKey()
+
+    /**
+     * returns if the given string is the origin entry of the applied configuration
+     * @param operatingsystem
+     * @param originEntry  entry
+     * @return  true: is origin, false: is not origin
+     */
+    public boolean isOriginEntry (final Operatingsystem operatingsystem, final String originEntry)
+
+
 
 }

@@ -11,6 +11,7 @@ import org.pike.model.operatingsystem.Operatingsystem
  */
 public abstract class UserEnvEntry implements IEnvEntry {
 
+
     protected String buildCommand (final boolean isExported, final Operatingsystem os, String key, final String value, String addon, String divider = "=") {
         String command = ""
         if (addon == null)
@@ -27,4 +28,6 @@ public abstract class UserEnvEntry implements IEnvEntry {
 
         return command
     }
+
+
 }
