@@ -1,0 +1,11 @@
+http://www.vagrantbox.es
+Download wget https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-i386-vagrant-disk1.box
+vagrant box add host1 $LOCAL
+-> ~/.vagrant.d/boxes
+vagrant init host1
+-> config.vm.network -> to enable network
+vagrant up
+ssh vagrant@ip
+-> vagrant
+sudo passwd root
+

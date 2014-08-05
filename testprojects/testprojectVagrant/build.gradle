@@ -1,0 +1,22 @@
+buildscript {
+   repositories {
+      mavenCentral()
+      jcenter()
+   }
+
+   dependencies {
+     classpath fileTree (dir: '../../autoinstall/build/libs', includes: ['*.jar'])
+     classpath fileTree (dir: '../../pike/build/libs', includes: ['*.jar'])
+     classpath fileTree (dir: '../../vagrant/build/libs', includes: ['*.jar'])
+     classpath 'sshtools:j2ssh-core:0.2.9'
+     classpath 'commons-io:commons-io:2.4'
+   }
+}
+
+apply {
+    plugin 'autoinstall'
+    plugin 'vagrant'
+}
+
+apply from: "pike.gradle"
+
