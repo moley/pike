@@ -1,6 +1,7 @@
 package org.pike.model.host
 
 import org.gradle.api.Project
+import org.gradle.internal.reflect.Instantiator
 import org.pike.common.NamedElement
 
 /**
@@ -35,8 +36,8 @@ abstract class EnvironmentHolder extends NamedElement{
      * constructor
      * @param name  name of host != hostname
      */
-    public EnvironmentHolder (String name) {
-        super (name)
+    public EnvironmentHolder (String name, Instantiator instantiator) {
+        super (name, instantiator)
     }
 
     /**

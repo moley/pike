@@ -21,7 +21,8 @@ class CreateVmTask extends DefaultTask {
         Operatingsystem os = host.operatingsystem
         File hostDir = VagrantUtil.getWorkingDir(project, host)
 
-        String vagrantBox = os.vagrantbox
+        Vagrant vagrant = os.vagrant
+        String vagrantBox = vagrant.boxUrl
         if (vagrantBox == null)
             throw new IllegalStateException("No vagrant box defined for host $host.name, skip preparing vm")
 
@@ -46,11 +47,8 @@ class CreateVmTask extends DefaultTask {
             commandLine 'vagrant', 'box', 'add', host.name, renamedFile.absolutePath
         }
 
-        /**project.exec {  TODO remove, because we create the Vagrantfile ourselves
-            workingDir hostDir.absolutePath
-            commandLine 'vagrant', 'init', host.name
-        }  **/
 
+        //Create vagrant file with own ip
         File vagrantFile = new File (hostDir, 'Vagrantfile')
         vagrantFile.text = """# Vagrantfile created by vagrant plugin of pike
 VAGRANTFILE_API_VERSION = "2"
@@ -61,7 +59,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 """
 
-        //set ip
 
     }
 }

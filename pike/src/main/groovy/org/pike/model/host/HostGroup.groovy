@@ -1,4 +1,7 @@
 package org.pike.model.host
+
+import org.gradle.internal.reflect.Instantiator
+
 /**
  * Created with IntelliJ IDEA.
  * User: OleyMa
@@ -12,8 +15,8 @@ class HostGroup extends EnvironmentHolder{
      * constructor
      * @param name name of host != hostname
      */
-    public HostGroup(String name) {
-        super(name)
+    public HostGroup(String name, Instantiator instantiator = null) {
+        super(name, instantiator)
     }
 
 }

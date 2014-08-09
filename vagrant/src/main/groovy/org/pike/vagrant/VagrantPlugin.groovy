@@ -37,16 +37,18 @@ class VagrantPlugin implements Plugin<Project> {
 
         log.info("hosts extensions: " + project.extensions.hosts.size())
 
-        /**project.hosts.all {  nextHost ->
-            nextHost.extensions.create('vagrant', Vagrant, nextHost)
-        }  **/
+        project.operatingsystems.all {  os ->
+            os.extensions.create('vagrant', Vagrant, os)
+        }
 
         project.afterEvaluate {
 
             for (Host nextHost : project.extensions.hosts) {
 
-                if (nextHost.operatingsystem.vagrantbox == null)
+                if (nextHost.operatingsystem.vagrant == null)
                     continue
+
+                Vagrant vagrant = nextHost.operatingsystem.vagrant
 
                 String hostSuffix = nextHost.name
 

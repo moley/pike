@@ -1,5 +1,6 @@
 package org.pike.model.operatingsystem
 
+import org.gradle.internal.reflect.Instantiator
 import org.pike.autoinitializer.NoAutoInitializing
 import org.pike.common.NamedElement
 import org.pike.os.IOperatingsystemProvider
@@ -44,7 +45,6 @@ public class Operatingsystem extends NamedElement{
     @NoAutoInitializing
     Boolean createInstaller  //TODO extract to autoinstall closure and autoinstall plugin
 
-    String vagrantbox //TODO extract to vagrant closure and vagrant plugin
 
 
     private void configureProvider (final String name) {
@@ -69,8 +69,8 @@ public class Operatingsystem extends NamedElement{
      *
      * @param name
      */
-    public Operatingsystem (String name) {
-        super (name)
+    public Operatingsystem (String name, Instantiator instantiator = null) {
+        super (name, instantiator)
         configureProvider(name)
     }
 

@@ -4,6 +4,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.internal.reflect.Instantiator
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.remoting.IRemoting
 import org.pike.remoting.SshRemoting
@@ -61,12 +62,14 @@ class Host extends EnvironmentHolder {
     boolean masterHost
 
 
+
+
     /**
      * constructor
      * @param name  name of host != hostname
      */
-    public Host (String name) {
-        super (name)
+    public Host (String name, Instantiator instantiator = null) {
+        super (name, instantiator)
     }
 
     @Override

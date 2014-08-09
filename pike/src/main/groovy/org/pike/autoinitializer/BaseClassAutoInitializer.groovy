@@ -28,7 +28,7 @@ public class BaseClassAutoInitializer {
             throw new IllegalStateException("parentfield " + parentField + " not found in object " + object)
 
         MetaMethod parentGetter = parentProperty.getGetter()
-        if (! parentGetter.getReturnType().equals(object.getClass()))
+        if (! parentGetter.getReturnType().isAssignableFrom(object.getClass()))
             throw new IllegalStateException("parentfield " + parentField + " is not of type " + object.getClass().getName() + " but of type " + parentGetter.getReturnType().getName())
 
         Object parentObject = parentGetter.invoke(object)
@@ -50,12 +50,15 @@ public class BaseClassAutoInitializer {
             boolean propertyHasNoAutoInitializing = false
             String fieldName = setter.name.substring(3,4).toLowerCase() + setter.name.substring(4)
             MetaProperty property = object.metaClass.properties.find(){it.name == fieldName}
+
             if (property instanceof  MetaBeanProperty) {
                 MetaBeanProperty metaBeanProperty = property
-                for (Annotation nextAnnotation: metaBeanProperty.getField().field.declaredAnnotations) {
-                    if (nextAnnotation.annotationType().equals(NoAutoInitializing.class)) {
-                        propertyHasNoAutoInitializing = true
-                        break
+                if (metaBeanProperty.getField() != null) {
+                    for (Annotation nextAnnotation : metaBeanProperty.getField().field.declaredAnnotations) {
+                        if (nextAnnotation.annotationType().equals(NoAutoInitializing.class)) {
+                            propertyHasNoAutoInitializing = true
+                            break
+                        }
                     }
                 }
             }

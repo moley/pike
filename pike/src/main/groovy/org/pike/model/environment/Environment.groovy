@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.internal.reflect.Instantiator
 import org.pike.common.NamedElement
 import org.pike.common.ProjectInfo
 import org.pike.common.TaskContext
@@ -41,8 +42,8 @@ public class Environment extends NamedElement{
      * constructor
      * @param name    name of environment
      */
-    public Environment (String name) {
-        super (name)
+    public Environment (String name, Instantiator instantiator = null) {
+        super (name, instantiator)
         matrixParams.put("", "")
     }
 

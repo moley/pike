@@ -2,6 +2,7 @@ package org.pike.vagrant
 
 import groovy.util.logging.Slf4j
 import org.pike.model.host.Host
+import org.pike.model.operatingsystem.Operatingsystem
 
 /**
  * Created by OleyMa on 05.08.14.
@@ -9,11 +10,11 @@ import org.pike.model.host.Host
 @Slf4j
 class Vagrant {
     String boxUrl
-    Host host
+    Operatingsystem os
 
-    public Vagrant (final Host host) {
-        log.info("Createing Vagrant object for host $host.name")
-        this.host = host
+    public Vagrant (Operatingsystem os) {
+        log.info("Creating Vagrant object for host $os.name")
+        this.os = os
     }
 
     void box (final String url) {

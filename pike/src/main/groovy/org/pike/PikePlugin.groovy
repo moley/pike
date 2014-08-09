@@ -1,10 +1,11 @@
 package org.pike
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.internal.reflect.Instantiator
 import org.pike.holdertasks.*
 import org.pike.info.InfoHostsTask
 import org.pike.logging.LogConfigurator
@@ -116,23 +117,40 @@ public class PikePlugin implements Plugin<Project> {
         log.info("Creating extensions for the model")
         project.plugins.apply(BasePlugin)
 
-        def operatingsystems = project.container(Operatingsystem)
-        project.extensions.operatingsystems = operatingsystems
+        project.extensions.operatingsystems = project.container(Operatingsystem , new NamedDomainObjectFactory<Operatingsystem>() {
+            Operatingsystem create(String name) {
+                def instantiator = project.services.get(Instantiator.class)
+                return instantiator.newInstance(Operatingsystem, name, instantiator)
+            }
+        })
 
-        def hostgroups = project.container(HostGroup)
-        project.extensions.hostgroups = hostgroups
+        project.extensions.hostgroups = project.container(HostGroup, new NamedDomainObjectFactory<HostGroup>() {
+            HostGroup create(String name) {
+                def instantiator = project.services.get(Instantiator.class)
+                return instantiator.newInstance(HostGroup, name, instantiator)
+            }
+        })
 
-        NamedDomainObjectContainer<Environment> hosts = project.container(Host)
-        project.extensions.hosts = hosts
-        hosts.all { Host host ->
+
+        project.extensions.hosts = project.container(Host, new NamedDomainObjectFactory<Host>() {
+            Host create(String name) {
+                def instantiator = project.services.get(Instantiator.class)
+                return instantiator.newInstance(Host, name, instantiator)
+            }
+        })
+        project.hosts.all { Host host ->
           host.project = project
         }
 
-        NamedDomainObjectContainer<Environment> environments = project.container(Environment)
-        environments.all { Environment env->
+        project.extensions.environments = project.container(Environment, new NamedDomainObjectFactory<Environment>() {
+            Environment create(String name) {
+                def instantiator = project.services.get(Instantiator.class)
+                return instantiator.newInstance(Environment, name, instantiator)
+            }
+        })
+        project.environments.all { Environment env->
             env.project = project
         }
-        project.extensions.environments = environments
 
         project.extensions.create("defaults", Defaults, project)
 
