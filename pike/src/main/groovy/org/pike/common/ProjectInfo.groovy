@@ -38,37 +38,44 @@ class ProjectInfo {
 
         //if default ist configured than use this
         if (currentHost != null) {
-            log.info ("Checking currenthost from defaults " + currentHost)
-            return host.name.equalsIgnoreCase(currentHost) || host.hostname.equalsIgnoreCase(currentHost)
+            log.info ("Checking if host $host.name matches current host from defaults $currentHost")
+            final boolean matches = host.name.equalsIgnoreCase(currentHost) || host.hostname.equalsIgnoreCase(currentHost)
+            if (matches)
+                return true
         }
 
         //other check name or ip matches
         String determinedHostName
         String ipAdress
 
+        log.info("Checking if host $host.name matches real host")
+
         try {
           determinedHostName = InetAddress.getLocalHost().getHostName().split("\\.") [0]
+          boolean nameMatches = host.name.equalsIgnoreCase(determinedHostName) || (host.hostname != null && host.hostname.equalsIgnoreCase(determinedHostName))
+          log.info("- Matching hostname: $host.name (expected) - $host.hostname - $determinedHostName")
+          if (nameMatches)
+              return true
         } catch (UnknownHostException e) {
           log.error("Hostname could not be determined")
         }
 
         try {
-          ipAdress = InetAddress.getLocalHost().getHostAddress()
+          InetAddress localhost = InetAddress.getLocalHost()
+          InetAddress[] allMyIps = InetAddress.getAllByName(localhost.getCanonicalHostName())
+            for (InetAddress nextAdress: allMyIps) {
+                log.info("- Matching ip: $host.ip (expected) - $nextAdress.hostAddress")
+                boolean ipMatches = host.ip != null && host.ip.equalsIgnoreCase(nextAdress.hostAddress)
+                if (ipMatches)
+                    return true
+            }
         } catch (UnknownHostException e) {
             log.error("IP could not be determined")
         }
 
-        boolean nameMatches = host.name.equalsIgnoreCase(determinedHostName) || (host.hostname != null && host.hostname.equalsIgnoreCase(determinedHostName))
-        boolean ipMatches = host.ip != null && host.ip.equalsIgnoreCase(ipAdress)
+        log.info("- Host does not match")
+        return false
 
-        if (log.isDebugEnabled())
-          log.debug("Checking currenthost <" + determinedHostName + "><" + ipAdress +
-                ">, expected <" + host.name +"><" + host.hostname + "><" + host.ip)
-
-        if (nameMatches || ipMatches)
-          log.info("Host " + host.name + " matches current host - (name $nameMatches - ipMatches $ipMatches)")
-
-        return nameMatches || ipMatches
     }
 
     /**

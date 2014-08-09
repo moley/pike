@@ -9,6 +9,7 @@ class StartVmTask extends VagrantCliTask {
 
     @TaskAction
     public void start () {
-
+        commands.add('up')
+        executeCli()
     }
 }

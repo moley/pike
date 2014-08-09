@@ -1,6 +1,7 @@
 package org.pike.vagrant
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
 import org.pike.model.host.Host
 
 /**
@@ -9,4 +10,21 @@ import org.pike.model.host.Host
 class VagrantCliTask extends DefaultTask {
 
     Host host
+
+    List<String> commands = ['vagrant']
+
+    public void executeCli () {
+
+        File hostDir = VagrantUtil.getWorkingDir(project, host)
+
+        project.exec {
+            workingDir hostDir.absolutePath
+            commandLine commands
+        }
+    }
+
+
+
+
+
 }

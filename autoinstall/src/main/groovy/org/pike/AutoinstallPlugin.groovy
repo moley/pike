@@ -6,8 +6,9 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.pike.cache.CacheManager
 import org.pike.holdertasks.ResolveModelTask
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
@@ -30,7 +31,7 @@ class AutoinstallPlugin implements Plugin<Project> {
             DefaultTask prepareInstallerTask = project.tasks.create('prepareInstallers', DefaultTask)
             prepareInstallerTask.group = GROUP_AUTOINSTALL
 
-            File installPathRoot = project.file('build/install')
+            File installPathRoot = AutoinstallUtil.getInstallPath(project)
 
             getUsedOperatingsystems(project).each {
                 Operatingsystem os = it
@@ -111,11 +112,14 @@ class AutoinstallPlugin implements Plugin<Project> {
                 prepareConfigurations.dependsOn resolveModelTask
 
                 //prepare installation container task
-                Zip prepareOperatingsystemTask = project.tasks.create("prepareInstaller${osSuffix}", Zip)
+                Class clazz = os.provider instanceof  LinuxProvider ? Tar : Zip
+                AbstractArchiveTask prepareOperatingsystemTask = project.tasks.create("prepareInstaller${osSuffix}", clazz)
+
                 prepareOperatingsystemTask.group = GROUP_AUTOINSTALL
                 prepareOperatingsystemTask.description = 'Prepares installer for operatingsystem ${osSuffix}'
                 prepareOperatingsystemTask.from(installPathForOs).into('.')
                 prepareOperatingsystemTask.baseName = AutoinstallUtil.getInstallerFile(os)
+                prepareOperatingsystemTask.extension = 'installer'
                 prepareOperatingsystemTask.destinationDir = installPathRoot
 
                 prepareOperatingsystemTask.dependsOn prepareGradle
@@ -132,7 +136,11 @@ class AutoinstallPlugin implements Plugin<Project> {
 
             InstallPikeTask installPikeTask = project.tasks.create('installPike', InstallPikeTask)
             installPikeTask.group = GROUP_AUTOINSTALL
-            installPikeTask.installPathRoot = installPathRoot
+
+            StartRemoteBuildTask startRemoteBuildTask = project.tasks.create('configure', StartRemoteBuildTask)
+            startRemoteBuildTask.group = GROUP_AUTOINSTALL
+            startRemoteBuildTask.dependsOn project.tasks.resolveModel
+            startRemoteBuildTask.description = "Start pike on all hosts configured in the model"
 
         }
 
@@ -145,6 +153,8 @@ class AutoinstallPlugin implements Plugin<Project> {
         for (Host nextHost: hosts) {
 
             Operatingsystem os = nextHost.operatingsystem
+            if (os == null)
+                continue
 
             while (true) {
                 if (os.createInstaller) {

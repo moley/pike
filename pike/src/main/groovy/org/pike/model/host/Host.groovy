@@ -2,8 +2,7 @@ package org.pike.model.host
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.internal.plugins.DefaultConvention
-import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtensionContainer
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.remoting.IRemoting
@@ -16,7 +15,12 @@ import org.pike.remoting.SshRemoting
  * Time: 22:08
  * To change this template use File | Settings | File Templates.
  */
-class Host extends EnvironmentHolder implements ExtensionAware {
+class Host extends EnvironmentHolder {
+
+    /**
+     * reference to project
+     */
+    ProjectInternal project
 
     /**
      * reference to the operatingsystem of this host
@@ -33,8 +37,6 @@ class Host extends EnvironmentHolder implements ExtensionAware {
      */
     String context
 
-    String swarmname //TODO make generic
-
     /**
      * hostgroup which should be configured
      */
@@ -47,7 +49,7 @@ class Host extends EnvironmentHolder implements ExtensionAware {
 
     String pikeuser
 
-    String pikeport
+    String pikeport = '22'
 
     String ip
 
@@ -58,11 +60,6 @@ class Host extends EnvironmentHolder implements ExtensionAware {
      */
     boolean masterHost
 
-    String remoting = SshRemoting.class.simpleName
-
-    IRemoting remotingImpl
-
-    private ExtensionContainer extensionContainer = new DefaultConvention()
 
     /**
      * constructor
@@ -71,35 +68,6 @@ class Host extends EnvironmentHolder implements ExtensionAware {
     public Host (String name) {
         super (name)
     }
-
-    /**
-     * define a different remoting implementation
-     * @param remoting    simple name of remoting implementation class, searched in package org.pike.remoting
-     */
-    public void remoting (String remoting) {
-        this.remoting = remoting
-    }
-
-    /**
-     * lazy getter
-     * @return remoting impl
-     *
-     */
-    public IRemoting getRemotingImpl () {
-        if (remotingImpl == null) {
-            String className = "org.pike.remoting.${remoting}"
-            try {
-                Class remotingClass = getClass().classLoader.loadClass(className)
-                remotingImpl = remotingClass.newInstance()
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Could not find class " + className + ", reconfigure your remoting of host ${name}")
-            }
-        }
-
-        return remotingImpl
-    }
-
-
 
     @Override
     protected Set<String> getAllEnvironments(Project project) {
@@ -171,7 +139,6 @@ class Host extends EnvironmentHolder implements ExtensionAware {
         objectAsString += "    * pike user               : $pikeuser $NEWLINE"
         objectAsString += "    * pike password           : $pikepassword $NEWLINE"
 		objectAsString += "    * pike port               : $pikeport $NEWLINE"
-        objectAsString += "    * remoting api            : $remoting $NEWLINE"
 
         for (String nextEnv: environments) {
           objectAsString += "    * environment             : $nextEnv $NEWLINE"
@@ -181,8 +148,6 @@ class Host extends EnvironmentHolder implements ExtensionAware {
 
     }
 
-    @Override
-    ExtensionContainer getExtensions() {
-        return extensionContainer
-    }
+
+
 }

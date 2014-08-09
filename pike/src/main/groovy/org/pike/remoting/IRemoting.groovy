@@ -46,4 +46,18 @@ public interface IRemoting {
      * @param host host to connect to
      */
     void configure (Project project, Host host)
+
+    /**
+     * creates command builder
+     * @param host  host
+     * @return commandbuilder
+     * @return commandbuilder
+     */
+    CommandBuilder createCommandBuild (Host host)
+
+    /**
+     * getter
+     * @return user
+     */
+    String getUser ()
 }

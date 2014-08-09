@@ -15,7 +15,7 @@ import org.pike.model.host.Host
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-class LocalRemoting implements IRemoting {
+class LocalRemoting extends AbstractRemoting {
     @Override
     void upload(String toDir, File from, PropertyChangeProgressLogging logging) {
         log.info("Uploading " + from.absolutePath + " to " + toDir)

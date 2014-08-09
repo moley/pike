@@ -8,8 +8,10 @@ import org.pike.autoinstall.PropertyChangeProgressLogging
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.IOperatingsystemProvider
+import org.pike.remoting.CommandBuilder
 import org.pike.remoting.IRemoting
 import org.pike.remoting.RemoteTask
+import org.pike.remoting.SshRemoting
 
 /**
  * Created by OleyMa on 01.08.14.
@@ -20,9 +22,16 @@ class InstallPikeTask extends RemoteTask {
 
     private AutoinstallWorker logic = new AutoinstallWorker()
 
+    protected IRemoting getRemoting () {
+        return new SshRemoting()
+    }
 
     @TaskAction
     public void install () {
+
+
+
+        installPathRoot = AutoinstallUtil.getInstallPath(project)
 
         String installerFileNotFound = ""
 
@@ -37,6 +46,7 @@ class InstallPikeTask extends RemoteTask {
 
         Collection<Host> hosts = getHostsToBuild()
         for (Host host: hosts) {
+            IRemoting remoting = getRemoting()
 
             File installerFile = getInstallerFile(host)
 
@@ -47,22 +57,21 @@ class InstallPikeTask extends RemoteTask {
             println ("Start installing pike on host " + host.name + "- Operatingsystem " + os.name + "- Group " + group)
 
             progressLogging.progressLogger.setDescription("Start configuring host $host.hostname")
-            progressLogging.start("Start configuring host $host.hostname")
+            progressLogging.start("Start configuring host $host.hostname ")
 
-            IRemoting remoting = host.remotingImpl
             remoting.configure(project, host)
-
-            remoting.execCmd()
 
             logic.operatingsystem = host.operatingsystem
 
             String pikeDirRemote = logic.getPikeDirRemote(host)
 
             //initialize paths
-            String initializePathsCommand = ""
-            AutoinstallUtil.addCommand(osprovider, initializePathsCommand, osprovider.bootstrapCommandRemovePath, pikeDirRemote)
-            AutoinstallUtil.addCommand(osprovider, initializePathsCommand, osprovider.bootstrapCommandMakePath, pikeDirRemote)
-            remoting.execCmd(initializePathsCommand)
+
+            CommandBuilder builderInitializePaths = remoting.createCommandBuild(host)
+            builderInitializePaths = builderInitializePaths.addCommand(osprovider.bootstrapCommandRemovePath, pikeDirRemote)
+            builderInitializePaths = builderInitializePaths.addCommand(osprovider.bootstrapCommandMakePath, pikeDirRemote)
+            builderInitializePaths = builderInitializePaths.addCommand(osprovider.bootstrapCommandMakeWritablePath, pikeDirRemote)
+            remoting.execCmd(builderInitializePaths.get())
 
             //TODO upload unzip in windows
 
@@ -72,13 +81,15 @@ class InstallPikeTask extends RemoteTask {
 
 
             //Unzip the installer file remote
-            String unzipInstallerCommand = ""
-            AutoinstallUtil.addCommand(osprovider, unzipInstallerCommand, osprovider.bootstrapCommandChangePath, pikeDirRemote)
-            AutoinstallUtil.addCommand(osprovider, unzipInstallerCommand, "./unzip " + installerFile.name, pikeDirRemote)
-            remoting.execCmd(unzipInstallerCommand)
+            String remoteZipFile = osprovider.addPath(pikeDirRemote, installerFile.name)
+            CommandBuilder builderUnzipInstaller = remoting.createCommandBuild(host)
+            builderUnzipInstaller = builderUnzipInstaller.addCommand(osprovider.bootstrapCommandChangePath, pikeDirRemote, false)
+            builderUnzipInstaller = builderUnzipInstaller.addCommand(osprovider.bootstrapCommandInstall, remoteZipFile)
+            remoting.execCmd(builderUnzipInstaller.get())
+
+            remoting.disconnect()
         }
 
-        logic.disconnectConnections(hosts)
 
 
 
@@ -92,7 +103,7 @@ class InstallPikeTask extends RemoteTask {
      * @return installer file
      */
     private File getInstallerFile (final Host host) {
-        return new File (installPathRoot, AutoinstallUtil.getInstallerFile(host.operatingsystem))
+        return new File (installPathRoot, AutoinstallUtil.getInstallerFile(host.operatingsystem) + ".installer")
     }
 
 

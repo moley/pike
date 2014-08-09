@@ -2,6 +2,7 @@ package org.pike.autoinstall
 
 import org.gradle.api.Project
 import org.pike.model.host.Host
+import org.pike.remoting.AbstractRemoting
 import org.pike.remoting.IRemoting
 import org.pike.remoting.RemoteResult
 
@@ -12,7 +13,7 @@ import org.pike.remoting.RemoteResult
  * Time: 22:30
  * To change this template use File | Settings | File Templates.
  */
-class DummySshRemoting implements IRemoting {
+class DummySshRemoting extends AbstractRemoting {
 
     public Collection<String> commands = new ArrayList<String>()
 

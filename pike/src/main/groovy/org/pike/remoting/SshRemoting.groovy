@@ -27,19 +27,32 @@ import org.pike.os.LinuxProvider
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-class SshRemoting implements IRemoting{
+class SshRemoting extends AbstractRemoting {
 
-    private SshClient client
-    private Operatingsystem os
-    private String hostname
+    protected Operatingsystem os
 
-    private boolean isConfigured
+    protected SshClient client
+
+    protected String hostname
+
+    protected boolean isConfigured
+
+
 
 
 
     public void setSshClient (final SshClient client) {
         this.client = client
     }
+
+    public String getUser (Host host, Project project) {
+         return host.pikeuser != null ? host.pikeuser : project.defaults.pikeuser
+    }
+
+    public String getPassword (final Host host, final Project project) {
+        return host.pikepassword != null ? host.pikepassword : project.defaults.pikepassword
+    }
+
     /**
      * constructor
      * @param project  project
@@ -58,24 +71,24 @@ class SshRemoting implements IRemoting{
 
         os = host.operatingsystem
 
-        String realPikeUser = host.pikeuser != null ? host.pikeuser : project.defaults.pikeuser
-        String realPikePassword = host.pikepassword != null ? host.pikepassword : project.defaults.pikepassword
+        user = getUser(host, project)
+        password = getPassword(host, project)
 
         SshConnectionProperties props = new SshConnectionProperties()
-        props.username = realPikeUser
+        props.username = user
         props.host = host.ip//hostname
         if (host.pikeport != null)
 		  props.port = host.pikePortInt
 
-        println ("Connecting to host <${hostname}>, ip <${host.ip}>, port <${host.pikeport}> with credentials " + realPikeUser + "-" + realPikePassword)
+        println ("Connecting to host <${hostname}>, ip <${host.ip}>, port <${host.pikeport}> with credentials " + user + "-" + password)
 
         client = new SshClient()
         client.connect(props, new AlwaysTrueHostKeyVerification())
 
         PasswordAuthenticationClient pwd = new PasswordAuthenticationClient()
 
-        pwd.setUsername(realPikeUser)
-        pwd.setPassword(realPikePassword)
+        pwd.setUsername(user)
+        pwd.setPassword(password)
         pwd.passwordChangePrompt = new PasswordChangePrompt() {
             @Override
             String changePassword(String s) {
@@ -106,6 +119,7 @@ class SshRemoting implements IRemoting{
      * @param logging
      */
     public void upload (String toDir, File from, PropertyChangeProgressLogging logging) {
+        log.info("Upload from $from.absolutePath to $toDir")
 
         int lastPercentageShown = 0
         int outgoingByteCountOffset = client.outgoingByteCount
@@ -126,7 +140,7 @@ class SshRemoting implements IRemoting{
                 }
             })
 
-            println ("Copy " + from.absolutePath + " to " + toDir)
+            log.info ("Copy " + from.absolutePath + " to " + toDir)
             scpclient.put(from.absolutePath, toDir, false)
 
         } else {
@@ -147,7 +161,7 @@ class SshRemoting implements IRemoting{
 
             toDir = toDir.replace("C:", "")      //sftp-rootdir
             toDir = toDir.replace("\\", "/")
-            println ("Upload " + from.absolutePath + " to "+ hostname + "-" + toDir)
+            log.info ("Upload " + from.absolutePath + " to "+ hostname + "-" + toDir)
             sftpClient.put(from.absolutePath, toDir)
         }
 
@@ -158,6 +172,8 @@ class SshRemoting implements IRemoting{
 
     public RemoteResult execCmd(String cmd) {
        RemoteResult result
+
+        log.info("Execute command " + cmd + " on host " + hostname)
 
         // The connection is authenticated we can now do some real work!
         SessionChannelClient session = client.openSessionChannel()

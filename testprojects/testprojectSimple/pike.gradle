@@ -6,7 +6,7 @@ apply {
 
 
 //Pike - Model
-project.defaults {
+defaults {
     defaultuser = 'nightly'
     rootpath = '${currentPath}/build/tests'
     pikeuser = '${user}'

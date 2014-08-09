@@ -39,4 +39,14 @@ class ProjectInfoTest {
         Assert.assertTrue ("group prod not available ", groups.contains("prod"))
 
     }
+
+    @Test
+    public void isCurrentHost () {
+        InetAddress localhost = InetAddress.getLocalHost()
+        // Just in case this host has multiple IP addresses....
+        InetAddress[] allMyIps = InetAddress.getAllByName(localhost.getCanonicalHostName())
+        allMyIps.each {println it.hostAddress}
+
+
+    }
 }

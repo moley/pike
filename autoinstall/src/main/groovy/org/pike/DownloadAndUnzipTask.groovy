@@ -19,7 +19,6 @@ abstract class DownloadAndUnzipTask extends DefaultTask {
     String from
     File to
     Operatingsystem os
-    File cacheDir
     String simplifyTo
     ZipUtils ziputils = new ZipUtils()
 
@@ -65,9 +64,9 @@ abstract class DownloadAndUnzipTask extends DefaultTask {
         worker.install()
 
         //TODO migrate to downloadWorker as simplifyStrategie
-        Collection<File> rootpaths = ziputils.getRootpaths(to, worker.downloadedFile)
+        Collection<File> rootpaths = ziputils.getRootpaths(to, worker.cacheFile)
         if (rootpaths.size() != 1)
-            throw new IllegalStateException("Zipfile " + worker.downloadedFile.absolutePath + " contains not 1, but ${rootpaths.size()} rootpaths")
+            throw new IllegalStateException("Zipfile " + worker.cacheFile.absolutePath + " contains not 1, but ${rootpaths.size()} rootpaths")
 
         simplifiedFile = new File (to, simplifyTo)
 

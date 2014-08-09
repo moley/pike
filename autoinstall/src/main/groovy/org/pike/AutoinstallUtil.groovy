@@ -1,8 +1,10 @@
 package org.pike
 
 import groovy.util.logging.Slf4j
+import org.gradle.api.Project
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.IOperatingsystemProvider
+import org.pike.os.LinuxProvider
 
 /**
  * Created by OleyMa on 01.08.14.
@@ -19,27 +21,12 @@ class AutoinstallUtil {
         return "pikeinstaller-${os.name}"
     }
 
-    public static String addCommand (final IOperatingsystemProvider provider, String command, final String unresolved, final String param) {
-
-        if (provider == null)
-            throw new IllegalStateException("No operatingsystem provider defined")
-
-        if (unresolved == null)
-            throw new IllegalStateException("No unresolved path defined")
-
-        String resolved = unresolved
-        if (param != null)
-            resolved = unresolved.replace("PARAM0", param)
-
-        resolved = resolved.replaceAll("//", provider.fileSeparator)
-
-        if (! command.isEmpty())
-            command += provider.commandSeparator
-
-        log.debug("resolve <" + unresolved + "> with param <" + param + "> to <" + resolved + ">")
-
-        command += resolved
-        return command
-
+    /**
+     * getter
+     * @param project  project
+     * @return path to lay installers into
+     */
+    public static File getInstallPath (final Project project) {
+        return project.file('build/install')
     }
 }

@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.remotetasks.StartRemoteBuildTask
+import org.pike.StartRemoteBuildTask
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +15,7 @@ import org.pike.remotetasks.StartRemoteBuildTask
  */
 class RemoteTaskTest {
 
-    private String TASKCONFIGUREREMOTE = "configureRemotes"
+    private String TASKCONFIGUREREMOTE = "configure"
 
     /**
      * creates a valid project
@@ -25,22 +25,32 @@ class RemoteTaskTest {
     private Project prepareProject (final String taskname, final String paramHost, final String paramEnv = null) {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.gradle.startParameter.taskNames = [taskname]
-        project.apply plugin: 'pike'
+        project.apply plugin: 'autoinstall'
+
+        project.operatingsystems {
+            linux {
+
+            }
+        }
 
         project.hosts {
             myhost {
+                project.operatingsystems.linux
                 hostgroups = 'test'
             }
 
             myhost2 {
+                project.operatingsystems.linux
                 hostgroups = 'test'
             }
 
             secondhost {
+                project.operatingsystems.linux
                 hostgroups = 'prod'
             }
 
             secondhost2 {
+                project.operatingsystems.linux
                 hostgroups = 'prod, test'
             }
         }
@@ -55,7 +65,12 @@ class RemoteTaskTest {
             }
         }
 
-        def task = project.tasks.findByName(taskname)
+        project.evaluate()
+
+        project.tasks.each {println it.name}
+
+        def task = project.tasks.getByName(taskname)
+
         if (paramHost != null)
           task.setHost(paramHost)
         if (paramEnv != null)
@@ -78,7 +93,7 @@ class RemoteTaskTest {
     private StartRemoteBuildTask prepareInvalidProject (final String param) {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.gradle.startParameter.taskNames.add("autoinstall")
-        project.apply plugin: 'pike'
+        project.apply plugin: 'autoinstall'
 
         project.hosts {
             test {
@@ -86,7 +101,10 @@ class RemoteTaskTest {
             }
         }
 
-        StartRemoteBuildTask task = project.tasks.findByName(TASKCONFIGUREREMOTE)
+
+        project.evaluate()
+
+        StartRemoteBuildTask task = project.tasks.getByName(TASKCONFIGUREREMOTE)
         task.setHost(param)
 
         return task

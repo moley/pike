@@ -19,6 +19,8 @@ public interface IOperatingsystemProvider {
 
     String getBootstrapCommandInstall()
 
+    String getBootstrapCommandMakeWritablePath()
+
     String getBootstrapCommandStartConfigure()
 
     //End of bootstrap

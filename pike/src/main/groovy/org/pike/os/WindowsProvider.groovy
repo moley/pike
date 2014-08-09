@@ -28,12 +28,17 @@ class WindowsProvider extends AbstractOsProvider{
 
     @Override
     String getBootstrapCommandInstall() {
-        return "installPike.bat"
+        return "unzip.exe PARAM0"
     }
 
     @Override
     String getBootstrapCommandStartConfigure() {
         return "configureHost.bat"
+    }
+
+    @Override
+    String getBootstrapCommandMakeWritablePath() {
+        return ""
     }
 
     @Override

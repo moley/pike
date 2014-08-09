@@ -25,12 +25,17 @@ class LinuxProvider extends AbstractOsProvider {
 
     @Override
     String getBootstrapCommandInstall() {
-        return "sh PARAM0/installPike.sh"
+        return "tar xf PARAM0"
+    }
+
+    @Override
+    String getBootstrapCommandMakeWritablePath() {
+        return "chmod 777 PARAM0"
     }
 
     @Override
     String getBootstrapCommandStartConfigure() {
-        return "sh PARAM0/configureHost"      //TODO rename to configureHost.sh
+        return "sh PARAM0/configureHost.sh"      //TODO rename to configureHost.sh
     }
 
     @Override

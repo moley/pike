@@ -18,7 +18,7 @@ class CacheManager {
 
 
     public File getCacheFile (final Operatingsystem os, final String url) {
-        return getCacheFile(os, url, false)
+        return getCacheFile(url, false)
     }
 
     private File getCacheDir () {
@@ -32,7 +32,7 @@ class CacheManager {
     }
 
 
-    public File getCacheFile (final Operatingsystem os, final String url, final boolean overwrite) {
+    public File getCacheFile (final String url, final boolean overwrite) {
 
 
         //TODO make generic
@@ -44,7 +44,7 @@ class CacheManager {
         if (toDir == null)
             throw new IllegalStateException("You did not installPike a cachedir nor a tempdir for your host, I don't know were to save downloaded artefact to")
 
-        File downloadedFile = getCacheFile(toDir, url)
+        File downloadedFile = getCacheFile(url)
         try {
 
             if (overwrite && downloadedFile.exists())
@@ -77,10 +77,7 @@ class CacheManager {
         return downloadedFile
     }
 
-    public File getCacheFile (final File cachedir, final String url) {
-        if (cachedir == null)
-            return null
-
-        return new File (cachedir, url.toUpperCase().replace("/", "").replace(":",""))
+    public File getCacheFile (final String url) {
+        return new File (getCacheDir(), url.toUpperCase().replace("/", "").replace(":",""))
     }
 }

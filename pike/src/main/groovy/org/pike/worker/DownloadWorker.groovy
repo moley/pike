@@ -29,7 +29,9 @@ class DownloadWorker extends PikeWorker {
 
     ZipUtils ziputils = new ZipUtils()
 
-    File downloadedFile
+    File cacheFile
+
+    Collection<File> downloadedFiles = new ArrayList<File>()
 
     /**
      * define files to make executable
@@ -59,7 +61,7 @@ class DownloadWorker extends PikeWorker {
         if (log.debugEnabled)
           log.debug("Installing from " + from + " to " + toPath.absolutePath + " (Overwrite: " + overwrite + ", Adapt linedelimiters: " + adaptLineDelimiters + ")")
 
-        downloadedFile = cacheManager.getCacheFile(operatingsystem, from, overwrite)
+        cacheFile = cacheManager.getCacheFile(from, overwrite)
 
 
         if (! toPath.exists()) {
@@ -68,16 +70,17 @@ class DownloadWorker extends PikeWorker {
               log.debug("Make dir " + toPath.absolutePath)
         }
 
-        if  (downloadedFile.name.toLowerCase().endsWith(".zip")) {
+        if  (cacheFile.name.toLowerCase().endsWith(".zip")) {
 
             if (log.debugEnabled)
-                log.debug("Unzip " + downloadedFile.absolutePath + " to " + toPath.absolutePath)
+                log.debug("Unzip " + cacheFile.absolutePath + " to " + toPath.absolutePath)
             def ant = new AntBuilder()   // create an antbuilder
-            ant.unzip(src: downloadedFile.absolutePath,
+            ant.unzip(src: cacheFile.absolutePath,
                     dest: toPath.absolutePath,
                     overwrite: true)
 
-            for (File next : ziputils.getRootpaths(toPath, downloadedFile)) {
+            downloadedFiles = ziputils.getRootpaths(toPath, cacheFile)
+            for (File next : downloadedFiles) {
                 next.eachFileRecurse(FileType.DIRECTORIES) {
                     if(it.name == 'bin') {
                         if (log.infoEnabled)
@@ -98,8 +101,9 @@ class DownloadWorker extends PikeWorker {
             String [] nameTokens = from.split("/")
             File toFile = new File(toPath, nameTokens[nameTokens.length - 1])
             if (log.debugEnabled)
-              log.debug("Copy " + downloadedFile.absolutePath + " to " + toFile.absolutePath)
-            fileutils.copyFile(downloadedFile, toFile)
+              log.debug("Copy " + cacheFile.absolutePath + " to " + toFile.absolutePath)
+            fileutils.copyFile(cacheFile, toFile)
+            downloadedFiles.add(toFile)
             adaptFileFlags(toFile, user, group, fileFlags)
 
             if (adaptLineDelimiters) {
@@ -141,10 +145,16 @@ class DownloadWorker extends PikeWorker {
         return false
     }
 
+    public File getDownloadedFile () {
+        if (downloadedFiles.size() != 1)
+            throw new IllegalStateException("There are not 1 downloaded files, but $downloadedFiles.size()")
+        return downloadedFiles.iterator().next()
+    }
+
     public String getDetailInfo () {
         String detailinfo = super.getDetailInfo()
         detailinfo += "    - from         : " + from + NEWLINE
-        detailinfo += "    - to           : " + toFile(to).absolutePath + NEWLINE
+        detailinfo += "    - to           : " + toPath.absolutePath + NEWLINE
         return detailinfo
     }
 }

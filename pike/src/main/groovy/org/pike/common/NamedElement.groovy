@@ -1,5 +1,4 @@
 package org.pike.common
-
 /**
  * Created with IntelliJ IDEA.
  * User: OleyMa
@@ -7,13 +6,12 @@ package org.pike.common
  * Time: 08:16
  * To change this template use File | Settings | File Templates.
  */
-class NamedElement {
+class NamedElement  {
 
     public static String NEWLINE = System.getProperty("line.separator")
 
 
     private String name
-
 
     public NamedElement (String name) {
         setName(name)

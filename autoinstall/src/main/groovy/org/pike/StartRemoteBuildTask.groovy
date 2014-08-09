@@ -1,4 +1,4 @@
-package org.pike.remotetasks
+package org.pike
 
 import groovy.util.logging.Log4j
 import org.gradle.api.GradleException
@@ -10,9 +10,7 @@ import org.pike.autoinstall.PropertyChangeProgressLogging
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.os.IOperatingsystemProvider
-import org.pike.remoting.IRemoting
-import org.pike.remoting.RemoteResult
-import org.pike.remoting.RemoteTask
+import org.pike.remoting.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,6 +44,10 @@ class StartRemoteBuildTask extends RemoteTask {
           return "install"
     }
 
+    protected IRemoting getRemoting () {
+        return new SshRemoting()
+    }
+
 
 
     @TaskAction
@@ -70,20 +72,24 @@ class StartRemoteBuildTask extends RemoteTask {
                 if (pikeDir == null)
                     throw new IllegalStateException("PikeDir on host " + nextHost.hostname + " not set")
 
-                nextHost.remotingImpl.configure(project, nextHost)
+                IRemoting remoting = getRemoting()
+                remoting.configure(project, nextHost)
 
-                logic.operatingsystem = nextHost.operatingsystem
-                logic.uploadBootstrapScripts(project, nextHost, progressLogging)
-                logic.uploadProjectDescriptions(project, nextHost, progressLogging)
-                logic.uploadPlugins(project, nextHost, progressLogging)
+
+               // logic.operatingsystem = nextHost.operatingsystem
+               // logic.uploadBootstrapScripts(project, nextHost, progressLogging)
+               // logic.uploadProjectDescriptions(project, nextHost, progressLogging)
+               // logic.uploadPlugins(project, nextHost, progressLogging)
 
 
                 IOperatingsystemProvider osProvider = nextHost.operatingsystem.provider
 
-                String command = ""
                 String pikeDirRemote = logic.getPikeDirRemote(nextHost)
-                command = logic.addCommand(osProvider, command, osProvider.bootstrapCommandChangePath, pikeDirRemote)
-                command = logic.addCommand(osProvider, command, osProvider.bootstrapCommandStartConfigure, pikeDirRemote)
+
+                CommandBuilder builder = remoting.createCommandBuild(nextHost)
+                builder = builder.addCommand(osProvider.bootstrapCommandChangePath, pikeDirRemote, false)
+                builder = builder.addCommand(osProvider.bootstrapCommandStartConfigure, pikeDirRemote)
+                String command = builder.get()
                 command += " " + getEnv()
                 if (project.logger.debugEnabled)
                     command += " --debug"
@@ -92,7 +98,9 @@ class StartRemoteBuildTask extends RemoteTask {
                     command += " --info"
 
                 println ("Complete command to configure remotely: " + command)
-                nextHost.remotingImpl.execCmd(command)
+                remoting.execCmd(command)
+
+                remoting.disconnect()
 
 
 
@@ -102,8 +110,6 @@ class StartRemoteBuildTask extends RemoteTask {
                 progressLogging.end()
             }
         }
-
-        logic.disconnectConnections(hosts)
 
         int numberOfErrors = 0
         String errorMessage = ""

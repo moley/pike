@@ -91,7 +91,6 @@ class SimpleIntegrationTest {
                 "checkenvJdks16",
                 "checkenvJdks17",
                 "clean",
-                "configureRemotes",
                 "deinstall",
                 "deinstallConfincludes",
                 "deinstallJdks16",

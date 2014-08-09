@@ -42,7 +42,9 @@ public class Operatingsystem extends NamedElement{
     File jrePrepareInstallationPath
 
     @NoAutoInitializing
-    Boolean createInstaller
+    Boolean createInstaller  //TODO extract to autoinstall closure and autoinstall plugin
+
+    String vagrantbox //TODO extract to vagrant closure and vagrant plugin
 
 
     private void configureProvider (final String name) {

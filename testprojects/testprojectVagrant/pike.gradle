@@ -1,50 +1,46 @@
+apply {
+    plugin 'pike'
+}
+
+
+
 //Pike - Model
-project.defaults {
+defaults {
     defaultuser = 'nightly'
-    currentHost = 'localhost'
     pikeuser = 'root'
     pikeport = '2222'
     pikepassword = 'cool'
-    pikegradle = 'http://services.gradle.org/distributions/gradle-1.10-all.zip'
+    pikegradle = 'http://services.gradle.org/distributions/gradle-2.0-all.zip'
 }
 
-project.operatingsystems {
+operatingsystems {
     linux {
         homedir = "/home/${project.defaults.defaultuser}"
         programdir = "${homedir}/swarm/tools"
         cachedir = "${homedir}/.pike/cache"
         pikedir = '/opt/pike'
         tmpdir = '/tmp'
-        pikejre = 'http://installbuilder.bitrock.com/java/jre1.7.0_51-linux.zip'
+        pikejre = 'http://installbuilder.bitrock.com/java/jre1.7.0_65-linux.zip'
         appconfigfile = '/etc/sysconfig/jenkins/global.sh'
         userconfigfile =  "${homedir}/.bashrc"
         globalconfigfile = '/etc/profile'
+        vagrantbox = 'https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-i386-vagrant-disk1.box'
+        createInstaller = 'true'
     }
 }
 
-project.hosts {
-    host1 {
+hosts {
+    testhost {
         hostname = 'host1'
         ip = '172.16.9.111'
         hostgroups = 'prod'
         operatingsystem = project.operatingsystems.linux
-        vagrant {
-            box = ''
-            //TODO pikeuser
-            //TODO pikepassword
-            //TODO pikeport
-
-
-        }
-        pikeuser = 'vagrant' //TODO use from defaults
-        pikeport = '2222'
-        pikepassword = 'cool'
         environment 'jdks'
         environment 'confincludes'
     }
 }
 
-project.environments {
+environments {
 
     // include
     confincludes {
@@ -56,20 +52,14 @@ project.environments {
 
 
     jdks {
-        matrix ([   '17':'1.7.0_07',
-                '16':'1.6.0_27'])
+        matrix ([   '17':'1.7.0_65',
+                '16':'1.8.0_11'])
 
         download {
-            from = "http://hudson.intra.vsa.de:8080/userContent/tools/jdk${paramvalue}.zip"
-            to = operatingsystem.programdir
-            executable ("jdk${paramvalue}/bin/java")
-            executable ("jdk${paramvalue}/jre/bin/java")
+            from "http://installbuilder.bitrock.com/java/jre${paramvalue}-linux.zip"
+            to (operatingsystem.programdir)
+            executable "jdk${paramvalue}/bin/java"
+            executable "jdk${paramvalue}/jre/bin/java"
         }
     }
 }
-
-
-
-
-
-

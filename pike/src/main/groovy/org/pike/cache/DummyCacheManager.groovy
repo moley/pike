@@ -1,8 +1,6 @@
 package org.pike.cache
 
 import groovy.util.logging.Slf4j
-import org.pike.cache.CacheManager
-import org.pike.model.operatingsystem.Operatingsystem
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +16,7 @@ class DummyCacheManager extends CacheManager {
     }
 
     @Override
-    public File getCacheFile (final Operatingsystem os, final String url, final boolean overwrite) {
+    public File getCacheFile (final String url, final boolean overwrite) {
        File file = new File (url)
        if (! file.exists())
          throw new IllegalStateException("Url ${url} does not exist")

@@ -1,4 +1,4 @@
-project.operatingsystems {
+operatingsystems {
     macosx {
         homedir = "/home/${project.defaults.defaultuser}"
         programdir = 'tools'

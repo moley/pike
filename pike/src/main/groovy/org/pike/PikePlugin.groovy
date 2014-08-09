@@ -13,7 +13,6 @@ import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.model.host.HostGroup
 import org.pike.model.operatingsystem.Operatingsystem
-import org.pike.remotetasks.StartRemoteBuildTask
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -52,7 +51,6 @@ public class PikePlugin implements Plugin<Project> {
 
         configureContainerTasks(project) // must be first
 
-        configureRemoteTasks(project)
         configureInfoTasks(project)
         configureModel(project)
     }
@@ -66,17 +64,7 @@ public class PikePlugin implements Plugin<Project> {
 
 
 
-    /**
-     * configures remote task to start a build on all hosts
-     * @param project
-     */
-    public void configureRemoteTasks (Project project) {
-        log.info("Configure task 'configureRemotes' ")
-        StartRemoteBuildTask startremotebuildTask = project.tasks.create("configureRemotes", StartRemoteBuildTask)
-        startremotebuildTask.group = PIKE_REMOTE_GROUP
-        startremotebuildTask.dependsOn project.tasks.resolveModel
-        startremotebuildTask.description = "Start pike on all hosts configured in the model"
-    }
+
 
     /**
      * configures containertasks as holder for the concrete tasks
@@ -134,8 +122,11 @@ public class PikePlugin implements Plugin<Project> {
         def hostgroups = project.container(HostGroup)
         project.extensions.hostgroups = hostgroups
 
-        def hosts = project.container(Host)
+        NamedDomainObjectContainer<Environment> hosts = project.container(Host)
         project.extensions.hosts = hosts
+        hosts.all { Host host ->
+          host.project = project
+        }
 
         NamedDomainObjectContainer<Environment> environments = project.container(Environment)
         environments.all { Environment env->

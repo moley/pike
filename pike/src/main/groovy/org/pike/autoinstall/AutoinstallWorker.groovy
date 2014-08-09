@@ -181,14 +181,6 @@ class AutoinstallWorker extends PikeWorker {
         remoting.upload(pikeDirDescs, pikeGradle, progressLogging)
     }
 
-    public void disconnectConnections (final Collection<Host> hosts) {
-        for (Host next: hosts) {
-            next.remotingImpl.disconnect()
-            next.remotingImpl = null
-        }
-    }
-
-
 
     @Override
     void install() {  //TODO make the official one

@@ -1,12 +1,10 @@
-project.hosts {
+hosts {
     localhost {
         hostname = 'testhost'
         hostgroups = 'prod'
         operatingsystem = project.operatingsystems.macosx
         environment 'jdks'
         environment 'confincludes'
-        remoting 'LocalRemoting'
-
     }
 }
 
