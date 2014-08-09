@@ -1,5 +1,8 @@
+
+
 apply {
     plugin 'pike'
+    plugin 'vagrant'
 }
 
 

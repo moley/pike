@@ -7,11 +7,23 @@ buildscript {
 subprojects {
    apply {
       plugin 'eclipse'
+      plugin 'maven'
    }
-}
-allprojects {
 
-    version=0.1
+  uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url:"https://api.bintray.com/maven/markusoley/pike/${project.name}") {
+                String username = System.properties['bintray.username']
+                String password = System.properties['bintray.password']
+                authentication( userName: username, password: password)
+            }
+        }
+    }
+  }
+}
+
+allprojects {
 
     group = 'org.pike'
 
@@ -19,19 +31,6 @@ allprojects {
         plugin 'idea'
         plugin 'groovy'
         plugin 'jacoco'
-    }
-
-//Only workaround
-    uploadArchives {
-        repositories {
-            ivy {
-                credentials {
-                    username "deployment"
-                    password "deployment123"
-                }
-                url "http://nexus.intra.vsa.de:8081/nexus/content/repositories/gradleplugins"
-            }
-        }
     }
 
     repositories {
