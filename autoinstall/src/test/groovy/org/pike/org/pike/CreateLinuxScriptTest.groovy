@@ -26,8 +26,11 @@ class CreateLinuxScriptTest {
         project.operatingsystems {
             linux {
                 pikejre = 'some pikejre'
-                createInstaller = true
             }
+        }
+
+        project.autoinstall {
+            os (project.operatingsystems.linux)
         }
 
         project.hosts {
