@@ -2,11 +2,16 @@ package org.pike.vagrant
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.DefaultTask
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.internal.reflect.Instantiator
 import org.pike.AutoinstallUtil
 import org.pike.PikePlugin
+import org.pike.model.Vagrant
 import org.pike.model.host.Host
+import org.pike.model.host.HostGroup
 
 /**
  * Created by OleyMa on 07.06.14.
@@ -35,20 +40,23 @@ class VagrantPlugin implements Plugin<Project> {
         DefaultTask stopVmsTask = project.tasks.create('stopVms', DefaultTask)
         stopVmsTask.group = GROUP_VAGRANT
 
-        log.info("hosts extensions: " + project.extensions.hosts.size())
+        NamedDomainObjectContainer<Vagrant> vagrantContainer  = project.container(Vagrant, new NamedDomainObjectFactory<Vagrant>() {
+            Vagrant create(String name) {
+                def instantiator = project.services.get(Instantiator.class)
+                return instantiator.newInstance(Vagrant, name, instantiator)
+            }
+        })
+        project.extensions.vagrant = vagrantContainer
 
-        project.operatingsystems.all {  os ->
-            os.extensions.create('vagrant', Vagrant, os)
-        }
+        log.info("hosts extensions: " + project.extensions.hosts.size())
 
         project.afterEvaluate {
 
             for (Host nextHost : project.extensions.hosts) {
 
-                if (nextHost.operatingsystem.vagrant == null)
+                Vagrant vagrant = VagrantUtil.findVagrant(project, nextHost, vagrantContainer)
+                if (vagrant == null)
                     continue
-
-                Vagrant vagrant = nextHost.operatingsystem.vagrant
 
                 String hostSuffix = nextHost.name
 
@@ -57,6 +65,7 @@ class VagrantPlugin implements Plugin<Project> {
                 CreateVmTask createVmTask = project.tasks.create("createVm$hostSuffix", CreateVmTask)
                 createVmTask.host = nextHost
                 createVmTask.group = GROUP_VAGRANT
+                createVmTask.vagrant = vagrant
                 prepareVmsTask.dependsOn createVmTask
 
                 log.info("Creating startVm for host $nextHost")
@@ -71,11 +80,6 @@ class VagrantPlugin implements Plugin<Project> {
                 stopVmTask.group = GROUP_VAGRANT
                 stopVmsTask.dependsOn stopVmTask
 
-
-
-
-
-
             }
 
             InstallPikeInVmTask installPikeTask = project.tasks.create('installPikeVm', InstallPikeInVmTask)
@@ -87,10 +91,8 @@ class VagrantPlugin implements Plugin<Project> {
 
 
         }
-
-
-
     }
+
 
 
 }

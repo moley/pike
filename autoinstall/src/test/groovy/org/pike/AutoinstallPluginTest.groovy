@@ -5,12 +5,13 @@ import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.tasks.Copy
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Assert
 import org.junit.Test
 import org.pike.holdertasks.ResolveModelTask
 import org.pike.test.TestUtils
 
 /**
- * Created by OleyMa on 31.07.14.
+ * Tests to check if autoinstall tasks are created
  */
 @Slf4j
 class AutoinstallPluginTest {
@@ -35,7 +36,6 @@ class AutoinstallPluginTest {
         project.operatingsystems {
 
             linux {
-                createInstaller = true
                 homedir = "home/${project.defaults.defaultuser}"
                 programdir = "tools"
                 cachedir = "build/cache"
@@ -44,12 +44,25 @@ class AutoinstallPluginTest {
                 pikejre = pikeJre
             }
 
+            windows { //No autoinstall
+
+            }
+
+        }
+
+
+
+        project.autoinstall {
+            os (project.operatingsystems.linux)
         }
 
         project.hosts {
             testhost {
                 hostname = 'testhost'
                 operatingsystem = project.operatingsystems.linux
+            }
+            testhost2 {
+                operatingsystem = project.operatingsystems.windows
             }
         }
 
@@ -68,8 +81,7 @@ class AutoinstallPluginTest {
     public void installGradleNotSet () {
         Project project = createProject(true, false)
         DownloadAndUnzipTask prepareGradleLinuxTask = project.tasks.prepareInstallerlinuxGradle
-        println (prepareGradleLinuxTask.to)
-        println (prepareGradleLinuxTask.from)
+
         prepareGradleLinuxTask.downloadAndUnzip()
 
     }
@@ -80,6 +92,9 @@ class AutoinstallPluginTest {
         DownloadAndUnzipTask prepareGradleLinuxTask = project.tasks.prepareInstallerlinuxGradle
         println (prepareGradleLinuxTask.to)
         println (prepareGradleLinuxTask.from)
+
+        Assert.assertNull (project.tasks.findByName('prepareInstallerwindowsGradle'))
+
         //prepareGradleLinuxTask.downloadAndUnzip() TODO asserts
     }
 
@@ -87,6 +102,7 @@ class AutoinstallPluginTest {
     public void installJre () {
         Project project = createProject(true, true)
         DownloadAndUnzipTask prepareGradleLinuxTask = project.tasks.prepareInstallerlinuxJre
+        Assert.assertNull (project.tasks.findByName('prepareInstallerwindowsJre'))
         //prepareGradleLinuxTask.downloadAndUnzip() TODO asserts
     }
 
@@ -101,6 +117,7 @@ class AutoinstallPluginTest {
     public void installLibs () {
         Project project = createProject(true, true)
         Copy prepareLibsTask = project.tasks.prepareInstallerlinuxLibs
+        Assert.assertNull (project.tasks.findByName('prepareInstallerwindowsLibs'))
         //prepareLibsTask.execute() TODO asserts
     }
 
@@ -108,6 +125,7 @@ class AutoinstallPluginTest {
     public void installScripts () {
         Project project = createProject(true, true)
         CreateLinuxScript linuxScriptTask = project.tasks.prepareInstallerlinuxStartscript
+        Assert.assertNull (project.tasks.findByName('prepareInstallerwindowsStartscript'))
         //linuxScriptTask.create() TODO asserts
     }
 }

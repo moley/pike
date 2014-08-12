@@ -10,6 +10,8 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
 import org.pike.holdertasks.ResolveModelTask
+import org.pike.model.Autoinstall
+import org.pike.model.defaults.Defaults
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.LinuxProvider
@@ -26,6 +28,9 @@ class AutoinstallPlugin implements Plugin<Project> {
 
         project.plugins.apply(PikePlugin.class)
 
+        Autoinstall autoinstall = project.extensions.create("autoinstall", Autoinstall, project)
+
+
         project.afterEvaluate {
 
             DefaultTask prepareInstallerTask = project.tasks.create('prepareInstallers', DefaultTask)
@@ -33,7 +38,7 @@ class AutoinstallPlugin implements Plugin<Project> {
 
             File installPathRoot = AutoinstallUtil.getInstallPath(project)
 
-            getUsedOperatingsystems(project).each {
+            getUsedOperatingsystems(project, autoinstall).each {
                 Operatingsystem os = it
 
                 ResolveModelTask resolveModelTask = project.tasks.resolveModel
@@ -70,7 +75,7 @@ class AutoinstallPlugin implements Plugin<Project> {
                 log.info("Configuring libraries")
                 Copy prepareLibs = project.tasks.create("prepareInstaller${osSuffix}Libs", Copy.class)
                 prepareLibs.group = GROUP_AUTOINSTALL
-                prepareLibs.from project.buildscript.configurations.classpath
+                prepareLibs.from AutoinstallUtil.getLocalLibs(project)
                 prepareLibs.into(installPathLibs)
                 prepareLibs.dependsOn resolveModelTask
 
@@ -107,6 +112,7 @@ class AutoinstallPlugin implements Plugin<Project> {
                 prepareConfigurations.include '**/*.gradle'
                 prepareConfigurations.exclude 'build.gradle'
                 prepareConfigurations.exclude 'build/**'
+                prepareConfigurations.includeEmptyDirs false
                 prepareConfigurations.into(installPathForOs)
                 log.info("Configuration: $prepareConfigurations")
                 prepareConfigurations.dependsOn resolveModelTask
@@ -146,7 +152,7 @@ class AutoinstallPlugin implements Plugin<Project> {
 
 	}
 
-    private Collection<Operatingsystem> getUsedOperatingsystems(Project project) {
+    private Collection<Operatingsystem> getUsedOperatingsystems(Project project, Autoinstall autoinstall) {
         Set<Operatingsystem> operatingsystems = new HashSet<Operatingsystem>()
 
         NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
@@ -157,7 +163,7 @@ class AutoinstallPlugin implements Plugin<Project> {
                 continue
 
             while (true) {
-                if (os.createInstaller) {
+                if (autoinstall.os.contains(os)) {
                     operatingsystems.add(os)
                     break
                 }

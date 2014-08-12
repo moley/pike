@@ -1,6 +1,9 @@
 package org.pike.vagrant
 
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
+import org.pike.model.Vagrant
 import org.pike.model.host.Host
 
 /**
@@ -13,6 +16,18 @@ class VagrantUtil {
         File hostDir = new File (buildDir, host.name)
         return hostDir
     }
+
+    public static Vagrant findVagrant (Project project, Host host, NamedDomainObjectContainer<Vagrant> vagrantContainer) {
+
+        String nameOfOs = host.operatingsystem.name
+        for (Vagrant vagrant: vagrantContainer) {
+            if (vagrant.name == nameOfOs)
+                return vagrant
+        }
+
+        return null
+    }
+
 
 
 }

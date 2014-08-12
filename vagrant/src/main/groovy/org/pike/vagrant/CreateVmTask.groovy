@@ -1,8 +1,10 @@
 package org.pike.vagrant
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.tasks.TaskAction
 import org.pike.cache.CacheManager
+import org.pike.model.Vagrant
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.worker.DownloadWorker
@@ -13,18 +15,23 @@ import org.pike.worker.DownloadWorker
 class CreateVmTask extends DefaultTask {
 
     Host host
+    Vagrant vagrant
 
     CacheManager cacheManager = new CacheManager()
+
+
 
     @TaskAction
     public void prepare () {
         Operatingsystem os = host.operatingsystem
         File hostDir = VagrantUtil.getWorkingDir(project, host)
 
-        Vagrant vagrant = os.vagrant
+        if (vagrant == null)
+            throw new IllegalStateException("No vagrant extension defined for operatingsystem $os.name")
+
         String vagrantBox = vagrant.boxUrl
         if (vagrantBox == null)
-            throw new IllegalStateException("No vagrant box defined for host $host.name, skip preparing vm")
+            throw new IllegalStateException("No vagrant box defined for vagrant extension $vagrant.name, skip preparing vm")
 
         DownloadWorker worker = new DownloadWorker()
         worker.from = vagrantBox

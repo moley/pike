@@ -2,6 +2,7 @@ package org.pike
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.IOperatingsystemProvider
 import org.pike.os.LinuxProvider
@@ -28,5 +29,11 @@ class AutoinstallUtil {
      */
     public static File getInstallPath (final Project project) {
         return project.file('build/install')
+    }
+
+    public static FileCollection getLocalLibs (final Project project) {
+        FileCollection libs = project.buildscript.configurations.classpath
+        libs.each {log.info("getLocalLibs->" + it)}
+        return libs
     }
 }

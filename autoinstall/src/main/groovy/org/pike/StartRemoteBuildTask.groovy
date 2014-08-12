@@ -2,7 +2,9 @@ package org.pike
 
 import groovy.util.logging.Log4j
 import org.gradle.api.GradleException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.tasks.options.Option
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskAction
 import org.gradle.logging.ProgressLoggerFactory
 import org.pike.autoinstall.AutoinstallWorker
@@ -26,6 +28,8 @@ class StartRemoteBuildTask extends RemoteTask {
 
     private String env
 
+    protected File minimalInstallPackage = new File (project.buildDir, 'minimalinstall')
+
     @Option(option='env', description='environment to be configured (default: all related envs)')
     public void setEnv(String env) {
         this.env = env
@@ -48,6 +52,18 @@ class StartRemoteBuildTask extends RemoteTask {
         return new SshRemoting()
     }
 
+    private void copyBuildscripts () {
+        project.copy {
+            from(project.projectDir)
+            include '**/*.gradle'
+            exclude 'build.gradle'
+            exclude 'build/**'
+            into(minimalInstallPackage)
+            includeEmptyDirs false
+        }
+    }
+
+
 
 
     @TaskAction
@@ -56,6 +72,8 @@ class StartRemoteBuildTask extends RemoteTask {
         Collection <RemoteResult> results = new ArrayList<RemoteResult>()
 
         Collection<Host> hosts = getHostsToBuild()
+
+        copyBuildscripts()
 
         for (Host nextHost: hosts) {
 
@@ -76,8 +94,7 @@ class StartRemoteBuildTask extends RemoteTask {
                 remoting.configure(project, nextHost)
 
 
-               // logic.operatingsystem = nextHost.operatingsystem
-               // logic.uploadBootstrapScripts(project, nextHost, progressLogging)
+
                // logic.uploadProjectDescriptions(project, nextHost, progressLogging)
                // logic.uploadPlugins(project, nextHost, progressLogging)
 

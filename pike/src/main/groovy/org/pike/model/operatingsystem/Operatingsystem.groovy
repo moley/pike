@@ -42,10 +42,6 @@ public class Operatingsystem extends NamedElement{
     File gradlePrepareInstallationPath
     File jrePrepareInstallationPath
 
-    @NoAutoInitializing
-    Boolean createInstaller  //TODO extract to autoinstall closure and autoinstall plugin
-
-
 
     private void configureProvider (final String name) {
         String classname = "org.pike.os." + name[0].toUpperCase() + name.substring(1) + "Provider"

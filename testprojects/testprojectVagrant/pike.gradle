@@ -27,10 +27,6 @@ operatingsystems {
         appconfigfile = '/etc/sysconfig/jenkins/global.sh'
         userconfigfile =  "${homedir}/.bashrc"
         globalconfigfile = '/etc/profile'
-        createInstaller = 'true'
-        vagrant {
-            boxUrl = 'https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-i386-vagrant-disk1.box'
-        }
     }
 }
 
