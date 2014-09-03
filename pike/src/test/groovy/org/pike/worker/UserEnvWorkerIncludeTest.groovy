@@ -5,6 +5,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.test.TestUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +16,7 @@ import org.pike.model.operatingsystem.Operatingsystem
  */
 class UserEnvWorkerIncludeTest {
 
-    File file = new File ("tmp/hallo")
+
 
     @Test
     public void testLinux () {
@@ -23,11 +24,11 @@ class UserEnvWorkerIncludeTest {
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = file.absolutePath
+        worker.file (TestUtils.tmpFile.absolutePath)
         worker.include("/etc/hallo", true)
         worker.install()
 
-        File file = worker.toFile(worker.file)
+        File file = worker.file
         String text = file.text
         println (text)
 
@@ -38,9 +39,4 @@ class UserEnvWorkerIncludeTest {
 
     }
 
-    @After
-    public void after () {
-        if (file.exists())
-            Assert.assertTrue (file.delete())
-    }
 }

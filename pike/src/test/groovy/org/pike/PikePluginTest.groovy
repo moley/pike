@@ -1,24 +1,112 @@
 package org.pike
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
 import org.pike.common.TaskContext
 import org.pike.model.environment.Environment
+import org.pike.model.host.Host
 import org.pike.tasks.DelegatingTask
 import org.pike.test.TestUtils
 import org.pike.worker.DownloadWorker
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 17.04.13
- * Time: 21:37
- * To change this template use File | Settings | File Templates.
+ * Tests for pike plugin
  */
 class PikePluginTest {
+
+    final String CURRENT_USER = System.getProperty("user.name")
+
+    @Test
+    public void defaults () {
+
+        ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        project.apply plugin: 'pike'
+
+        Assert.assertEquals(CURRENT_USER, project.defaults.defaultuser)
+
+    }
+
+    @Test(expected = ProjectConfigurationException)
+    public void hostWithoutOs () {
+
+        ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        project.apply plugin: 'pike'
+
+        project.hosts {
+            host1 {
+                environment 'invalidEnvironment'
+            }
+        }
+
+        ModelLogger.logConfiguration("test", project, false)
+
+        TestUtils.prepareModel(project)
+    }
+
+    @Test(expected = ProjectConfigurationException)
+    public void invalidEnv () {
+
+        ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        project.apply plugin: 'pike'
+
+        project.defaults {
+            currentHost = 'host1' //to enable on local machine
+        }
+
+        project.hosts {
+            host1 {
+                environment 'invalidEnvironment'
+                operatingsystem = project.operatingsystems.suse
+            }
+        }
+
+        project.environments {
+            anything {
+                download {
+                    from 'http://somegradleadress.zip'
+                    to (operatingsystem.homedir)
+                }
+            }
+        }
+
+        ModelLogger.logConfiguration("test", project, false)
+
+        TestUtils.prepareModel(project)
+
+
+    }
+
+    @Test
+    public void autocreateTasksNoHostsConfigured () {
+
+        ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        project.apply plugin: 'pike'
+
+        project.environments {
+            anything {
+                download {
+                    from 'http://somegradleadress.zip'
+                    to (operatingsystem.homedir)
+                }
+            }
+        }
+
+        ModelLogger.logConfiguration("test", project, false)
+
+        TestUtils.prepareModel(project)
+
+        DelegatingTask installtask = project.tasks.installAnything
+        Assert.assertNotNull('Task installAnything was not created', installtask)
+        Host host = installtask.getWorkers().get(0).host
+        Assert.assertNotNull('Host is not injected', host)
+        Assert.assertNotNull('IP is not set', host.ip)
+        Assert.assertNotNull('Hostname is not set', host.hostname)
+        Assert.assertNotNull('Operatingsystem is not set', host.operatingsystem)
+    }
 
     @Test
     public void autocreateTasks () {
@@ -26,35 +114,22 @@ class PikePluginTest {
         ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.apply plugin: 'pike'
 
+        String DEFAULTUSER = 'user'
+
         project.defaults {
-            defaultuser = 'nightly'
-            currentHost = 'vtbuild11-x'
-        }
-
-        project.operatingsystems {
-
-            linux {
-
-            }
-
-            suse {
-                parent = linux
-            }
-
-            redhat {
-                parent = linux
-            }
+            defaultuser = DEFAULTUSER
+            currentHost = 'build11'
         }
 
         project.hosts {
             jumptest {
-                hostname = 'vtbuild11-x'
+                hostname = 'build11'
                 operatingsystem = project.operatingsystems.redhat
                 environment 'buildnode'
             }
 
             divatest {
-                hostname = 'vtnightly11-x'
+                hostname = 'nightly11'
                 operatingsystem = project.operatingsystems.suse
                 environment 'buildnode'
             }
@@ -62,11 +137,8 @@ class PikePluginTest {
 
         project.environments {
             buildnode {
-                /**
-                 * Download VSA Gradle
-                 */
                 download {
-                    from = "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
+                    from = "http://somegradleadress.zip"
                 }
             }
         }
@@ -110,6 +182,9 @@ class PikePluginTest {
         Assert.assertEquals (TaskContext.checkenv, checkWorker.context)
         DefaultTask containerTask = project.tasks.checkenv
         checkTaskContainsDependency(containerTask, "checkenvBuildnode")
+
+        Assert.assertEquals(DEFAULTUSER, project.defaults.defaultuser)
+
     }
 
     private void checkTaskContainsDependency (final DefaultTask task, final String depTask) {

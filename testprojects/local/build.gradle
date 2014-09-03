@@ -4,17 +4,19 @@ buildscript {
    }
 
    dependencies {
-     classpath files('../../pike/build/libs/pike-0.1.jar')
-     classpath files('../../autoinstall/build/libs/autoinstall-0.1.jar')
+     classpath fileTree('../../pike/build/libs')
+     classpath fileTree('../../autoinstall/build/libs')
      classpath 'sshtools:j2ssh-core:0.2.9'
      classpath 'commons-io:commons-io:2.4'
    }
 }
 
 apply {
-  plugin 'groovy'
-  plugin 'idea'
   plugin 'autoinstall'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = new File ("../gradle.version").text
 }
 
 apply from: 'pike.gradle'

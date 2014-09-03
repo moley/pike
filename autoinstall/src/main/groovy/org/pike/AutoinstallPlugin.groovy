@@ -39,7 +39,9 @@ class AutoinstallPlugin implements Plugin<Project> {
             File installPathRoot = AutoinstallUtil.getInstallPath(project)
 
             getUsedOperatingsystems(project, autoinstall).each {
-                Operatingsystem os = it
+                AutoinstallEntry entry = it
+                Operatingsystem os = entry.os
+                BitEnvironment bitEnvironment = entry.bitEnvironment
 
                 ResolveModelTask resolveModelTask = project.tasks.resolveModel
 
@@ -67,6 +69,7 @@ class AutoinstallPlugin implements Plugin<Project> {
                 DownloadJreTask prepareJre = project.tasks.create("prepareInstaller${osSuffix}Jre", DownloadJreTask.class)
                 prepareJre.group = GROUP_AUTOINSTALL
                 prepareJre.os = os
+                prepareJre.bitEnvironment = bitEnvironment
                 prepareJre.to installPathForOs
                 prepareJre.simplifyTo 'jre'
                 prepareJre.dependsOn resolveModelTask
@@ -152,8 +155,10 @@ class AutoinstallPlugin implements Plugin<Project> {
 
 	}
 
-    private Collection<Operatingsystem> getUsedOperatingsystems(Project project, Autoinstall autoinstall) {
-        Set<Operatingsystem> operatingsystems = new HashSet<Operatingsystem>()
+    private Collection<AutoinstallEntry> getUsedOperatingsystems(Project project, Autoinstall autoinstall) {
+        Set<AutoinstallEntry> operatingsystems = new HashSet<AutoinstallEntry>()
+
+        Set<Operatingsystem> usedOs = new HashSet<Operatingsystem>()
 
         NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
         for (Host nextHost: hosts) {
@@ -164,7 +169,10 @@ class AutoinstallPlugin implements Plugin<Project> {
 
             while (true) {
                 if (autoinstall.os.contains(os)) {
-                    operatingsystems.add(os)
+                    if (! usedOs.contains(os)) {
+                        usedOs.add(os)
+                        operatingsystems.add(new AutoinstallEntry(os, nextHost.bitEnvironment))
+                    }
                     break
                 }
                 if (os.parent == null)

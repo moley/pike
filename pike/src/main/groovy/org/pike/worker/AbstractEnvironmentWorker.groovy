@@ -22,13 +22,33 @@ import org.pike.worker.properties.Propertyfile
 @Slf4j
 abstract class AbstractEnvironmentWorker extends PikeWorker  {
 
-    String file
+    private File file
 
     Collection <IEnvEntry> entries = new ArrayList<IEnvEntry>()
 
     protected global = false
 
     String chapter
+
+    /**
+     * configures file path
+     * @param file file path
+     */
+    public void file (String file) {
+        if (file == null)
+            throw new NullPointerException('Parameter file must not be null')
+
+        this.file = toFile(file)
+    }
+
+    /**
+     * getter
+     * @return file which is configured
+     */
+    public File getFile ()  {
+        file
+    }
+
 
 
     public void alias (final String from, final String to) {
@@ -62,6 +82,9 @@ abstract class AbstractEnvironmentWorker extends PikeWorker  {
      * @param toDevNull     boolean flag if >/dev/null should be appended
      */
     public void include (final String includefile, boolean toDevNull = false) {
+        if (includefile == null)
+            throw new NullPointerException("Parameter include must not be null")
+
         entries.add(new IncludeEnvEntry(new File (includefile), toDevNull))
     }
 
@@ -89,19 +112,16 @@ abstract class AbstractEnvironmentWorker extends PikeWorker  {
     @Override
     void install() {
 
-        File fileAsFile
 
         if (file != null) {
-          fileAsFile = toFile(file)
-
-          if (! fileAsFile.parentFile.exists())
-            if (fileAsFile.parentFile.mkdirs() == false)
-                throw new IllegalStateException("Could not create directory " + fileAsFile.parent)
+          if (! file.parentFile.exists())
+            if (file.parentFile.mkdirs() == false)
+                throw new IllegalStateException("Could not create directory " + file.parent)
         }
 
-        boolean readExistingFile = fileAsFile != null && fileAsFile.exists()
+        boolean readExistingFile = file != null && file.exists()
         IOperatingsystemProvider osProvider = operatingsystem.provider
-        Propertyfile propertyfile = readExistingFile ? new Propertyfile(osProvider, fileAsFile) : new Propertyfile(osProvider)
+        Propertyfile propertyfile = readExistingFile ? new Propertyfile(osProvider, file) : new Propertyfile(osProvider)
 
         Collection<Chapter> chapters = propertyfile.getChapters(chapter)
 
@@ -137,8 +157,8 @@ abstract class AbstractEnvironmentWorker extends PikeWorker  {
             }
         }
 
-        if (fileAsFile)
-          fileAsFile.text = propertyfile.toString()
+        if (file)
+          file.text = propertyfile.toString()
     }
 
     public boolean uptodate () {

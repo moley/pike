@@ -36,22 +36,9 @@ class ResolveModelTask extends DefaultTask{
         ModelLogger.logConfiguration("postConfigureTasks", project, false)
         log.info("Model is resolved")
 
-        checkModel()
-
-
     }
 
-    private void checkModel () {
-        log.info("Check model")
 
-        for (Host nextHost : project.hosts) {
-            if (nextHost.operatingsystem == null)
-                throw new IllegalStateException("You have to configure a operatingsystem for host ${nextHost.name}")
-        }
-
-        log.info("Model is checked")
-
-    }
 
     /**
      * autoinitialize properties from base item

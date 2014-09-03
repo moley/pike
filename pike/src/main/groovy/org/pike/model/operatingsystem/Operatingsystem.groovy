@@ -6,11 +6,7 @@ import org.pike.common.NamedElement
 import org.pike.os.IOperatingsystemProvider
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 17.04.13
- * Time: 00:20
- * To change this template use File | Settings | File Templates.
+ * Class that configures a concrete operatingsystem instance
  */
 public class Operatingsystem extends NamedElement{
 
@@ -19,29 +15,20 @@ public class Operatingsystem extends NamedElement{
     String programdir
     String pikedir
     String servicedir
-    String cachedir
-    String tmpdir
-    String pikejre
+
+    /**
+     * jre that is used for pike
+     */
+    String pikejre32
+    String pikejre64
 
     String appconfigfile
     String userconfigfile
     String globalconfigfile
-    String appdesc   //lin32, lin64, win32, win64, mac32, mac64 to describe download repository position
-
-    String scriptSuffix
-
-
-
-
 
     Operatingsystem parent
 
     IOperatingsystemProvider provider
-
-    //internal fields
-    File gradlePrepareInstallationPath
-    File jrePrepareInstallationPath
-
 
     private void configureProvider (final String name) {
         String classname = "org.pike.os." + name[0].toUpperCase() + name.substring(1) + "Provider"
@@ -70,16 +57,7 @@ public class Operatingsystem extends NamedElement{
         configureProvider(name)
     }
 
-    /**
-     * getter
-     * @return script suffix ^
-     */
-    public String getScriptSuffix () {
-        if (scriptSuffix != null)
-            return scriptSuffix
-        else
-            return provider.scriptSuffix
-    }
+
 
     /**
      * getter
@@ -102,9 +80,8 @@ public class Operatingsystem extends NamedElement{
         objectAsString += "    * service directory       : $servicedir $NEWLINE"
 
         objectAsString += "    * pike directory          : $pikedir $NEWLINE"
-        objectAsString += "    * pike jre                : $pikejre $NEWLINE"
-        objectAsString += "    * cache directory         : $cachedir $NEWLINE"
-        objectAsString += "    * app descriptor          : $appdesc $NEWLINE"
+        objectAsString += "    * pike jre 32 bit         : $pikejre32 $NEWLINE"
+        objectAsString += "    * pike jre 64 bit         : $pikejre64 $NEWLINE"
 
         objectAsString += "    * appconfigfile           : $appconfigfile $NEWLINE"
         objectAsString += "    * userconfigfile          : $userconfigfile $NEWLINE"

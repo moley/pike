@@ -1,6 +1,7 @@
 package org.pike.integration
 
 import org.gradle.tooling.ProjectConnection
+import org.junit.Ignore
 import org.junit.Test
 import org.pike.test.TestUtils
 
@@ -9,10 +10,10 @@ import org.pike.test.TestUtils
  */
 class StartRemoteBuildTaskTest {
 
-    @Test
+    @Test@Ignore
     public void startRemoteBuild () {
 
-        ProjectConnection connection = TestUtils.gradleConnector.forProjectDirectory(new File ('testprojects/testprojectSimple')).connect()
+        ProjectConnection connection = TestUtils.gradleConnector.forProjectDirectory(new File ('testprojects/local')).connect()
         connection.newBuild().forTasks('configureRemote').run()
 
 

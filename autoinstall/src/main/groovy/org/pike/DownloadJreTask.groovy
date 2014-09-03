@@ -7,13 +7,24 @@ import org.gradle.api.tasks.TaskAction
  */
 class DownloadJreTask extends DownloadAndUnzipTask{
 
+    BitEnvironment bitEnvironment
+
     @TaskAction
     public void downloadAndUnzip () {
+
         simplifyTo = 'jre'
-        from = os.pikejre
+
+        from = getPikeJreFrom()
         if (from == null)
             throw new IllegalStateException("pikeJre is not set for operatingsystem $os.name.")
 
         super.downloadAndUnzip()
+    }
+
+    String getPikeJreFrom () {
+        if (bitEnvironment.equals(BitEnvironment._64))
+            return os.pikejre64
+        else
+            return os.pikejre32
     }
 }

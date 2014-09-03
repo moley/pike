@@ -54,6 +54,50 @@ public class PikePlugin implements Plugin<Project> {
 
         configureInfoTasks(project)
         configureModel(project)
+
+        configureDefaults(project)
+
+        checkModel(project)
+    }
+
+    public configureDefaults (Project project) {
+        project.operatingsystems {
+
+            linux {
+                homedir = "/home/${project.defaults.defaultuser}"
+                servicedir = "/etc/init.d"
+                pikedir = '/opt/pike'
+                globalconfigfile = '/etc/profile'
+                pikejre32 = 'http://installbuilder.bitrock.com/java/jre1.7.0_67-linux.zip'
+                pikejre64 = 'http://installbuilder.bitrock.com/java/jdk1.7.0_67-linux-x64.zip'
+            }
+
+            macosx {
+                homedir = "/Users/${project.defaults.defaultuser}"
+                servicedir = "/etc/init.d"
+                pikedir = '/opt/pike'
+                globalconfigfile = '/etc/profile'
+                pikejre32 = 'http://installbuilder.bitrock.com/java/jre1.7.0_67-osx.zip'
+            }
+
+            suse {
+                parent=linux
+            }
+
+            redhat {
+                parent = linux
+            }
+
+            windows {
+                homedir = "C:\\Users/${project.defaults.defaultuser}"
+                appdir = "${homedir}\\jenkins"
+                programdir = "${homedir}\\jenkins\\tools"
+                pikedir = 'C:\\opt\\pike'
+                appconfigfile = "${appdir}\\jenkins_global.bat"
+                pikejre32 = 'http://installbuilder.bitrock.com/java/jre1.7.0_67-windows.zip'
+                pikejre64 = 'http://installbuilder.bitrock.com/java/jre1.7.0_67-windows-x64.zip'
+            }
+        }
     }
 
     public configureInfoTasks (Project project) {
@@ -64,6 +108,27 @@ public class PikePlugin implements Plugin<Project> {
     }
 
 
+
+    private void checkModel (Project project) {
+        log.info("Check model")
+
+        project.afterEvaluate {
+
+            for (Host nextHost : project.hosts) {
+                if (nextHost.operatingsystem == null)
+                    throw new IllegalStateException("You have to configure a operatingsystem for host $nextHost.name")
+
+                for (String nextEnv : nextHost.getAllEnvironments(project)) {
+                    Environment env = project.environments.findByName(nextEnv)
+                    if (env == null)
+                        throw new IllegalStateException("Cannot find environment $nextEnv which is defined for host $nextHost.name")
+                }
+            }
+
+            log.info("Model is checked")
+        }
+
+    }
 
 
 

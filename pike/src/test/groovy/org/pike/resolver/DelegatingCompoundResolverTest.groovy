@@ -42,21 +42,21 @@ class DelegatingCompoundResolverTest {
                 hostname = 'testhost.intra.domain'
                 operatingsystem = project.operatingsystems.linux
                 environment 'buildnode'
-                environment 'buildnode2'
+                //environment 'buildnode2'
             }
         }
 
         project.environments {
             gradle {
                 download {
-                    from "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
+                    from "http://somwhere.zip"
                     to "${operatingsystem.programdir}"
                 }
             }
 
-            buildnode2 {
+            buildnode {
                 download {
-                    from "http://hudson.intra.vsa.de:8080/view/gradle/job/createVsaGradle/lastSuccessfulBuild/artifact/build/vsagradle-1.5-all.zip"
+                    from "http://somwhere2.zip"
                     to "${operatingsystem.programdir}"
                 }
             }

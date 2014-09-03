@@ -1,3 +1,8 @@
+
+
+
+- pre und post Tasks
+- installiere package tasks (rpm,...)
 - methode memory (variable, xmx, xms, ...) einfuegen, die bei windows automatisch das " rausschmeisst
 - Highlevel komponenten erstellen für jdk, jenkins, ....
 - executable für Verzeichnisse unterstützen und dann das komplette bin der jdks executable machen

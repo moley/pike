@@ -13,29 +13,35 @@ class Defaults {
 
     public static String NEWLINE = System.getProperty("line.separator")
 
+    String defaultuser = System.getProperty("user.name")
 
-    String defaultuser
-
+    /**
+     * domain which is appended by default
+     */
     String defaultdomain
 
     String currentHost
 
-    String rootpath
+    String rootpath = '/'
 
     /**
-     * rootpasswd
+     * password for managing pike
      */
     String pikepassword
 
-	String pikeport
-
+    /**
+     * user for managing pike
+     */
     String pikeuser
 
     /**
      * link to gradle for usage with pike
      */
-    String pikegradle
+    String pikegradle  = 'http://services.gradle.org/distributions/gradle-2.0-all.zip'
 
+    /**
+     * project
+     */
     private Project project
 
     /**
@@ -45,7 +51,6 @@ class Defaults {
     public Defaults(Project project) {
         this.project = project
     }
-
 
 
     public String toString () {

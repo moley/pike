@@ -1,8 +1,7 @@
 import org.junit.Assert
 import org.junit.Test
 import org.pike.os.IOperatingsystemProvider
-import org.pike.os.Linux64Provider
-import org.pike.test.TestUtils
+import org.pike.os.LinuxProvider
 import org.pike.worker.properties.Chapter
 import org.pike.worker.properties.Entry
 import org.pike.worker.properties.Propertyfile
@@ -18,6 +17,13 @@ class PropertyfileTest {
     public void nullError () {
         new Propertyfile(osProvider, null)
 
+    }
+
+    @Test
+    public void readEmptyFile () {
+        File tmpFile = Files.createTempFile(getClass().name, 'readEmptyFile').toFile()
+        Propertyfile propFile = new Propertyfile(osProvider, tmpFile)
+        Assert.assertTrue ("An new empty file does contain data", propFile.chapters.isEmpty())
     }
 
     @Test
@@ -78,6 +84,6 @@ max_allowed_packet=32M
     }
 
     private IOperatingsystemProvider getOsProvider () {
-        return new Linux64Provider()
+        return new LinuxProvider()
     }
 }

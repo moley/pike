@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xml:id="usermanual.docbook"
+      version="5.0"
+      xml:lang="en"
+      xmlns="http://docbook.org/ns/docbook"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xsi:schemaLocation="
+        http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/rnc/docbookxi.rnc
+        http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd
+        http://www.w3.org/1999/xlink http://www.docbook.org/xml/5.0/xsd/xlink.xsd
+"
+        >
+    <info>
+        <productnumber>
+            <?eval ${project.version}?>
+        </productnumber>
+        <title>usermanual.docbook</title>
+        <xi:include href="../../../target/tmp/shared-resources/docbkx/content/legalnotice.xml" xpointer="legalnotice"/>
+    </info>
+    <xi:include href="../../../target/tmp/shared-resources/docbkx/content/support7.xml"/>
+    <xi:include href="../../../target/tmp/shared-resources/docbkx/content/glossary_filtered.xml"/>
+
+    If you want to make docbook documentation, do it with
+
+    <orderedlist>
+      <listitem>
+      Eclipse
+      </listitem>
+      <listitem>
+      IntelliJ
+      </listitem>
+        <listitem>
+            Gradle
+        </listitem>
+
+
+    </orderedlist>
+    <index/>
+</book>

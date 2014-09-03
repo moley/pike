@@ -1,0 +1,15 @@
+apply {
+  plugin 'pike'
+}
+
+defaults.rootpath = '${currentPath}/build/test'
+
+
+environments {
+    helloworld {
+        userenv {
+            file "${operatingsystem.homedir}/pike.txt"
+            property('hello', 'world')
+        }
+    }
+}

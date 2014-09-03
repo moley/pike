@@ -33,10 +33,6 @@ public abstract class PikeTask extends DefaultTask {
         this.user = user
     }
 
-    public Defaults setDefaults (final Defaults defaults) {
-        this.defaults = defaults
-    }
-
     public Defaults getDefaults () {
         return defaults != null ? defaults : project.defaults
     }
@@ -51,39 +47,6 @@ public abstract class PikeTask extends DefaultTask {
 
     }
 
-
-    /**
-     * getter
-     * @return cachedir
-     */
-    public File getCacheDir () {
-        if (operatingsystem.cachedir == null)
-            return null
-        return file(operatingsystem.cachedir)
-    }
-
-    /**
-     * getter
-     * @return tempdir
-     */
-    public File getTempDir () {
-
-        if (operatingsystem == null)
-            throw new IllegalStateException("No operatingsystem specific data applied")
-
-        if (operatingsystem.tmpdir == null)
-            return null
-
-        return file (operatingsystem.tmpdir)
-    }
-
-    /**
-     * getter
-     * @return true if cache is defined, false, if not
-     */
-    public boolean isCacheDirDefined () {
-        return getCacheDir() != null
-    }
 
     public Path path (final String path) {
         if (path == null)

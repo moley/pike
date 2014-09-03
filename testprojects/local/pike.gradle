@@ -4,11 +4,9 @@ apply {
 
 //Pike - Model
 defaults {
+    currentHost = 'localhost'  //to enable on local machine
     defaultuser = 'nightly'
-    rootpath = '${currentPath}/build/tests'
-    pikeuser = '${user}'
-    pikepassword = 'Momopomo351977'
-    pikegradle = 'http://services.gradle.org/distributions/gradle-2.0-all.zip'
+    rootpath = '${currentPath}/build/test'
 }
 
 apply from: 'configurations/operatingsystems.gradle'

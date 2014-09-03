@@ -1,9 +1,0 @@
-operatingsystems {
-    macosx {
-        homedir = "/home/${project.defaults.defaultuser}"
-        programdir = 'tools'
-        pikedir = 'pike'
-        cachedir = 'cache'
-        pikejre = 'http://installbuilder.bitrock.com/java/jre1.7.0_65-osx.zip'
-    }
-}

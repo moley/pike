@@ -6,6 +6,9 @@ import org.junit.Ignore
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.test.TestUtils
+
+import java.nio.file.Files
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,25 +19,17 @@ import org.pike.model.operatingsystem.Operatingsystem
  */
 class UserEnvDefaultPathTest {
 
-    File file = new File ("tmp/hallo")
-
-    @After
-    public void after () {
-        if (file.exists())
-            Assert.assertTrue (file.delete())
-    }
-
     @Test
     public void path () {
 
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = "tmp/hallo"
+        worker.file (TestUtils.tmpFile.absolutePath)
         worker.defaultpath("GROOVY_HOME")
         worker.install()
 
-        File file = worker.toFile(worker.file)
+        File file = worker.file
         String text = file.text
         println (text)
 

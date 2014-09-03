@@ -19,6 +19,10 @@ apply {
 
 apply from: "pike.gradle"
 
+task wrapper(type: Wrapper) {
+    gradleVersion = new File ("../gradle.version").text
+}
+
 autoinstall {
     os (operatingsystems.linux)
 }

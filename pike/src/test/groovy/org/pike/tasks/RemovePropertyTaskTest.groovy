@@ -17,7 +17,7 @@ import org.pike.test.TestUtils
  */
 public class RemovePropertyTaskTest {
 
-    File propFile = new File ("tmp/home/OleyMa/swarm/tools/hallo.properties").absoluteFile
+    File propFile = new File ("tmp/home/user/hallo.properties").absoluteFile
 
     private Project configureProject () {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()

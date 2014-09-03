@@ -68,8 +68,8 @@ abstract class EnvironmentHolder extends NamedElement{
      * getter
      * @return returns set of all environments that belong to the environment holder
      */
-    protected Set<String> getAllEnvironments(final Project project) {
-        return environments
+    public Set<String> getAllEnvironments(final Project project) {
+        return environments + preEnvironments + postEnvironments
     }
 
     /**

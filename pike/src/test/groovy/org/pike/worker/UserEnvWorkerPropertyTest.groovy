@@ -7,6 +7,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.test.TestUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -75,7 +76,7 @@ export HOME=/home/nightly
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = file.absolutePath
+        worker.file (file.absolutePath)
         worker.path("JDK5_HOME", "hans")
         worker.install()
         println (file.text)
@@ -94,11 +95,11 @@ export HOME=/home/nightly
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = file.absolutePath
+        worker.file (file.absolutePath)
         worker.property("max_allowed_packet", "32M")
         worker.install()
 
-        file = worker.toFile(worker.file)
+        file = worker.file
         String text = file.text
         println (text)
 
@@ -129,12 +130,12 @@ export HOME=/home/nightly
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = file.absolutePath
+        worker.file (file.absolutePath)
         worker.chapter = 'chapter1'
         worker.property("max_allowed_packet", "32M")
         worker.install()
 
-        file = worker.toFile(worker.file)
+        file = worker.file
         String text = file.text
         println (text)
 
@@ -160,12 +161,12 @@ export HOME=/home/nightly
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = file.absolutePath
+        worker.file (file.absolutePath)
         worker.property("http_proxy", "proxy.mycompany.de")
         worker.property("https_proxy", "proxy.mycompany.de")
         worker.install()
 
-        file = worker.toFile(worker.file)
+        file = worker.file
         String text = file.text
         println (text)
 
@@ -188,12 +189,12 @@ export HOME=/home/nightly
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = "tmp/hallo"
+        worker.file (TestUtils.tmpFile.absolutePath)
         worker.property("http_proxy", "proxy.mycompany.de", ":")
         worker.property("https_proxy", "proxy.mycompany.de")
         worker.install()
 
-        File file = worker.toFile(worker.file)
+        File file = worker.file
         String text = file.text
         println (text)
 

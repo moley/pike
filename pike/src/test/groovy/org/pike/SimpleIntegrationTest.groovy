@@ -30,21 +30,13 @@ class SimpleIntegrationTest {
             defaultuser = 'nightly'
             currentHost = 'localhost'
             rootpath = '${currentPath}/rootpath4Test'
-            pikeuser = '${user}'
-            pikepassword = 'Momopomo351977'
-            pikegradle = 'http://services.gradle.org/distributions/gradle-1.6-all.zip'
         }
 
         project.operatingsystems {
             macosx {
-                homedir = "/home/${project.defaults.defaultuser}"
                 programdir = "${homedir}/swarm/tools"
-                cachedir = "${homedir}/.pike/cache"
-                pikedir = '/opt/pike'
-                tmpdir = '/tmp'
-                pikejre = 'http://installbuilder.bitrock.com/java/jre1.7.0_21-osx.zip'
                 appconfigfile = '/etc/sysconfig/jenkins/global.sh'
-                userconfigfile =  "${homedir}/.bashrc"
+                userconfigfile =  "${homedir}/.bashrc" //TODO make global
                 globalconfigfile = '/etc/profile'
             }
         }
@@ -64,8 +56,8 @@ class SimpleIntegrationTest {
             // include
             confincludes {
                 userenv {
-                    file = operatingsystem.userconfigfile
-                    include (operatingsystem.appconfigfile)
+                    file operatingsystem.userconfigfile
+                    include operatingsystem.appconfigfile
                 }
             }
 

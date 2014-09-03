@@ -18,7 +18,7 @@ class WindowsProviderTest {
         WindowsProvider provider = new WindowsProvider()
         println (provider.getOsDependendPath("C:/hallo"))
         Assert.assertEquals ("C:\\hallo", provider.getOsDependendPath("C:/hallo"))
-        Assert.assertEquals (":ext:nightly@cvs.intra.vsa.de/irgendwas", provider.getOsDependendPath(":ext:nightly@cvs.intra.vsa.de/irgendwas"))
+        Assert.assertEquals (":ext:user@somewhere.de/irgendwas", provider.getOsDependendPath(":ext:user@somewhere.de/irgendwas"))
 
     }
 }

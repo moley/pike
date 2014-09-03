@@ -51,7 +51,6 @@ class SonarWorkerTest {
         worker.property("sonar.property", 'sonar.value')
 
         Operatingsystem os = new Operatingsystem("linux")
-        os.tmpdir = "/tmp"
         worker.operatingsystem = os
 
         Defaults defaults = new Defaults()

@@ -59,11 +59,6 @@ class LinuxProvider extends AbstractOsProvider {
     }
 
     @Override
-    String getScriptSuffix() {
-        return ".sh"
-    }
-
-    @Override
     String getSetEnvPrefix() {
         return "export "
     }
@@ -76,11 +71,6 @@ class LinuxProvider extends AbstractOsProvider {
     @Override
     String getAsVariable(String variablename) {
         return "\$" + variablename
-    }
-
-    @Override
-    boolean isAbsolute(String path) {
-        return path.startsWith("/")
     }
 
     @Override
@@ -97,5 +87,15 @@ class LinuxProvider extends AbstractOsProvider {
     @Override
     String adaptLineDelimiters(String originText) {
         return originText
+    }
+
+    @Override
+    boolean isActive() {
+        return false //TODO
+    }
+
+    @Override
+    String getId() {
+        return 'lin'
     }
 }

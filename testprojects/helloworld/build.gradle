@@ -1,0 +1,16 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../../pike/build/libs/pike-0.1.jar')
+        classpath 'commons-io:commons-io:2.4'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = new File ("../gradle.version").text
+}
+
+apply from: 'pike.gradle'

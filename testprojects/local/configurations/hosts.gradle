@@ -3,8 +3,9 @@ hosts {
         hostname = 'testhost'
         hostgroups = 'prod'
         operatingsystem = project.operatingsystems.macosx
-        environment 'jdks'
-        environment 'confincludes'
+        environment 'coolproperty'
+        pre 'pretask'
+        post 'posttask'
     }
 }
 

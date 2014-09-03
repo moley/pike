@@ -23,6 +23,12 @@ class EnvCollector {
         if (log.debugEnabled)
           log.debug("Check if environment " + name + " is active...")
 
+        if (project.hosts.isEmpty()) {
+            log.info("Environment $name is active because no hosts are defined")
+            return true
+        }
+
+
         NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
         Defaults defaults = project.extensions.defaults
         String availableHosts = ""

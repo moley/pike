@@ -2,8 +2,10 @@ package org.pike.common
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
+import org.gradle.internal.reflect.Instantiator
 import org.pike.model.defaults.Defaults
 import org.pike.model.host.Host
+import org.pike.os.OperatingsystemUtil
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,13 +47,10 @@ class ProjectInfo {
         }
 
         //other check name or ip matches
-        String determinedHostName
-        String ipAdress
-
         log.info("Checking if host $host.name matches real host")
 
         try {
-          determinedHostName = InetAddress.getLocalHost().getHostName().split("\\.") [0]
+          String determinedHostName = InetAddress.getLocalHost().getHostName().split("\\.") [0]
           boolean nameMatches = host.name.equalsIgnoreCase(determinedHostName) || (host.hostname != null && host.hostname.equalsIgnoreCase(determinedHostName))
           log.info("- Matching hostname: $host.name (expected) - $host.hostname - $determinedHostName")
           if (nameMatches)
@@ -61,9 +60,7 @@ class ProjectInfo {
         }
 
         try {
-          InetAddress localhost = InetAddress.getLocalHost()
-          InetAddress[] allMyIps = InetAddress.getAllByName(localhost.getCanonicalHostName())
-            for (InetAddress nextAdress: allMyIps) {
+          for (InetAddress nextAdress: getAdresses()) {
                 log.info("- Matching ip: $host.ip (expected) - $nextAdress.hostAddress")
                 boolean ipMatches = host.ip != null && host.ip.equalsIgnoreCase(nextAdress.hostAddress)
                 if (ipMatches)
@@ -78,11 +75,26 @@ class ProjectInfo {
 
     }
 
+    public static InetAddress [] getAdresses () {
+        InetAddress localhost = InetAddress.getLocalHost()
+        return InetAddress.getAllByName(localhost.getCanonicalHostName())
+    }
+
     /**
-     * gets the current host to work
-     * @return
+     * if not hosts are configured gets the current host automatically created
+     * if hosts are configured the host which fits the currents host hostname or ip is searched and returned
+     * @return found host or automatically defaulted host
      */
     public static Host getCurrentHost (Project project) {
+
+            //simple case, no hosts defined, create a host object with current hosts data
+            if (project.hosts.isEmpty()) {
+                Host currentHost = new Host('localhost', project.services.get(Instantiator.class))
+                currentHost.ip = getAdresses() [0].hostAddress
+                currentHost.hostname = getAdresses() [0].hostName
+                currentHost.operatingsystem = new OperatingsystemUtil().findOperatingsystem(project)
+                return currentHost
+            }
 
             for (Host nextHost : project.hosts) {
                 if (ProjectInfo.isCurrentHost(project, nextHost))
@@ -96,7 +108,7 @@ class ProjectInfo {
                  hostnames += nextHost.name
             }
 
-            throw new IllegalStateException ("Current host not found in configuration and no configuration in dsl (Valid hosts: $hostnames)")
+            throw new IllegalStateException ("Current host not found in configuration (Valid hosts: $hostnames)")
 
     }
 }

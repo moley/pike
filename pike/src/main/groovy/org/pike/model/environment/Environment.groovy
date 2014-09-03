@@ -1,18 +1,12 @@
 package org.pike.model.environment
 
-import groovy.util.logging.Log
 import groovy.util.logging.Slf4j
-import org.gradle.api.DefaultTask
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.internal.reflect.Instantiator
 import org.pike.common.NamedElement
-import org.pike.common.ProjectInfo
 import org.pike.common.TaskContext
 import org.pike.environment.EnvCollector
-import org.pike.model.defaults.Defaults
-import org.pike.model.host.Host
 import org.pike.tasks.DelegatingTask
 
 /**
@@ -48,7 +42,7 @@ public class Environment extends NamedElement{
     }
 
     public void matrix (final HashMap<String, String> matrixIds) {
-        if (matrixParams.size() == 1 && matrixParams.get("").trim().isEmpty())
+        if (matrixParams.size() == 1 && matrixParams.get('').trim().isEmpty())
           matrixParams.clear()
 
         for (String nextMatrix: matrixIds.keySet()) {

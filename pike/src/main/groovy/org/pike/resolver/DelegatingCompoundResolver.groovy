@@ -84,6 +84,12 @@ class DelegatingCompoundResolver {
                     if (next.type.package == null) //simple types
                         continue
 
+                    if (next instanceof MetaBeanProperty) {
+                        MetaBeanProperty nextMeta = next
+                        if (nextMeta.getter == null || nextMeta.setter == null)
+                          continue
+                    }
+
                     if (next.type.package.name.startsWith('org.pike.model')) {  //object reference of a model element
                         if (next.getProperty(object) != null)
                             collectResolveItems(collectedObjects, resolveItems, project, next.getProperty(object))

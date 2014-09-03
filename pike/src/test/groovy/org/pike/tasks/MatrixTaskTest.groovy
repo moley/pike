@@ -49,7 +49,7 @@ class MatrixTaskTest {
                 matrix (['17':'1.7.0_07', '16':'1.6.0_something'])
 
                 download {
-                    from "http://hudson.intra.vsa.de:8080/userContent/tools/jdk${paramvalue}.zip"
+                    from "http://somewhere/jdk${paramvalue}.zip"
                     to "${operatingsystem.programdir}"
                     executable ("jdk${paramvalue}/bin/java")
                     executable ("jdk${paramvalue}/jre/bin/java")
@@ -65,13 +65,13 @@ class MatrixTaskTest {
 
         DelegatingTask task = project.tasks.findByName("installJdks17")
         DownloadWorker worker = task.workers.get(0)
-        Assert.assertEquals ("http://hudson.intra.vsa.de:8080/userContent/tools/jdk1.7.0_07.zip", worker.from)
+        Assert.assertEquals ("http://somewhere/jdk1.7.0_07.zip", worker.from)
         Assert.assertNotNull (task)
 
         DelegatingTask task2 = project.tasks.findByName("installJdks16")
         Assert.assertNotNull (task2)
         DownloadWorker worker2 = task2.workers.get(0)
-        Assert.assertEquals ("http://hudson.intra.vsa.de:8080/userContent/tools/jdk1.6.0_something.zip", worker2.from)
+        Assert.assertEquals ("http://somewhere/jdk1.6.0_something.zip", worker2.from)
         Assert.assertNotNull (task2)
     }
 }

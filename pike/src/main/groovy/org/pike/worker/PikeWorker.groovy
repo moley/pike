@@ -1,6 +1,5 @@
 package org.pike.worker
 
-import groovy.util.logging.Log4j
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.pike.cache.CacheManager
@@ -38,6 +37,22 @@ public abstract class PikeWorker {
     String group
 
     public static String NEWLINE = System.getProperty("line.separator")
+
+    Environment environment
+
+    Host host
+
+    String name
+
+    TaskContext context
+
+    Closure autoconfigClosure
+
+    String paramkey
+
+    String paramvalue
+
+    String fileFlags
 
 
     public void configure (final PikeWorker otherWorker) {
@@ -88,23 +103,6 @@ public abstract class PikeWorker {
     }
 
 
-    /**
-     * getter
-     * @return tempdir
-     */
-    public File getTempDir () {
-
-        if (operatingsystem == null)
-            throw new IllegalStateException("No operatingsystem specific data applied")
-
-        if (operatingsystem.tmpdir == null)
-            return null
-
-        return toFile (operatingsystem.tmpdir)
-    }
-
-
-
     public Path toPath(final String path) {
         if (path == null)
             return null
@@ -121,10 +119,6 @@ public abstract class PikeWorker {
     public File toFile(final String path) {
         if (path == null)
             return null
-
-       /** File absolutePath = new File (path)
-        if (absolutePath.isAbsolute())
-            return absolutePath**/
 
         if (operatingsystem == null)
             throw new IllegalStateException("No operatingsystem set")
@@ -143,21 +137,7 @@ public abstract class PikeWorker {
     }
 
 
-    Environment environment
 
-    Host host
-
-    String name
-
-    TaskContext context
-
-    Closure autoconfigClosure
-
-    String paramkey
-
-    String paramvalue
-
-    String fileFlags
 
 
     public String getDetailInfo () {

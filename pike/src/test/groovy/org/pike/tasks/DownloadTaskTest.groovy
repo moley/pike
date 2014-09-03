@@ -34,7 +34,6 @@ class DownloadTaskTest {
 
 
         Operatingsystem os = new Operatingsystem("linux")
-        os.tmpdir = "/tmp"
         task.operatingsystem = os
 
         Defaults defaults = new Defaults ()

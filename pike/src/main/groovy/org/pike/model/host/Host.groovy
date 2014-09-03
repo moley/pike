@@ -3,11 +3,9 @@ package org.pike.model.host
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.internal.reflect.Instantiator
+import org.pike.BitEnvironment
 import org.pike.model.operatingsystem.Operatingsystem
-import org.pike.remoting.IRemoting
-import org.pike.remoting.SshRemoting
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,7 +32,7 @@ class Host extends EnvironmentHolder {
     String hostname
 
     /**
-     * context
+     * context of this host, can be used to distinguish hosts
      */
     String context
 
@@ -44,25 +42,29 @@ class Host extends EnvironmentHolder {
     String hostgroups
 
     /**
-     * rootpasswd
+     * password that is used to configure via pike
      */
     String pikepassword
 
+    /**
+     * user that is used to configure via pike
+     */
     String pikeuser
 
+    /**
+     * port that is used to configure via pike
+     */
     String pikeport = '22'
 
+    /**
+     * ip of the host
+     */
     String ip
 
     /**
-     * if current host is a master host, its pike instance
-     * tries to connect with the clients. If build is triggered on
-     * masterserver it is forwarded to all connected servers
+     * true: 64 bit environment, false: 32 bit environment
      */
-    boolean masterHost
-
-
-
+    BitEnvironment bitEnvironment = BitEnvironment._32
 
     /**
      * constructor
@@ -72,8 +74,18 @@ class Host extends EnvironmentHolder {
         super (name, instantiator)
     }
 
+    /**
+     * getter app desc
+     * @return describtion for repository
+     */
+    public getAppdesc () {
+        return operatingsystem.provider.id + bitEnvironment.id
+    }
+
+
+
     @Override
-    protected Set<String> getAllEnvironments(Project project) {
+    public Set<String> getAllEnvironments(Project project) {
         Set<String> allEnvironments = super.getAllEnvironments(project)
 
         //add environments of groups
@@ -138,7 +150,6 @@ class Host extends EnvironmentHolder {
         objectAsString += "    * ip                      : $ip $NEWLINE"
         objectAsString += "    * hostgroup               : $hostgroups $NEWLINE"
         objectAsString += "    * context                 : $context $NEWLINE"
-        objectAsString += "    * masterhost              : $masterHost $NEWLINE"
         objectAsString += "    * pike user               : $pikeuser $NEWLINE"
         objectAsString += "    * pike password           : $pikepassword $NEWLINE"
 		objectAsString += "    * pike port               : $pikeport $NEWLINE"

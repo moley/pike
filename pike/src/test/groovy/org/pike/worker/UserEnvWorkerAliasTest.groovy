@@ -16,25 +16,19 @@ import org.pike.model.operatingsystem.Operatingsystem
  */
 class UserEnvWorkerAliasTest {
 
-    File file = new File ("tmp/hallo")
-
-    @After
-    public void after () {
-        if (file.exists())
-            Assert.assertTrue (file.delete())
-    }
-
     @Test
     public void alias () {
+
+        File tmpFile = File.createTempFile(getClass().getName(), 'alias')
 
         UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
-        worker.file = "tmp/hallo"
+        worker.file (tmpFile.absolutePath)
         worker.alias("l", "ls -l")
         worker.install()
 
-        File file = worker.toFile(worker.file)
+        File file = worker.file
         String text = file.text
         println (text)
 

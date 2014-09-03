@@ -1,4 +1,4 @@
-version=0.1
+apply plugin: 'groovy'
 
 dependencies {
     compile project(':pike')

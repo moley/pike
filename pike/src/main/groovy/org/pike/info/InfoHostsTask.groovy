@@ -10,12 +10,15 @@ import org.pike.tasks.PikeTask
  */
 class InfoHostsTask extends PikeTask{
 
+    String completeString = ""
+
     @TaskAction
     public void show () {
         NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
         for (Host nextHost: hosts) {
-
-            println (sprintf("%-20s %-20s %-15s %-10s", nextHost.name, nextHost.hostname, nextHost.ip, nextHost.operatingsystem.name))
+            completeString += sprintf("%-20s %-20s %-15s %-10s", nextHost.name, nextHost.hostname, nextHost.ip, nextHost.operatingsystem.name) + '\n'
         }
+
+        println(completeString)
     }
 }

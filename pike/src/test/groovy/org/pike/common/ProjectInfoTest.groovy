@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
+import org.pike.model.host.Host
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,6 +16,17 @@ import org.junit.Test
 class ProjectInfoTest {
 
 
+
+    @Test
+    public void getCurrentHostDefault () {
+
+        Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
+        project.apply plugin: 'pike'
+
+        Host host = ProjectInfo.getCurrentHost(project)
+        Assert.assertNotNull("localhost", host.hostname)
+
+    }
 
     @Test
     public void allgroups () {

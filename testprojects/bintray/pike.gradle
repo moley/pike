@@ -1,0 +1,31 @@
+buildscript {
+   repositories {
+      mavenCentral()
+      maven { url "http://dl.bintray.com/markusoley/pike"}
+   }
+
+   dependencies {
+     classpath "org.pike:pike:0.1"
+   }
+}
+
+apply {
+    plugin 'pike'
+}
+
+defaults {
+    currentHost = 'localhost' //to enable on local machine
+    defaultuser = 'nightly'
+    rootpath = '${currentPath}/build/test'
+}
+
+apply from: 'configurations/operatingsystems.gradle'
+apply from: 'configurations/hosts.gradle'
+apply from: 'configurations/env.gradle'
+
+
+
+
+
+
+

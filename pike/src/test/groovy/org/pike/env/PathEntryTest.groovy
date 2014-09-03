@@ -22,8 +22,6 @@ class PathEntryTest {
 
         PathEntry entry = new PathEntry("GRADLE_HOME", "/opt/gradle", null)
 
-
-
         List <String> serialized = new ArrayList<String>()
         entry.serialize(os, serialized)
 

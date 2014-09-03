@@ -33,15 +33,11 @@ public interface IOperatingsystemProvider {
 
     String getCommandSeparator ()
 
-    String getScriptSuffix ()
-
     String getSetEnvPrefix()
 
     void executeGlobalConf (final String key, final String value, final String addon)
 
     String getAsVariable (final String variablename)
-
-    boolean isAbsolute(final String path)
 
     String addPath (final String path, final String addPath)
 
@@ -50,6 +46,14 @@ public interface IOperatingsystemProvider {
     void adaptLineDelimiters (final File originfile, final File adaptedfile)
 
     String adaptLineDelimiters (String originText)
+
+    /**
+     * method checks if the current host is a host with the current os
+     * @return true: current host has this os, false: current host has another os
+     */
+    boolean isActive ()
+
+    String getId ()
 
 
 }

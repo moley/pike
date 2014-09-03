@@ -90,7 +90,7 @@ class UserenvTaskTest {
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
         UserenvWorker worker = setPropertyHalloTask.workers.get(0)
-        worker.file = propFilePath
+        worker.file (propFilePath)
         println (setPropertyHalloTask.getDetailInfo())
         setPropertyHalloTask.install()
 
@@ -112,7 +112,7 @@ class UserenvTaskTest {
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
         UserenvWorker worker = setPropertyHalloTask.workers.get(0)
         Assert.assertTrue (propFile.absoluteFile.parentFile.mkdirs())
-        worker.file = propFilePath
+        worker.file (propFilePath)
         println (setPropertyHalloTask.getDetailInfo())
         setPropertyHalloTask.install()
 

@@ -7,6 +7,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
+import org.pike.cache.CacheManager
 import org.pike.holdertasks.ResolveModelTask
 import org.pike.test.TestUtils
 
@@ -20,6 +21,8 @@ class AutoinstallPluginTest {
 
 
     public Project createProject (final boolean validJre, final boolean validGradle) {
+
+        CacheManager.cacheDir = new File ('build/cache')
 
         String pikeJre = validJre ? 'http://installbuilder.bitrock.com/java/jre1.7.0_65-osx.zip' : null
         String pikeGradle = validGradle ? "http://services.gradle.org/distributions/${TestUtils.CURRENT_DIST}": null
@@ -38,10 +41,8 @@ class AutoinstallPluginTest {
             linux {
                 homedir = "home/${project.defaults.defaultuser}"
                 programdir = "tools"
-                cachedir = "build/cache"
                 pikedir = "pike"
-                tmpdir = "tmp"
-                pikejre = pikeJre
+                pikejre32 = pikeJre
             }
 
             windows { //No autoinstall

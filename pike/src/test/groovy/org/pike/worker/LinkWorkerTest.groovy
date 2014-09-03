@@ -48,7 +48,6 @@ class LinkWorkerTest {
         task.toPath = dummyPathTo
 
         Operatingsystem os = new Operatingsystem("linux")
-        os.tmpdir = "/tmp"
         task.operatingsystem = os
 
         Defaults defaults = new Defaults ()
@@ -73,7 +72,6 @@ class LinkWorkerTest {
         Files.createSymbolicLink(dummyPathFrom.toPath(), dummyPathToOld.toPath())
 
         Operatingsystem os = new Operatingsystem("linux")
-        os.tmpdir = "/tmp"
         task.operatingsystem = os
 
         Defaults defaults = new Defaults ()
@@ -106,7 +104,6 @@ class LinkWorkerTest {
         task.toPath = dummyPathTo
 
         Operatingsystem os = new Operatingsystem("linux")
-        os.tmpdir = "/tmp"
         task.operatingsystem = os
 
         Defaults defaults = new Defaults ()

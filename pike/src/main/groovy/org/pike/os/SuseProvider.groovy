@@ -8,4 +8,8 @@ package org.pike.os
  * To change this template use File | Settings | File Templates.
  */
 class SuseProvider extends LinuxProvider {
+    @Override
+    boolean isActive() {
+        return //TODO
+    }
 }

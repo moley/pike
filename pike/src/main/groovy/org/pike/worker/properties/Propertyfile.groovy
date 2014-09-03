@@ -38,7 +38,9 @@ class Propertyfile {
 
         Chapter nextChapter = new Chapter(this, null)
 
-        List<String> contentOfFile = propFile.exists() ? propFile.text.split(NEWLINE).toList() : new ArrayList<String>()
+        boolean fileHasContent = propFile.exists() && ! propFile.text.trim().isEmpty()
+
+        List<String> contentOfFile = fileHasContent ? propFile.text.trim().split(NEWLINE).toList() : new ArrayList<String>()
 
 
         Entry nextPikedEntry = null

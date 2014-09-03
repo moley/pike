@@ -1,15 +1,11 @@
 package org.pike.os
 
-import groovy.util.logging.Log
+import groovy.util.logging.Slf4j
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 13.09.13
- * Time: 10:14
- * To change this template use File | Settings | File Templates.
+ * Provider for operatingsystem specialities depending on windows
  */
-@Log
+@Slf4j
 class WindowsProvider extends AbstractOsProvider{
     @Override
     String getBootstrapCommandRemovePath() {
@@ -63,14 +59,16 @@ class WindowsProvider extends AbstractOsProvider{
         return " & "
     }
 
-    @Override
-    String getScriptSuffix() {
-        return ".bat"
-    }
+
 
     @Override
     String getSetEnvPrefix() {
         return "SET "
+    }
+
+    @Override
+    String getId() {
+        return 'win'
     }
 
     @Override
@@ -99,10 +97,7 @@ class WindowsProvider extends AbstractOsProvider{
         return "%" + variablename + "%"
     }
 
-    @Override
-    boolean isAbsolute(String path) {
-        return path.charAt(1) == ':'
-    }
+
 
 
 
@@ -122,6 +117,11 @@ class WindowsProvider extends AbstractOsProvider{
 
     String adaptLineDelimiters (String originText) {
         return originText.replace('\n', '\r\n')
+    }
+
+    @Override
+    boolean isActive() {
+        return System.getProperty('os.name').toLowerCase().contains('win')
     }
 
     @Override

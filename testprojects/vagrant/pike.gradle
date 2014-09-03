@@ -1,8 +1,5 @@
-
-
 apply {
     plugin 'pike'
-    plugin 'vagrant'
 }
 
 
@@ -13,17 +10,12 @@ defaults {
     pikeuser = 'root'
     pikeport = '2222'
     pikepassword = 'cool'
-    pikegradle = 'http://services.gradle.org/distributions/gradle-2.0-all.zip'
 }
 
 operatingsystems {
     linux {
-        homedir = "/home/${project.defaults.defaultuser}"
         programdir = "${homedir}/swarm/tools"
-        cachedir = "${homedir}/.pike/cache"
         pikedir = '/opt/pike'
-        tmpdir = '/tmp'
-        pikejre = 'http://installbuilder.bitrock.com/java/jre1.7.0_65-linux.zip'
         appconfigfile = '/etc/sysconfig/jenkins/global.sh'
         userconfigfile =  "${homedir}/.bashrc"
         globalconfigfile = '/etc/profile'

@@ -1,6 +1,5 @@
 package org.pike.org.pike
 
-import com.google.common.io.Files
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
@@ -8,7 +7,7 @@ import org.junit.Test
 import org.pike.CreateLinuxScript
 
 /**
- * Created by OleyMa on 01.08.14.
+ * Test to check CreateLinuxScript task
  */
 class CreateLinuxScriptTest {
 
@@ -21,12 +20,6 @@ class CreateLinuxScriptTest {
 
         project.defaults {
             pikegradle = 'some pikegradle'
-        }
-
-        project.operatingsystems {
-            linux {
-                pikejre = 'some pikejre'
-            }
         }
 
         project.autoinstall {
@@ -49,8 +42,6 @@ class CreateLinuxScriptTest {
         Assert.assertTrue (jreFile.createNewFile())
 
         project.evaluate()
-
-        project.tasks.each {println (it.name)}
 
         CreateLinuxScript linuxScriptTask = project.tasks.prepareInstallerlinuxStartscript
         linuxScriptTask.create()
