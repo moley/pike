@@ -15,12 +15,12 @@ to easily test your provisioning scripts.
 
 To show all available tasks call the gradle task 
 
-   ./gradlew tasks 
+    ./gradlew tasks 
 
 
 To show what hosts are configured in your provisioning scripts you can call 
 
-   ./gradlew hosts 
+    ./gradlew hosts 
 
 
 ## Autoinstallation
