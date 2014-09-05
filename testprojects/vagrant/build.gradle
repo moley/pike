@@ -4,9 +4,9 @@ buildscript {
    }
 
    dependencies {
-     classpath files('../../pike/build/libs/pike-0.1.jar')
-     classpath files('../../autoinstall/build/libs/autoinstall-0.1.jar')
-     classpath files('../../vagrant/build/libs/vagrant-0.1.jar')
+     classpath files('../../pike/build/libs/pike-0.3.jar')
+     classpath files('../../autoinstall/build/libs/autoinstall-0.3.jar')
+     classpath files('../../vagrant/build/libs/vagrant-0.3.jar')
      classpath 'sshtools:j2ssh-core:0.2.9'
      classpath 'commons-io:commons-io:2.4'
    }

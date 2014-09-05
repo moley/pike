@@ -146,7 +146,7 @@ class AutoinstallPlugin implements Plugin<Project> {
             InstallPikeTask installPikeTask = project.tasks.create('installPike', InstallPikeTask)
             installPikeTask.group = GROUP_AUTOINSTALL
 
-            StartRemoteBuildTask startRemoteBuildTask = project.tasks.create('configure', StartRemoteBuildTask)
+            StartRemoteBuildTask startRemoteBuildTask = project.tasks.create('provision', StartRemoteBuildTask)
             startRemoteBuildTask.group = GROUP_AUTOINSTALL
             startRemoteBuildTask.dependsOn project.tasks.resolveModel
             startRemoteBuildTask.description = "Start pike on all hosts configured in the model"
@@ -162,26 +162,13 @@ class AutoinstallPlugin implements Plugin<Project> {
 
         NamedDomainObjectContainer<Host> hosts = project.extensions.hosts
         for (Host nextHost: hosts) {
-
-            Operatingsystem os = nextHost.operatingsystem
-            if (os == null)
-                continue
-
-            while (true) {
-                if (autoinstall.os.contains(os)) {
-                    if (! usedOs.contains(os)) {
-                        usedOs.add(os)
-                        operatingsystems.add(new AutoinstallEntry(os, nextHost.bitEnvironment))
-                    }
-                    break
+            Operatingsystem os = AutoinstallUtil.getInstallerOs(autoinstall, nextHost)
+            if (os != null) {
+                if (! usedOs.contains(os)) {
+                    usedOs.add(os)
+                    operatingsystems.add(new AutoinstallEntry(os, nextHost.bitEnvironment))
                 }
-                if (os.parent == null)
-                    break
-                else
-                    os = os.parent
             }
-
-
         }
 
         return operatingsystems

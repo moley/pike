@@ -33,6 +33,11 @@ class LinuxProvider extends AbstractOsProvider {
         return "chmod 777 PARAM0"
     }
 
+
+    String getBootstrapCommandAdaptUser () {
+        return "chown -R PARAM0:PARAM1 PARAM2"
+    }
+
     @Override
     String getBootstrapCommandStartConfigure() {
         return "sh PARAM0/configureHost.sh"      //TODO rename to configureHost.sh

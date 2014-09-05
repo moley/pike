@@ -33,6 +33,11 @@ class WindowsProvider extends AbstractOsProvider{
     }
 
     @Override
+    String getBootstrapCommandAdaptUser() {
+        return ""
+    }
+
+    @Override
     String getBootstrapCommandMakeWritablePath() {
         return ""
     }

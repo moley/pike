@@ -38,11 +38,8 @@ class SshRemoting extends AbstractRemoting {
     protected boolean isConfigured
 
 
-
-
-
-    public void setSshClient (final SshClient client) {
-        this.client = client
+    public String getGroup (Host host, Project project) {
+        return host.pikegroup != null ? host.pikegroup : project.defaults.pikegroup
     }
 
     public String getUser (Host host, Project project) {
@@ -73,6 +70,7 @@ class SshRemoting extends AbstractRemoting {
 
         user = getUser(host, project)
         password = getPassword(host, project)
+        group = getGroup(host, project)
 
         SshConnectionProperties props = new SshConnectionProperties()
         props.username = user

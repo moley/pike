@@ -3,8 +3,8 @@ package org.pike
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 import org.gradle.logging.ProgressLoggerFactory
-import org.pike.autoinstall.AutoinstallWorker
 import org.pike.autoinstall.PropertyChangeProgressLogging
+import org.pike.model.Autoinstall
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.IOperatingsystemProvider
@@ -20,7 +20,6 @@ class InstallPikeTask extends RemoteTask {
 
     File installPathRoot
 
-    private AutoinstallWorker logic = new AutoinstallWorker()
 
     protected IRemoting getRemoting () {
         return new SshRemoting()
@@ -29,6 +28,7 @@ class InstallPikeTask extends RemoteTask {
     @TaskAction
     public void install () {
 
+        Autoinstall autoinstall = project.autoinstall
 
 
         installPathRoot = AutoinstallUtil.getInstallPath(project)
@@ -36,7 +36,7 @@ class InstallPikeTask extends RemoteTask {
         String installerFileNotFound = ""
 
         for (Host host: getHostsToBuild()) {
-            File installerFile = getInstallerFile(host)
+            File installerFile = getInstallerFile(host, autoinstall)
             if (! installerFile.exists())
                 installerFileNotFound += "- Installerfile ${installerFile.absolutePath} for host $host.name (operatingsystem $host.operatingsystem.name) not available\n"
         }
@@ -48,7 +48,7 @@ class InstallPikeTask extends RemoteTask {
         for (Host host: hosts) {
             IRemoting remoting = getRemoting()
 
-            File installerFile = getInstallerFile(host)
+            File installerFile = getInstallerFile(host, autoinstall)
 
             Operatingsystem os = host.operatingsystem
             IOperatingsystemProvider osprovider = os.provider
@@ -61,12 +61,9 @@ class InstallPikeTask extends RemoteTask {
 
             remoting.configure(project, host)
 
-            logic.operatingsystem = host.operatingsystem
-
-            String pikeDirRemote = logic.getPikeDirRemote(host)
+            String pikeDirRemote = AutoinstallUtil.getPikeDirRemote(host)
 
             //initialize paths
-
             CommandBuilder builderInitializePaths = remoting.createCommandBuild(host)
             builderInitializePaths = builderInitializePaths.addCommand(osprovider.bootstrapCommandRemovePath, pikeDirRemote)
             builderInitializePaths = builderInitializePaths.addCommand(osprovider.bootstrapCommandMakePath, pikeDirRemote)
@@ -75,17 +72,20 @@ class InstallPikeTask extends RemoteTask {
 
             //TODO upload unzip in windows
 
-
             //upload installer
             remoting.upload(pikeDirRemote, installerFile, progressLogging)
 
-
-            //Unzip the installer file remote
+            //Unzip the installer on remote host
             String remoteZipFile = osprovider.addPath(pikeDirRemote, installerFile.name)
             CommandBuilder builderUnzipInstaller = remoting.createCommandBuild(host)
-            builderUnzipInstaller = builderUnzipInstaller.addCommand(osprovider.bootstrapCommandChangePath, pikeDirRemote, false)
+            builderUnzipInstaller = builderUnzipInstaller.addCommand(false, osprovider.bootstrapCommandChangePath, pikeDirRemote)
             builderUnzipInstaller = builderUnzipInstaller.addCommand(osprovider.bootstrapCommandInstall, remoteZipFile)
             remoting.execCmd(builderUnzipInstaller.get())
+
+            //Adapt the user
+            CommandBuilder builderAdaptUser = remoting.createCommandBuild(host)
+            builderAdaptUser = builderAdaptUser.addCommand(osprovider.bootstrapCommandAdaptUser, remoting.user, remoting.group, pikeDirRemote)
+            remoting.execCmd(builderAdaptUser.get())
 
             remoting.disconnect()
         }
@@ -102,8 +102,9 @@ class InstallPikeTask extends RemoteTask {
      * @param host  host
      * @return installer file
      */
-    private File getInstallerFile (final Host host) {
-        return new File (installPathRoot, AutoinstallUtil.getInstallerFile(host.operatingsystem) + ".installer")
+    public File getInstallerFile (final Host host, Autoinstall autoinstall) {
+        Operatingsystem os = AutoinstallUtil.getInstallerOs(autoinstall, host)
+        return new File (installPathRoot, AutoinstallUtil.getInstallerFile(os) + ".installer")
     }
 
 

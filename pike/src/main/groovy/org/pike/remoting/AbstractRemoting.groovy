@@ -8,6 +8,7 @@ import org.pike.model.host.Host
 abstract class AbstractRemoting implements IRemoting{
 
     protected String user
+    protected String group
     protected String password
 
     CommandBuilder createCommandBuild (Host host) {
@@ -33,5 +34,12 @@ abstract class AbstractRemoting implements IRemoting{
             throw new IllegalStateException("Password not set, please call configure() and implement this method to set the property password")
 
         return password
+    }
+
+    String getGroup () {
+        if (group == null)
+            return getUser()
+        else
+            return group
     }
 }

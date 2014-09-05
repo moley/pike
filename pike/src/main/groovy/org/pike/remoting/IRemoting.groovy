@@ -60,4 +60,10 @@ public interface IRemoting {
      * @return user
      */
     String getUser ()
+
+    /**
+     * getter
+     * @return group
+     */
+    String getGroup ()
 }

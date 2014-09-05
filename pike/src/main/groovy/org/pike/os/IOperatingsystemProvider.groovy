@@ -23,6 +23,8 @@ public interface IOperatingsystemProvider {
 
     String getBootstrapCommandStartConfigure()
 
+    String getBootstrapCommandAdaptUser ()
+
     //End of bootstrap
 
     String getFileSeparator ()

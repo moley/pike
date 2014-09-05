@@ -48,6 +48,13 @@ class DownloadWorker extends PikeWorker {
         fileFlags = "755";
     }
 
+    /**
+     * if overwrite is enabled, the file is always downloaded completely without checking if it has changed
+     */
+    public void overwrite () {
+        this.overwrite = true
+    }
+
     public void to (String to) {
         this.toPath = toFile(to)
     }

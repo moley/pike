@@ -52,6 +52,11 @@ class Host extends EnvironmentHolder {
     String pikeuser
 
     /**
+     * group for pike actions
+     */
+    String pikegroup
+
+    /**
      * port that is used to configure via pike
      */
     String pikeport = '22'
@@ -80,6 +85,17 @@ class Host extends EnvironmentHolder {
      */
     public getAppdesc () {
         return operatingsystem.provider.id + bitEnvironment.id
+    }
+
+    /**
+     * getter
+     * @return group with which pike is executed
+     */
+    public String getPikegroup () {
+        if (this.pikegroup == null)
+          return pikeuser
+        else
+          return this.pikegroup
     }
 
 

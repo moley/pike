@@ -8,7 +8,6 @@ apply {
 defaults {
     defaultuser = 'nightly'
     pikeuser = 'root'
-    pikeport = '2222'
     pikepassword = 'cool'
 }
 
@@ -38,8 +37,8 @@ environments {
     // include
     confincludes {
         userenv {
-            file = operatingsystem.userconfigfile
-            include (operatingsystem.appconfigfile)
+            file operatingsystem.userconfigfile
+            include operatingsystem.appconfigfile
         }
     }
 
@@ -50,7 +49,7 @@ environments {
 
         download {
             from "http://installbuilder.bitrock.com/java/jre${paramvalue}-linux.zip"
-            to (operatingsystem.programdir)
+            to operatingsystem.programdir
             executable "jdk${paramvalue}/bin/java"
             executable "jdk${paramvalue}/jre/bin/java"
         }

@@ -2,12 +2,10 @@ package org.pike
 
 import groovy.util.logging.Log4j
 import org.gradle.api.GradleException
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.internal.tasks.options.Option
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskAction
 import org.gradle.logging.ProgressLoggerFactory
-import org.pike.autoinstall.AutoinstallWorker
 import org.pike.autoinstall.PropertyChangeProgressLogging
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
@@ -24,8 +22,6 @@ import org.pike.remoting.*
 @Log4j
 class StartRemoteBuildTask extends RemoteTask {
 
-    private AutoinstallWorker logic = new AutoinstallWorker()
-
     private String env
 
     protected File minimalInstallPackage = new File (project.buildDir, 'minimalinstall')
@@ -37,7 +33,6 @@ class StartRemoteBuildTask extends RemoteTask {
     }
 
     public String getEnv () {
-
         if (env != null) {
             Environment environment = findEnvByName(project, env)
             String envname = environment.name
@@ -52,7 +47,10 @@ class StartRemoteBuildTask extends RemoteTask {
         return new SshRemoting()
     }
 
-    private void copyBuildscripts () {
+    /**
+     * copies provision scripts
+     **/
+    private void copyProvisioningDefinitions() {
         project.copy {
             from(project.projectDir)
             include '**/*.gradle'
@@ -73,38 +71,44 @@ class StartRemoteBuildTask extends RemoteTask {
 
         Collection<Host> hosts = getHostsToBuild()
 
-        copyBuildscripts()
+        copyProvisioningDefinitions()
 
         for (Host nextHost: hosts) {
 
-            println ("Start remote build on host " + nextHost.name + "- Operatingsystem " + nextHost.operatingsystem.name + "- Group " + group + " with env " + getEnv())
+            String hostname = nextHost.name
+
+
+            println ("Start remote build on host $hostname - Operatingsystem $nextHost.operatingsystem.name - Group " + group + " with env " + getEnv())
 
             PropertyChangeProgressLogging progressLogging = new PropertyChangeProgressLogging(services.get(ProgressLoggerFactory), StartRemoteBuildTask)
 
             try {
-
-                progressLogging.progressLogger.setDescription("Start configuring host $nextHost.hostname")
-                progressLogging.start("Start configuring host $nextHost.hostname")
+                progressLogging.progressLogger.setDescription("Provisioning of host $hostname")
+                progressLogging.start("Starting provisioning of host $hostname")
 
                 String pikeDir = file (nextHost.operatingsystem.pikedir).absolutePath
                 if (pikeDir == null)
-                    throw new IllegalStateException("PikeDir on host " + nextHost.hostname + " not set")
+                    throw new IllegalStateException("PikeDir on host $hostname not set")
 
                 IRemoting remoting = getRemoting()
                 remoting.configure(project, nextHost)
 
+                String pikeDirRemote = AutoinstallUtil.getPikeDirRemote(nextHost)
 
+                progressLogging.progressLogger.progress("Upload provision descriptions to host $hostname")
 
-               // logic.uploadProjectDescriptions(project, nextHost, progressLogging)
-               // logic.uploadPlugins(project, nextHost, progressLogging)
+                FileTree buildscripts = project.fileTree(minimalInstallPackage)
+                for (File next: buildscripts.files) {
+                    String relativ = (next.toString() - minimalInstallPackage.toString())
+                    String to = pikeDirRemote + relativ
+                    log.info("Upload file $next.absolutePath to $to on host $hostname")
+                    remoting.upload(to, next, progressLogging)
+                }
 
 
                 IOperatingsystemProvider osProvider = nextHost.operatingsystem.provider
-
-                String pikeDirRemote = logic.getPikeDirRemote(nextHost)
-
                 CommandBuilder builder = remoting.createCommandBuild(nextHost)
-                builder = builder.addCommand(osProvider.bootstrapCommandChangePath, pikeDirRemote, false)
+                builder = builder.addCommand(false, osProvider.bootstrapCommandChangePath, pikeDirRemote)
                 builder = builder.addCommand(osProvider.bootstrapCommandStartConfigure, pikeDirRemote)
                 String command = builder.get()
                 command += " " + getEnv()
@@ -114,15 +118,16 @@ class StartRemoteBuildTask extends RemoteTask {
                 if (project.logger.infoEnabled)
                     command += " --info"
 
-                println ("Complete command to configure remotely: " + command)
+                log.info ("Complete command to configure remotely: $command")
+                progressLogging.progressLogger.progress("Start provisioning of host $hostname")
                 remoting.execCmd(command)
 
                 remoting.disconnect()
 
-
+                progressLogging.progressLogger.progress("Provisioning of host $hostname is done")
 
             } catch (Exception e) {
-                log.error("Could not installPike host $nextHost due to error ${e.toString()}", e)
+                log.error("Could not provision $hostname due to error ${e.toString()}", e)
             } finally {
                 progressLogging.end()
             }

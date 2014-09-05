@@ -12,7 +12,7 @@ To use pike with autoinstall:
 
 ./gradlew prepareInstallers - prepares all installers for all configured operatingsystems
 ./gradlew installPike --host=foo - installs pike on this host
-./gradlew configure --host=foo starts configuration on this host
+./gradlew provision --host=foo --env=bar - starts provisioning of one or all environments on this host
 
 To use pike with vagrant: 
 
@@ -20,4 +20,4 @@ To use pike with vagrant:
 ./gradlew createVms - creates vms that are configured
 ./gradlew startVms - starts vms that are configured
 ./gradlew installPikeVm - installs pike on vm
-./gradlew configureVm - starts configuration on vm
+./gradlew provisionVm - starts provisioning of one or all environments on this vm 

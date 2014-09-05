@@ -69,6 +69,9 @@ public abstract class PikeWorker {
         return cutoff.substring(0, cutoff.lastIndexOf("."))
     }
 
+    public group (final String group) {
+        this.group = group
+    }
 
     public user (final String user) {
         this.user = user

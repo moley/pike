@@ -25,7 +25,24 @@ class CommandBuilder {
         return this
     }
 
-    public CommandBuilder addCommand (final String unresolved, final String param, final boolean sudo = true) {
+    /**
+     * creates a command that is executed as sudo
+     * @param unresolved  unresolved command
+     * @param param   list of parameters
+     * @return itself
+     */
+    public CommandBuilder addCommand (final String unresolved, final String... param) {
+        return addCommand(true, unresolved, param)
+    }
+
+    /**
+     * creates a command
+     * @param sudo          true: executed as sudo
+     * @param unresolved    unresolved command
+     * @param param         list of parameters
+     * @return itself
+     */
+    public CommandBuilder addCommand (final boolean sudo, final String unresolved, final String... param) {
         if (osProvider == null)
             throw new IllegalStateException("No operatingsystem provider defined")
 
@@ -33,8 +50,11 @@ class CommandBuilder {
             throw new IllegalStateException("No unresolved path defined")
 
         String resolved = unresolved
-        if (param != null)
-            resolved = unresolved.replace("PARAM0", param)
+
+        for (int i = 0; i < param.length; i++) {
+            String key = "PARAM" + i
+            resolved = resolved.replace(key, param [i])
+        }
 
         resolved = resolved.replaceAll("//", osProvider.fileSeparator)
 

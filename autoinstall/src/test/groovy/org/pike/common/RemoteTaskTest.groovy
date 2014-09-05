@@ -35,22 +35,22 @@ class RemoteTaskTest {
 
         project.hosts {
             myhost {
-                project.operatingsystems.linux
+                operatingsystem = project.operatingsystems.linux
                 hostgroups = 'test'
             }
 
             myhost2 {
-                project.operatingsystems.linux
+                operatingsystem = project.operatingsystems.linux
                 hostgroups = 'test'
             }
 
             secondhost {
-                project.operatingsystems.linux
+                operatingsystem = project.operatingsystems.linux
                 hostgroups = 'prod'
             }
 
             secondhost2 {
-                project.operatingsystems.linux
+                operatingsystem = project.operatingsystems.linux
                 hostgroups = 'prod, test'
             }
         }
@@ -98,6 +98,7 @@ class RemoteTaskTest {
         project.hosts {
             test {
                 hostgroups = 'test'
+                operatingsystem = project.operatingsystems.linux
             }
         }
 

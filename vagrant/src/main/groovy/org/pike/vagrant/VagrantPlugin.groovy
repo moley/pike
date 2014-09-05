@@ -48,15 +48,21 @@ class VagrantPlugin implements Plugin<Project> {
         })
         project.extensions.vagrant = vagrantContainer
 
-        log.info("hosts extensions: " + project.extensions.hosts.size())
 
         project.afterEvaluate {
 
+            log.info("hosts extensions: " + project.extensions.hosts.size())
+
+
             for (Host nextHost : project.extensions.hosts) {
 
+                log.info("Check host $nextHost.name")
+
                 Vagrant vagrant = VagrantUtil.findVagrant(project, nextHost, vagrantContainer)
-                if (vagrant == null)
+                if (vagrant == null) {
+                    log.warn("Could not find vagrant named $nextHost.name")
                     continue
+                }
 
                 String hostSuffix = nextHost.name
 
@@ -86,7 +92,7 @@ class VagrantPlugin implements Plugin<Project> {
             installPikeTask.group = GROUP_VAGRANT
 
 
-            StartRemoteBuildInVmTask startRemoteBuildInVmTask = project.tasks.create('configureVm', StartRemoteBuildInVmTask)
+            StartRemoteBuildInVmTask startRemoteBuildInVmTask = project.tasks.create('provisionVm', StartRemoteBuildInVmTask)
             startRemoteBuildInVmTask.group = GROUP_VAGRANT
 
 

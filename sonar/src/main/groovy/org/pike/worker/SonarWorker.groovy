@@ -61,7 +61,8 @@ class SonarWorker extends CombinedWorker {
         }
 
         UserenvWorker userEnv = new UserenvWorker()
-        userEnv.file = new File (linkWorker.fromPath, '/conf/sonar.properties')
+        userEnv.configure(this)
+        userEnv.file(new File (linkWorker.fromPath, '/conf/sonar.properties').absolutePath)
         userEnv.entries = entries
 
         workers.add(userEnv)

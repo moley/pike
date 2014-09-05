@@ -35,6 +35,11 @@ class Defaults {
     String pikeuser
 
     /**
+     * group for managing pike
+     */
+    String pikegroup
+
+    /**
      * link to gradle for usage with pike
      */
     String pikegradle  = 'http://services.gradle.org/distributions/gradle-2.0-all.zip'
