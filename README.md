@@ -15,12 +15,12 @@ to easily test your provisioning scripts.
 
 To show all available tasks call the gradle task 
 
-   ./gradlew tasks - shows all tasks you can use 
+   ./gradlew tasks 
 
 
 To show what hosts are configured in your provisioning scripts you can call 
 
-    ./gradlew hosts - shows all configured hosts
+   ./gradlew hosts 
 
 
 ## Autoinstallation
@@ -44,11 +44,11 @@ As using with autoinstallation plugin you have to create your installers first.
 
 Then you can create your vms with
 
-   ./gradlew createVms 
+    ./gradlew createVms 
 
 To start your vms you simply call
 
-   ./gradlew startVms 
+    ./gradlew startVms 
 
 If you want to install pike on a vm you call
 
