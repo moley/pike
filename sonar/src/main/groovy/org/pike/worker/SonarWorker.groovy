@@ -19,7 +19,7 @@ class SonarWorker extends CombinedWorker {
 
 
     public void to (final String to) {
-        this.to = toFile(to)
+        this.toPath = toFile(to)
     }
 
     /**
@@ -32,7 +32,7 @@ class SonarWorker extends CombinedWorker {
         if (toPath == null)
             throw new IllegalStateException("You have to set a to of the sonar jar'")
 
-        String local = url.substring(url.lastIndexOf("/") + 1)
+        //String local = url.substring(url.lastIndexOf("/") + 1)
         String linked = 'sonar'
 
         DownloadWorker downloadWorker = new DownloadWorker()

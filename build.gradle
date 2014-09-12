@@ -8,13 +8,14 @@ buildscript {
   }
 }
 
-import java.text.SimpleDateFormat
+
+allprojects {
+    apply plugin: 'idea'
+}
 
 subprojects {
 
-
     apply plugin: 'groovy'
-    apply plugin: 'idea'
     apply plugin: 'com.jfrog.bintray'
 
     dependencies {
@@ -41,7 +42,7 @@ subprojects {
     }
 
     group = 'org.pike'
-    version = '0.4'
+    version = '0.7'
 
     println ("Configuring for $project.name with version $project.version")
 
@@ -104,9 +105,7 @@ configurations {
 }
 
 
-
-
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
+    gradleVersion = '2.1'
 }
 

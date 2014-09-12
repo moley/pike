@@ -6,6 +6,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.pike.model.operatingsystem.Operatingsystem
 
+import java.nio.file.Files
+
 /**
  * Created by OleyMa on 06.03.14.
  */
@@ -40,7 +42,7 @@ class CreateWindowsScript extends DefaultTask {
         log.info ("Found local gradle home ${localGradleGome}")
         log.info ("Found local jre home ${localJavaHome}")
 
-        scriptFileCreated = new File (toDir, 'configureHost.sh')
+        scriptFileCreated = new File (toDir, 'configureHost.bat')
         scriptFileCreated.parentFile.mkdirs()
         scriptFileCreated.text =
                 """ set GRADLE_HOME=$localGradleGome
@@ -54,6 +56,8 @@ echo "Startparameter = %1%"
 %GRADLE_HOME%\\bin\\gradle %1% --stacktrace"""
 
         ant.chmod(perm:"0755", file:scriptFileCreated)
+
+
 
     }
 

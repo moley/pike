@@ -1,5 +1,6 @@
 package org.pike.model.host
 
+import groovy.util.logging.Slf4j
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
@@ -14,6 +15,7 @@ import org.pike.model.operatingsystem.Operatingsystem
  * Time: 22:08
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 class Host extends EnvironmentHolder {
 
     /**
@@ -115,7 +117,8 @@ class Host extends EnvironmentHolder {
           NamedDomainObjectContainer<HostGroup> hostgroups = project.extensions.hostgroups
           hostgroups.all { HostGroup group ->
 
-            println ("Check if " + trimAssignedHostgroups + " contains " + group.name)
+            if (log.debugEnabled)
+                log.debug ("Check if " + trimAssignedHostgroups + " contains " + group.name)
             if (trimAssignedHostgroups.contains(group.name)) {
                 allEnvironments.addAll(group.getAllEnvironments())
             }

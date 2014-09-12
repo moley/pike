@@ -5,17 +5,13 @@ buildscript {
    }
 
    dependencies {
-     classpath "org.pike:autoinstall:0.1"
+     classpath "org.pike:autoinstall:0.+"
    }
 }
 
 
 apply {
   plugin 'autoinstall'
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = new File ("../gradle.version").text
 }
 
 apply from: 'pike.gradle'

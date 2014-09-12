@@ -15,7 +15,7 @@ import org.pike.StartRemoteBuildTask
  */
 class RemoteTaskTest {
 
-    private String TASKCONFIGUREREMOTE = "configure"
+    private String TASKCONFIGUREREMOTE = "provision"
 
     /**
      * creates a valid project

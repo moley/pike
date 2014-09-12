@@ -42,6 +42,18 @@ abstract class AbstractEnvironmentWorker extends PikeWorker  {
     }
 
     /**
+     * configures a chapter the settings are stored to
+     * @param chapter
+     */
+    public void chapter (final String chapter) {
+        if (chapter != null)
+            throw new IllegalStateException('You cannot override chapter')
+
+        this.chapter = chapter
+
+    }
+
+    /**
      * getter
      * @return file which is configured
      */

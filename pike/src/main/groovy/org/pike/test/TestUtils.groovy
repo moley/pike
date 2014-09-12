@@ -18,7 +18,6 @@ public class TestUtils {
 
     private final static String OS = System.getProperty("os.name")
 
-    private static File gradleHome = new File ("/Users/OleyMa/programs/gradle-2.0")
 
     public static String CURRENT_DIST = 'gradle-2.0-all.zip'
 
@@ -27,7 +26,23 @@ public class TestUtils {
      * @return
      */
     public static GradleConnector getGradleConnector () {
-        return GradleConnector.newConnector().useInstallation(gradleHome) //TODO with gradle wrapper
+        return GradleConnector.newConnector().useGradleVersion("2.0") //TODO with gradle wrapper
+    }
+
+    /**
+     * gets testproject path with given name
+     * @param testprojectname name of testproject
+     * @return testproject path
+     */
+    public static File getTestproject (final String testprojectname) {
+        File testprojects = new File ('testprojects')
+        if (! testprojects.exists())
+            testprojects = new File ('../testprojects')
+
+        File concreteTestProject = new File (testprojects, testprojectname)
+        if (! concreteTestProject.exists())
+            throw new IllegalStateException("Could not find testproject $testprojectname")
+        return concreteTestProject
     }
 
 
@@ -67,27 +82,7 @@ public class TestUtils {
         return OS.toUpperCase().indexOf("WIN") >= 0
     }
 
-    /**
-     * Gets toPath to a gradleplugins-module
-     *
-     * @param project name of the project, e.g. 'marvin'
-     * @return toPath
-     */
-    public static File getProjectPath(final String project) {
 
-        File pathAsPath = new File(project)
-        if (!pathAsPath.exists()) {
-            println("Path " + pathAsPath.absolutePath + " doesn't exist, look up in parent")
-            pathAsPath = new File(new File("").absoluteFile.parentFile, project)
-        }
-        else
-            println("Using projectpath " + pathAsPath.absolutePath)
-
-        if (!pathAsPath.exists())
-            throw new IllegalStateException("Path " + pathAsPath.absolutePath + " not found in project.")
-
-        return pathAsPath
-    }
 
 
 }

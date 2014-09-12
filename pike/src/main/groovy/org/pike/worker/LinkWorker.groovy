@@ -1,6 +1,5 @@
 package org.pike.worker
 
-import groovy.util.logging.Log
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Files

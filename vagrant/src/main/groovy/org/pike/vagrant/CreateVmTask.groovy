@@ -21,6 +21,7 @@ class CreateVmTask extends DefaultTask {
 
 
 
+
     @TaskAction
     public void prepare () {
         Operatingsystem os = host.operatingsystem

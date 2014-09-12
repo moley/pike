@@ -78,7 +78,7 @@ class WindowsProvider extends AbstractOsProvider{
 
     @Override
     void executeGlobalConf(String key, String value, String addon) {
-        log.fine("executing global confs is deactivated because it breaks everything :-) (" + key + "," + value + "," + addon)
+        log.warn("executing global confs is deactivated because it breaks everything :-) (" + key + "," + value + "," + addon)
 
         /**if (addon == null)
             addon = ""
@@ -134,7 +134,7 @@ class WindowsProvider extends AbstractOsProvider{
         if (originfile.name.contains("configureHost"))
             return
 
-        log.fine("adapt line delimiters from file " + originfile.absolutePath + " to file " + adaptedfile.absolutePath)
+        log.debug("adapt line delimiters from file " + originfile.absolutePath + " to file " + adaptedfile.absolutePath)
 
         adaptedfile.text = originfile.text.replace('\n', '\r\n') //from linux to windows delimiters
         //TODO sometimes we want to administrate linux systems from a windows host.

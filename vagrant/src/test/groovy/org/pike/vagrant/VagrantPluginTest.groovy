@@ -64,7 +64,7 @@ class VagrantPluginTest {
         InstallPikeInVmTask installPikeInVmTask = project.tasks.getByName('installPikeVm')
         Assert.assertNotNull (installPikeInVmTask)
 
-        StartRemoteBuildInVmTask configurePikeInVmTask = project.tasks.getByName('configureVm')
+        StartRemoteBuildInVmTask configurePikeInVmTask = project.tasks.getByName('provisionVm')
         Assert.assertNotNull(configurePikeInVmTask)
 
     }

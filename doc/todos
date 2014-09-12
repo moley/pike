@@ -1,4 +1,5 @@
-
+- Installer auf gradlew umstellen
+- Kopieren der libs beim Starten des Provisionings, incl. UptoDateCheck
 
 
 - pre und post Tasks
