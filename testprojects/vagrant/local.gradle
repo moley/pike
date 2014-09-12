@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../../pike/build/classes/main')
+        classpath files('../../pike/build/resources/main')
+
+        classpath files('../../autoinstall/build/classes/main')
+        classpath files('../../autoinstall/build/resources/main')
+
+        classpath files('../../vagrant/build/classes/main')
+        classpath files('../../vagrant/build/resources/main')
+
+        classpath 'sshtools:j2ssh-core:0.2.9'
+        classpath 'commons-io:commons-io:2.4'
+    }
+}
+
+apply {
+    plugin 'autoinstall'
+    plugin 'vagrant'
+}
+
+apply from: "pike.gradle"
+
+autoinstall {
+    os (operatingsystems.linux)
+}
+
+vagrant {
+    linux { // is the same as operatingsystem name
+        boxUrl = 'https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-i386-vagrant-disk1.box'
+    }
+}
+
+
+

@@ -1,0 +1,19 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../../pike/build/classes/main')
+        classpath files('../../pike/build/resources/main')
+
+        classpath files('../../autoinstall/build/classes/main')
+        classpath files('../../autoinstall/build/resources/main')
+
+        classpath 'sshtools:j2ssh-core:0.2.9'
+        classpath 'commons-io:commons-io:2.4'
+    }
+}
+
+
+apply from: 'pike.gradle'

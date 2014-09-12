@@ -1,5 +1,0 @@
-operatingsystems {
-    macosx {
-        programdir = 'tools'
-    }
-}

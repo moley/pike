@@ -1,0 +1,12 @@
+Downloading https://services.gradle.org/distributions/gradle-2.0-bin.zip
+
+Exception in thread "main" java.net.ConnectException: Verbindungsaufbau abgelehnt
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:369)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:230)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:212)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:403)
+	at java.net.Socket.connect(Socket.java:642)
+
+-> Try if wget works
+-> Download gradle to ~/.gradle/wrapper/..... manually
