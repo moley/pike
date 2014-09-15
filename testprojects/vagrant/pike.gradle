@@ -19,16 +19,24 @@ operatingsystems {
         userconfigfile =  "${homedir}/.bashrc"
         globalconfigfile = '/etc/profile'
     }
+    windows {
+    }
 }
 
 hosts {
     testhost {
         hostname = 'host1'
-        ip = '172.16.9.111'
+        ip = '172.17.9.111'
         hostgroups = 'prod'
         operatingsystem = project.operatingsystems.linux
         environment 'jdks'
         environment 'confincludes'
+    }
+    
+    testwin {
+        hostname='testwin'
+        ip = '172.17.9.112'
+        operatingsystem = project.operatingsystems.windows
     }
 }
 
