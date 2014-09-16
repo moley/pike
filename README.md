@@ -1,10 +1,10 @@
 pike
 ====
 
-Pike is a provisioning tool like chef/puppet based on gradle technology. You can define multiple 
-hosts to be provisioned in different ways. Also pike is implemented to be simply bootstrapped, 
-so you only need an ssh access to the hosts that should be configured. It works with vagrant as well 
-to easily test your provisioning scripts. 
+Pike is a provisioning tool like chef/puppet based on gradle technology. You can define the current or multiple 
+remote hosts to be provisioned in different ways. Also pike is implemented to be simply bootstrapped, 
+so you only need an ssh access to any remotehosts that should be configured. If you want to configure localhost you need no more additional tooling. 
+Pike works with vagrant as well to easily test your provisioning scripts. 
 
 
 ## First steps 
