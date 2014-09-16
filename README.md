@@ -5,7 +5,7 @@ Pike is a provisioning tool like chef/puppet based on gradle technology. You can
 remote hosts to be provisioned in different ways. 
 
 Also pike is implemented to be simply bootstrapped, 
-so you only need an ssh access to any remotehosts that should be configured. If you want to configure localhost you need no more additional tooling. 
+so you only need an ssh access to provision any configured remotehost. If you want to provision localhost you need no more additional tooling. 
 
 Pike works with vagrant as well to easily test your provisioning scripts. 
 
