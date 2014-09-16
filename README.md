@@ -12,7 +12,12 @@ Pike works with vagrant as well to easily test your provisioning scripts.
 
 ## First steps 
 
-   TODO
+Starting pike the first time is very easy. No configuration of special repositories, no installation of additional tools, only download the example TODO, unzip it, call 
+
+    ./gradlew provision
+    
+and wait for an new file generated in the temp path which you notice from the output.
+
 
 ## General tasks
 
