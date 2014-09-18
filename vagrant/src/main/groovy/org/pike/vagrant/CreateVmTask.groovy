@@ -45,11 +45,6 @@ class CreateVmTask extends DefaultTask {
         File renamedFile = new File (boxFile.parentFile, "vm.box")
         boxFile.renameTo(renamedFile)
 
-        /**project.exec {
-            workingDir hostDir.absolutePath
-            commandLine 'vagrant', 'box', 'remove', host.name
-        }  **/
-
         project.exec {
             workingDir hostDir.absolutePath
             commandLine 'vagrant', 'box', 'add', host.name, renamedFile.absolutePath

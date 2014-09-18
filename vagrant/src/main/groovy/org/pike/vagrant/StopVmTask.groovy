@@ -9,7 +9,7 @@ class StopVmTask extends VagrantCliTask {
 
     @TaskAction
     public void stop () {
-        commands.add('down')
+        commands.add('halt')
         executeCli()
     }
 }

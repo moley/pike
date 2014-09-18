@@ -42,11 +42,17 @@ class JavaWorker extends PikeWorker {
     void install() {
 
         for (String nextHost: certificateHosts) {
+
+            if (! CertUtils.getCertsFile(jdkHome).exists()) {
+                log.info("No certfile exists for jdk ${jdkHome.absolutePath}")
+                continue
+            }
+
             log.info("Import certifiacte for host ${nextHost} into jdk ${jdkHome.absolutePath}")
             String commandline = CertUtils.readCertificateAndWriteToFile(nextHost, jdkHome)
             if (commandline != null) {
-                commandline.execute()
-                log.debug("Execute $commandline")
+                Process process = commandline.execute()
+                log.debug("Execute $commandline returned " + process.exitValue())
             }
         }
 

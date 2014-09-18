@@ -2,6 +2,7 @@ package org.pike
 
 import groovy.util.logging.Log4j
 import org.gradle.api.GradleException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.tasks.options.Option
 import org.gradle.api.tasks.TaskAction
@@ -97,6 +98,10 @@ class StartRemoteBuildTask extends RemoteTask {
 
                 progressLogging.progressLogger.progress("Upload provision descriptions to host $hostname")
 
+                IOperatingsystemProvider osProvider = nextHost.operatingsystem.provider
+
+
+                //Upload gradle scripts
                 FileTree buildscripts = project.fileTree(minimalInstallPackage)
                 for (File next: buildscripts.files) {
                     String relativ = (next.toString() - minimalInstallPackage.toString())
@@ -105,8 +110,29 @@ class StartRemoteBuildTask extends RemoteTask {
                     remoting.upload(to, next, progressLogging)
                 }
 
+                //Upload gradle.properties if available
+                File gradleProperties = project.file('gradle.properties')
+                if (gradleProperties.exists()) {
+                    log.info("Upload file $gradleProperties.absolutePath to $pikeDirRemote on host $hostname")
+                    remoting.upload(pikeDirRemote, gradleProperties, progressLogging)
+                }
 
-                IOperatingsystemProvider osProvider = nextHost.operatingsystem.provider
+                //Upload libs
+                String libDirRemote = osProvider.addPath(pikeDirRemote, 'libs')
+                CommandBuilder builderDelLibs = remoting.createCommandBuild(nextHost)
+                builderDelLibs = builderDelLibs.addCommand(false, osProvider.bootstrapCommandRemovePath, libDirRemote)
+                builderDelLibs = builderDelLibs.addCommand(false, osProvider.bootstrapCommandMakePath, libDirRemote)
+                remoting.execCmd(builderDelLibs.get())
+
+                FileCollection libCollection = AutoinstallUtil.getLocalLibs(project)
+                for (File nextLib: libCollection) {
+
+                    String remoteLib = osProvider.addPath(libDirRemote, nextLib.name)
+                    log.info("Upload library $nextLib.absolutePath to $remoteLib on host $hostname")
+                    remoting.upload(remoteLib, nextLib, progressLogging)
+                }
+
+                //Change to pike directory and start configuration
                 CommandBuilder builder = remoting.createCommandBuild(nextHost)
                 builder = builder.addCommand(false, osProvider.bootstrapCommandChangePath, pikeDirRemote)
                 builder = builder.addCommand(osProvider.bootstrapCommandStartConfigure, pikeDirRemote)

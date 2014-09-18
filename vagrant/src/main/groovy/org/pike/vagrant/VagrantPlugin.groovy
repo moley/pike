@@ -29,9 +29,10 @@ class VagrantPlugin implements Plugin<Project> {
         project.plugins.apply(PikePlugin.class)
 
         //pro host:
-        //      prepareVm
+        //      createVm
         //      startVm
         //      stopVm
+        //      deleteVm
 
         DefaultTask prepareVmsTask = project.tasks.create('createVms', DefaultTask)
         prepareVmsTask.group = GROUP_VAGRANT
@@ -42,6 +43,9 @@ class VagrantPlugin implements Plugin<Project> {
         DefaultTask stopVmsTask = project.tasks.create('stopVms', DefaultTask)
         stopVmsTask.group = GROUP_VAGRANT
         stopVmsTask.description = 'Stop all configured vms'
+        DefaultTask deleteVmsTask = project.tasks.create('deleteVms', DefaultTask)
+        deleteVmsTask.group = GROUP_VAGRANT
+        deleteVmsTask.description = 'Deletes all configured vms'
 
         NamedDomainObjectContainer<Vagrant> vagrantContainer  = project.container(Vagrant, new NamedDomainObjectFactory<Vagrant>() {
             Vagrant create(String name) {
@@ -93,6 +97,13 @@ class VagrantPlugin implements Plugin<Project> {
                 stopVmTask.group = GROUP_VAGRANT
                 stopVmsTask.dependsOn stopVmTask
                 stopVmTask.description = "Stop configured vm for host $hostname"
+
+                log.info("Creating deleteVm for host $nextHost")
+                DeleteVmTask deleteVmTask = project.tasks.create("deleteVm$hostSuffix", DeleteVmTask)
+                deleteVmTask.host = nextHost
+                deleteVmTask.group = GROUP_VAGRANT
+                deleteVmsTask.dependsOn deleteVmTask
+                deleteVmTask.description = "Deletes configured vm for host $hostname"
 
             }
 

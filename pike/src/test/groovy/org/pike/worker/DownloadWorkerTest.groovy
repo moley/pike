@@ -1,15 +1,13 @@
 package org.pike.worker
 
 import com.google.common.io.Files
-import org.apache.commons.io.FileUtils
-import org.junit.After
+import groovy.util.logging.Slf4j
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import org.pike.test.TestUtils
+import org.pike.cache.DummyCacheManager
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
-import org.pike.cache.DummyCacheManager
+import org.pike.test.TestUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,6 +16,7 @@ import org.pike.cache.DummyCacheManager
  * Time: 11:28
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 class DownloadWorkerTest {
 
     @Test
@@ -117,11 +116,17 @@ class DownloadWorkerTest {
 
         downloadworker.install()
 
+
+
         File executableExpected = new File (dummyPathTo, "testzipWithbin/bin/execute.sh")
+
+        log.info(executableExpected.absolutePath)
 
         Assert.assertTrue ("Executable toFile $executableExpected.absolutePath was not made executable", executableExpected.canExecute())
 
         Assert.assertTrue ("Task is not uptodate after installation", downloadworker.uptodate())
 
     }
+
+
 }

@@ -16,11 +16,14 @@ class DummyCacheManager extends CacheManager {
     }
 
     @Override
-    public File getCacheFile (final String url, final boolean overwrite) {
+    public DownloadInfo download(final String url, final boolean overwrite) {
        File file = new File (url)
        if (! file.exists())
          throw new IllegalStateException("Url ${url} does not exist")
 
-        return file
+        DownloadInfo info = new DownloadInfo()
+        info.cacheFile = file
+        info.fromCache = false
+        return info
     }
 }

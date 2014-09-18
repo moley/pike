@@ -68,7 +68,7 @@ class DownloadWorker extends PikeWorker {
         if (log.debugEnabled)
           log.debug("Installing from " + from + " to " + toPath.absolutePath + " (Overwrite: " + overwrite + ", Adapt linedelimiters: " + adaptLineDelimiters + ")")
 
-        cacheFile = cacheManager.getCacheFile(from, overwrite)
+        cacheFile = cacheManager.download(from, overwrite).cacheFile
 
 
         if (! toPath.exists()) {
@@ -136,7 +136,7 @@ class DownloadWorker extends PikeWorker {
 
     @Override
     public boolean uptodate() {
-        File downloadedFile = cacheManager.getCacheFile(operatingsystem, from)
+        File downloadedFile = cacheManager.download(from, false).cacheFile
 
         if  (downloadedFile.name.toUpperCase().endsWith(".ZIP")) {
           Collection <File> files = ziputils.unzippedFiles(downloadedFile, toPath)

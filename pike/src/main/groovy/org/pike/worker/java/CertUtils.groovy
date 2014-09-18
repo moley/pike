@@ -1,5 +1,6 @@
 package org.pike.worker.java
 
+import groovy.util.logging.Slf4j
 import org.apache.commons.codec.binary.Base64
 
 import javax.net.ssl.*
@@ -15,6 +16,7 @@ import java.security.cert.X509Certificate
  * @author oleym
  * Date: 19.08.14
  */
+@Slf4j
 class CertUtils {
 
     private static String FS = File.separator
@@ -33,14 +35,19 @@ class CertUtils {
 
         def changeit = "changeit"
         char[] passphrase = changeit.toCharArray()
-        ks.load(is, passphrase);
+        try {
+            ks.load(is, passphrase)
+        } catch (Exception e) {
+            log.error(e.toString(), e)
+            return true
+        }
         is.close()
 
         return ks.containsAlias(host)
     }
 
     public static File getCertsFile (final File jdkHome) {
-        return new File (jdkHome, 'lib/security/cacerts')
+        return new File (jdkHome, 'jre/lib/security/cacerts')
     }
 
     /**
@@ -94,6 +101,10 @@ class CertUtils {
 
         File bin = new File (jdkHome, 'bin')
         File keytool = new File (bin, 'keytool')
+
+        if (! keytool.canExecute())
+            if (keytool.setExecutable(true) == false)
+                throw new IllegalStateException("Could not make ${keytool} executable")
 
         return "$keytool -import -alias $host -file $tmpFile.absolutePath -keystore $certsFile.absolutePath -storepass changeit -noprompt"
     }
