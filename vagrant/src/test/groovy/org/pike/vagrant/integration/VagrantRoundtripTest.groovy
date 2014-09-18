@@ -72,7 +72,7 @@ abstract class VagrantRoundtripTest extends Specification {
         output.contains("BUILD SUCCESSFUL")
 
         when:
-        succeed("provision", "--host",  host)
+        succeed("provisionVm", "--host",  host)
         then:
         output.contains("BUILD SUCCESSFUL")
 
