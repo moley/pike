@@ -19,6 +19,11 @@ public class VagrantIntegrationLinuxTest extends VagrantRoundtripTest {
     }
 
     @Override
+    protected boolean alwaysClean() {
+        return true
+    }
+
+    @Override
     protected String getHost() {
         return "testhost"
     }

@@ -4,14 +4,9 @@ buildscript {
     }
 
     dependencies {
-        classpath files('../../pike/build/classes/main')
-        classpath files('../../pike/build/resources/main')
-
-        classpath files('../../autoinstall/build/classes/main')
-        classpath files('../../autoinstall/build/resources/main')
-
-        classpath files('../../vagrant/build/classes/main')
-        classpath files('../../vagrant/build/resources/main')
+        classpath fileTree(dir: '../../pike/build/libs', include: '*.jar')
+        classpath fileTree(dir: '../../autoinstall/build/libs', include: '*.jar')
+        classpath fileTree(dir: '../../vagrant/build/libs', include: '*.jar')
 
         classpath 'sshtools:j2ssh-core:0.2.9'
         classpath 'commons-io:commons-io:2.4'
