@@ -1,15 +1,23 @@
 pike
 ====
 
-Pike is a provisioning tool like chef/puppet based on gradle technology. You can define multiple 
-hosts to be provisioned in different ways. Also pike is implemented to be simply bootstrapped, 
-so you only need an ssh access to the hosts that should be configured. It works with vagrant as well 
-to easily test your provisioning scripts. 
+Pike is a provisioning tool like chef/puppet based on gradle technology. You can define the current or multiple 
+remote hosts to be provisioned in different ways. 
+
+Also pike is implemented to be simply bootstrapped, 
+so you only need an ssh access to any remotehosts that should be configured. If you want to configure localhost you need no more additional tooling. 
+
+Pike works with vagrant as well to easily test your provisioning scripts. 
 
 
 ## First steps 
 
-   TODO
+Starting pike the first time is very easy. No configuration of special repositories, no installation of additional tools, only download the example TODO, unzip it, call 
+
+    ./gradlew provision
+    
+and wait for an new file generated in the temp path which you notice from the output.
+
 
 ## General tasks
 
@@ -25,17 +33,29 @@ To show what hosts are configured in your provisioning scripts you can call
 
 ## Autoinstallation
 
+### Create installers
+With the autoinstall feature it is possible to create installers per operatingsystem you want to configure.
+
 You can automatically create installers for your defined hosts by calling
 
     ./gradlew prepareInstallers 
+    
+This results in an installer per operatingsystem you have defined to be created. This installer contains a defined jre, the gradle wrapper itself and a platform specific script startscript.
 
-If you want to install pike you call
+### Installing installers on remote hosts
 
-    ./gradlew installPike --host=foo 
+If you want to install pike via these installers you call
+
+    ./gradlew installPike [--host=foo] 
+    
+### Starting provisioning on remote hosts
 
 To start provisioning of one or all environments defined on any configured host you call 
 
-    ./gradlew provision --host=foo --env=bar 
+    ./gradlew provision [--host=foo] [--env=bar] 
+    
+    
+Anytime you call a provisioning pike copies changed plans to the remote host, the gradle wrapper (which defines what gradle version is used) all the changed libraries and dependencies and, if exists, an file gradle.properties (file to configure your build).  
 
 
 ## Vagrant
