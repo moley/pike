@@ -123,6 +123,7 @@ abstract class AbstractEnvironmentWorker extends PikeWorker  {
 
     @Override
     void install() {
+        log.info("Configure file $file")
 
 
         if (file != null) {

@@ -55,8 +55,8 @@ class SonarWorker extends CombinedWorker {
             DownloadWorker nextPluginWorker = new DownloadWorker()
             nextPluginWorker.from = it
             nextPluginWorker.toPath = pluginsPath
-            nextPluginWorker.user = user
-            nextPluginWorker.group = group
+            nextPluginWorker.fsUser = fsUser
+            nextPluginWorker.fsGroup = fsGroup
             workers.add(nextPluginWorker)
         }
 

@@ -53,7 +53,7 @@ echo "GRADLE_HOME set to %GRADLE_HOME% and added to PATH"
 echo "JAVA_HOME set to %JAVA_HOME% and added to PATH"
 echo "Startparameter = %1%"
 
-%GRADLE_HOME%\\bin\\gradle %1% --stacktrace"""
+%GRADLE_HOME%\\bin\\gradle %* --stacktrace"""
 
         ant.chmod(perm:"0755", file:scriptFileCreated)
 

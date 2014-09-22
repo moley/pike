@@ -21,7 +21,7 @@ class UserEnvWorkerIncludeTest {
     @Test
     public void testLinux () {
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (TestUtils.tmpFile.absolutePath)

@@ -11,5 +11,9 @@ environments {
             file "${operatingsystem.homedir}/pike.txt"
             property('hello', 'world')
         }
+        userenv {
+            file "${operatingsystem.homedir}/hallo.txt"
+            property('hello', 'world')
+        }
     }
 }

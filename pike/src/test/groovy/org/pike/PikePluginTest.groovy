@@ -6,7 +6,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.common.TaskContext
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.tasks.DelegatingTask
@@ -160,28 +159,8 @@ class PikePluginTest {
         Assert.assertEquals ("installBuildnode", installtask.name)
         Assert.assertEquals ("buildnode", downloadWorker.environment.name)
         Assert.assertEquals ("download(0)", downloadWorker.name)
-        Assert.assertEquals (TaskContext.install, downloadWorker.context)
         DefaultTask containerTaskInstall = project.tasks.install
         checkTaskContainsDependency(containerTaskInstall, "installBuildnode")
-
-
-        DelegatingTask deinstalltask = project.tasks.deinstallBuildnode
-        DownloadWorker undownloadWorker = deinstalltask.workers.get(0)
-        Assert.assertEquals ("deinstallBuildnode", deinstalltask.name)
-        Assert.assertEquals ("buildnode", undownloadWorker.environment.name)
-        Assert.assertEquals ("download(0)", undownloadWorker.name)
-        Assert.assertEquals (TaskContext.deinstall, undownloadWorker.context)
-        DefaultTask containerTaskDeInstall = project.tasks.deinstall
-        checkTaskContainsDependency(containerTaskDeInstall, "deinstallBuildnode")
-
-        DelegatingTask checktask = project.tasks.checkenvBuildnode
-        DownloadWorker checkWorker = checktask.workers.get(0)
-        Assert.assertEquals ("checkenvBuildnode", checktask.name)
-        Assert.assertEquals ("buildnode", checkWorker.environment.name)
-        Assert.assertEquals ("download(0)", checkWorker.name)
-        Assert.assertEquals (TaskContext.checkenv, checkWorker.context)
-        DefaultTask containerTask = project.tasks.checkenv
-        checkTaskContainsDependency(containerTask, "checkenvBuildnode")
 
         Assert.assertEquals(DEFAULTUSER, project.defaults.defaultuser)
 

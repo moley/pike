@@ -19,8 +19,13 @@ public class VagrantIntegrationLinuxTest extends VagrantRoundtripTest {
     }
 
     @Override
+    protected boolean debug() {
+        return false
+    }
+
+    @Override
     protected boolean alwaysClean() {
-        return true
+        return false
     }
 
     @Override

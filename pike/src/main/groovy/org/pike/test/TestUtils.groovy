@@ -1,9 +1,16 @@
 package org.pike.test
 
+import groovy.util.logging.Slf4j
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.GradleConnector
 import org.pike.holdertasks.DeriveTasksTask
 import org.pike.holdertasks.ResolveModelTask
+import org.pike.tasks.DelegatingTask
+import org.pike.tasks.PikeTask
+import org.pike.worker.PikeWorker
+import org.pike.worker.UserenvWorker
 
 import java.nio.file.Files
 
@@ -14,6 +21,7 @@ import java.nio.file.Files
  * Time: 23:41
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 public class TestUtils {
 
     private final static String OS = System.getProperty("os.name")
@@ -27,6 +35,34 @@ public class TestUtils {
      */
     public static GradleConnector getGradleConnector () {
         return GradleConnector.newConnector().useGradleVersion("2.0") //TODO with gradle wrapper
+    }
+
+
+
+    public static PikeWorker getWorker (final DelegatingTask delegatingTask, final String name) {
+        String allTasks = ""
+        for (Object next: delegatingTask.dependsOn) {
+            if (next instanceof PikeWorker) {
+                PikeWorker nextWorker = next as PikeWorker
+                if (nextWorker.name.equals(name))
+                    return nextWorker
+                else
+                    allTasks += " $nextWorker.name"
+            }
+        }
+
+        throw new IllegalStateException("Workertask $name not found (available workertasks: ${allTasks.trim()}")
+
+    }
+
+    /**
+     * create task in a project
+     * @param clazz  clazz of task
+     * @return task
+     */
+    public static Task createTask (final Class clazz) {
+        Project project = ProjectBuilder.builder().build()
+        return project.tasks.create(name:'sometask', type:UserenvWorker)
     }
 
     /**

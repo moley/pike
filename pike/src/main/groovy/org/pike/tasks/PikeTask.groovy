@@ -1,11 +1,7 @@
 package org.pike.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.util.ConfigureUtil
-import org.pike.common.TaskContext
 import org.pike.model.defaults.Defaults
-import org.pike.model.environment.Environment
-import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
 
 import java.nio.file.FileSystems

@@ -144,20 +144,6 @@ public class PikePlugin implements Plugin<Project> {
         installTask.group = PIKE_REMOTE_GROUP
         containerTasks.add(installTask)
 
-
-        //Task holds all the deinstall sub tasks of all current modelelements
-        log.info("Configure task 'deinstall' ")
-        DeinstallTask deinstallTask = project.tasks.create("deinstall", DeinstallTask)
-        deinstallTask.description = "Deinstalls all environments configured for the current host"
-        deinstallTask.group = PIKE_REMOTE_GROUP
-        containerTasks.add(deinstallTask)
-
-        //Task holds all the checkenv sub tasks of all current modelelements
-        CheckTask checkTask = project.tasks.create("checkenv", CheckTask)
-        checkTask.description = "Checks all environments configured for the current host to be installed"
-        checkTask.group = PIKE_REMOTE_GROUP
-        containerTasks.add(checkTask)
-
         //task is triggered first to checkenv model and make some resolving things
 
         log.info("Configure task 'resolveModel' ")

@@ -55,7 +55,7 @@ echo \"Starting \$1 \"
 chmod a+x \$JAVA_HOME/bin/java
 chmod a+x \$GRADLE_HOME/bin/gradle
 
-gradle \$1 --stacktrace"""
+gradle \$* --stacktrace"""
 
         ant.chmod(perm:"0755", file:scriptFileCreated)
 

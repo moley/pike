@@ -29,6 +29,12 @@ abstract class VagrantRoundtripTest extends Specification {
     protected abstract boolean withLocal ()
 
     /**
+     * must be overriden to enable debugging
+     * @return true: start with --debug, false: start without debug infos
+     */
+    protected abstract boolean debug ()
+
+    /**
      * must be overriden to return if a clean test run should be processed or only a provisioning of the vm
      * @return true: recreate the vm, false: only provision
      */
@@ -136,6 +142,9 @@ abstract class VagrantRoundtripTest extends Specification {
                 argsList.add('--build-file')
                 argsList.add('local.gradle')
             }
+
+            if (debug())
+                argsList.add('--info')
             argsList.addAll(args)
 
             launcher.withArguments(argsList.toArray(new String [argsList.size()]))

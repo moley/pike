@@ -6,6 +6,7 @@ import org.gradle.api.tasks.TaskAction
 import org.pike.common.ProjectInfo
 import org.pike.model.host.Host
 import org.pike.tasks.DelegatingTask
+import org.pike.worker.PikeWorker
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +22,7 @@ class DeriveTasksTask extends DefaultTask {
         public void deriveTasks () {
             log.info("Configure all tasks")
             Host currentHost = ProjectInfo.getCurrentHost(project)
-            project.tasks.withType(DelegatingTask).each { DelegatingTask task ->
+            project.tasks.withType(PikeWorker).each { PikeWorker task ->
                 if (log.debugEnabled)
                   log.debug("Configure task " + task.name)
                 task.configure(currentHost)

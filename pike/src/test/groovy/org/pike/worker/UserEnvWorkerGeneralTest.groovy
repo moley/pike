@@ -105,7 +105,7 @@ class UserEnvWorkerGeneralTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        UserenvWorker worker = setPropertyHalloTask.workers.get(0)
+        UserenvWorker worker = TestUtils.getWorker(setPropertyHalloTask, 'hans')
         Assert.assertTrue (propFile.absoluteFile.parentFile.mkdirs())
         worker.file (propFilePath)
         println (setPropertyHalloTask.getDetailInfo())

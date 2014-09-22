@@ -58,8 +58,6 @@ environments {
         download {
             from "http://installbuilder.bitrock.com/java/jre${paramvalue}-linux.zip"
             to operatingsystem.programdir
-            executable "jdk${paramvalue}/bin/java"
-            executable "jdk${paramvalue}/jre/bin/java"
         }
     }
 }

@@ -1,9 +1,11 @@
 package org.pike.worker
 
 import groovy.util.logging.Slf4j
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskAction
+import org.gradle.util.ConfigureUtil
 import org.pike.cache.CacheManager
-import org.pike.common.TaskContext
 import org.pike.model.defaults.Defaults
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
@@ -22,7 +24,7 @@ import java.nio.file.Path
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-public abstract class PikeWorker {
+public abstract class PikeWorker extends DefaultTask{
 
     Project project
 
@@ -32,9 +34,9 @@ public abstract class PikeWorker {
 
     private Defaults defaults
 
-    String user
+    String fsUser
 
-    String group
+    String fsGroup
 
     public static String NEWLINE = System.getProperty("line.separator")
 
@@ -42,17 +44,15 @@ public abstract class PikeWorker {
 
     Host host
 
-    String name
-
-    TaskContext context
-
     Closure autoconfigClosure
 
     String paramkey
 
     String paramvalue
 
-    String fileFlags
+    String ordinaryFileFlag = '644'
+
+    String executableFileFlag = '755'
 
 
     public void configure (final PikeWorker otherWorker) {
@@ -60,8 +60,22 @@ public abstract class PikeWorker {
         cacheManager = otherWorker.cacheManager
         operatingsystem = otherWorker.operatingsystem
         defaults = otherWorker.defaults
-        user = otherWorker.user
-        group = otherWorker.group
+        this.fsUser = otherWorker.fsUser
+        if (log.debugEnabled)
+            log.debug("group ${group} was configure by worker $otherWorker.name")
+        this.fsGroup = otherWorker.fsGroup
+    }
+
+    /**
+     * installPike the task, set all relevant model elements
+     * @param host
+     */
+    public void configure (final Host host) {
+        this.host = host
+        this.operatingsystem = host.operatingsystem
+        if (this.autoconfigClosure != null)
+            ConfigureUtil.configure(autoconfigClosure, this)
+
     }
 
     public String directoryName (final String url) {
@@ -70,11 +84,13 @@ public abstract class PikeWorker {
     }
 
     public group (final String group) {
-        this.group = group
+        if (log.debugEnabled)
+        log.debug("User configures group=${group}")
+        this.fsGroup = group
     }
 
     public user (final String user) {
-        this.user = user
+        this.fsUser = user
     }
 
     public Defaults setDefaults (final Defaults defaults) {
@@ -85,9 +101,9 @@ public abstract class PikeWorker {
         return defaults != null ? defaults : project.defaults
     }
 
-    public String getUser () {
-        if (user)
-            return user
+    public String getFsUser () {
+        if (this.fsUser != null)
+            return this.fsUser
         if (defaults != null)
             return defaults.defaultuser
 
@@ -95,14 +111,20 @@ public abstract class PikeWorker {
 
     }
 
-    public String getGroup () {
-        if (group)
-            return group
+    public String getFsGroup () {
+        if (this.fsGroup != null) {
+            if (log.debugEnabled)
+              log.debug("Group set to ${this.fsGroup} ")
+            return this.fsGroup
+        }
 
-        if (getUser() != null)
-            return getUser()
+        if (getFsUser() != null) {
+            if (log.debugEnabled)
+                log.debug("Group set to ${getFsUser()} like user")
+            return getFsUser()
+        }
         else
-            return getUser() //TODO make better
+            throw new IllegalStateException('Group could not be determined, because neither group nor user defined')
     }
 
 
@@ -158,32 +180,40 @@ public abstract class PikeWorker {
      * adapts file to user and flags
      * @param fileToAdapt file to be adapted to user from worker or default and fileflags from worker
      */
-    protected void adaptFileFlags (File fileToAdapt, String user, String group, String fileFlags) {
+    protected void adaptFileFlags (File fileToAdapt, String fsUser, String fsGroup, String fileFlags) {
 
         //TODO solve with Java NIO
         if (! (operatingsystem.provider instanceof WindowsProvider)) {
-            if (user != null && group != null) {
 
-                String command = "chown -R $user:$group $fileToAdapt"
-                log.debug(command)
+            if (fsUser == null)
+                throw new IllegalStateException('No user set. Please set an user at environment or defaultuser')
+
+            if (fsGroup == null)
+                throw new IllegalStateException('No group set. Please set an group at environment or defaultgroup')
+
+
+            if (fsUser != null && fsGroup != null) {
+
+                String command = "chown -R $fsUser:$fsGroup $fileToAdapt.absolutePath"
+                log.info(command)
                 Process process = Runtime.getRuntime().exec(command)
                 int returnCode = process.waitFor()
-                log.info("Modify user $user and group $group of file $fileToAdapt.absolutePath (returncode $returnCode)")
+                log.info("Modify user $fsUser and group $fsGroup of file $fileToAdapt.absolutePath (returncode $returnCode)")
                 if (returnCode != 0)
-                    log.warn(" - Command " + command)
+                    throw new IllegalStateException("$command failed")
             }
             else
-              log.info("Skip modifying user $user and group $group of file $fileToAdapt.absolutePath")
+              log.info("Skip modifying user $fsUser and group $fsGroup of file $fileToAdapt.absolutePath")
 
             if (fileFlags != null) {
 
-                String command2 = "chmod -R $fileFlags $fileToAdapt"
-                log.debug(command2)
+                String command2 = "chmod -R $fileFlags $fileToAdapt.absolutePath"
+                log.info(command2)
                 Process process = Runtime.getRuntime().exec(command2)
                 int returnCode = process.waitFor()
                 log.info("Modify fileflags $fileFlags of file $fileToAdapt.absolutePath (returncode $returnCode)")
                 if (returnCode != 0)
-                    log.warn(" - Command " + command2)
+                    throw new IllegalStateException("$command2 failed")
             }
             else
                 log.info("Skip modifying fileflags of file $fileToAdapt.absolutePath")
@@ -192,6 +222,7 @@ public abstract class PikeWorker {
 
 
 
+    @TaskAction
     public abstract void install ()
 
 

@@ -3,7 +3,6 @@ package org.pike.worker
 import com.google.common.io.Files
 import org.junit.After
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
@@ -73,7 +72,7 @@ export SWARM_USER=nightly
 export HOME=/home/nightly
 '''
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (file.absolutePath)
@@ -86,13 +85,14 @@ export HOME=/home/nightly
     /**
      */
     public void testAllChapter () {
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
+
         File file = new File (Files.createTempDir(), 'hallo')
         file.text = '[chapter1]\n' +
                     '  max_allowed_packet=3M\n'+
                     '[chapter2]\n' +
                     '  max_allowed_packet=3M\n'
 
-        UserenvWorker worker = new UserenvWorker()
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (file.absolutePath)
@@ -127,7 +127,7 @@ export HOME=/home/nightly
                 '[chapter2]\n' +
                 '  max_allowed_packet=3M'
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (file.absolutePath)
@@ -158,7 +158,7 @@ export HOME=/home/nightly
         File file = new File (Files.createTempDir(), 'hallo')
         file.text = 'http_proxy=old_value'
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (file.absolutePath)
@@ -186,7 +186,7 @@ export HOME=/home/nightly
     @Test
     public void testLinux () {
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (TestUtils.tmpFile.absolutePath)

@@ -34,19 +34,13 @@ class DownloadWorker extends PikeWorker {
     Collection<File> downloadedFiles = new ArrayList<File>()
 
     /**
-     * define files to make executable
+     * define files to make executable for own user (755)
      * @param file
      */
     public void executable (String file) {
         executables.add(file)
     }
 
-    /**
-     * everything should be executable
-     */
-    public void executable () {
-        fileFlags = "755";
-    }
 
     /**
      * if overwrite is enabled, the file is always downloaded completely without checking if it has changed
@@ -88,17 +82,18 @@ class DownloadWorker extends PikeWorker {
 
             downloadedFiles = ziputils.getRootpaths(toPath, cacheFile)
             for (File next : downloadedFiles) {
+
+                if (log.infoEnabled)
+                    log.info("Adapting file flags for next rootpath $next")
+                adaptFileFlags(next, fsUser, fsGroup, ordinaryFileFlag)
+
                 next.eachFileRecurse(FileType.DIRECTORIES) {
                     if(it.name == 'bin') {
                         if (log.infoEnabled)
                             log.info("Adapting file flags for detected binpath $it.absolutePath")
-                        adaptFileFlags(it, user, group, 'a+x')
+                        adaptFileFlags(it, fsUser, fsGroup, executableFileFlag)
                     }
                 }
-
-                if (log.infoEnabled)
-                    log.info("Adapting file flags for next rootpath $next")
-                adaptFileFlags(next, user, group, fileFlags)
             }
 
           if (adaptLineDelimiters)
@@ -111,7 +106,7 @@ class DownloadWorker extends PikeWorker {
               log.debug("Copy " + cacheFile.absolutePath + " to " + toFile.absolutePath)
             fileutils.copyFile(cacheFile, toFile)
             downloadedFiles.add(toFile)
-            adaptFileFlags(toFile, user, group, fileFlags)
+            adaptFileFlags(toFile, fsUser, fsGroup, executableFileFlag)
 
             if (adaptLineDelimiters) {
                 IOperatingsystemProvider osProvider = operatingsystem.provider
@@ -123,8 +118,9 @@ class DownloadWorker extends PikeWorker {
         if (! (operatingsystem.provider instanceof WindowsProvider)) {
 
           for (String nextExecutable : executables) {
+              log.info("Make $nextExecutable executable")
               File next = new File (toPath, nextExecutable)
-              adaptFileFlags(next, user, group, 'a+x')
+              adaptFileFlags(next, fsUser, fsGroup, 'a+x')
           }
         }
 
