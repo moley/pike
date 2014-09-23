@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.test.TestUtils
 import org.pike.worker.LinkWorker
 
 import java.nio.file.FileSystems
@@ -43,7 +44,7 @@ class LinkTaskTest {
     @Test
     public void testToIsAvailable () {
 
-        LinkWorker task = new LinkWorker()
+        LinkWorker task = TestUtils.createTask(LinkWorker)
         task.fromPath = dummyPathFrom
         task.toPath = dummyPathTo
 
@@ -64,7 +65,7 @@ class LinkTaskTest {
     @Test
     public void testChangeLink () {
 
-        LinkWorker task = new LinkWorker()
+        LinkWorker task = TestUtils.createTask(LinkWorker)
         task.fromPath = dummyPathFrom
         task.toPath = dummyPathTo
 
@@ -98,7 +99,7 @@ class LinkTaskTest {
 
         Files.createSymbolicLink(dummyPathFromAsPath, dummyPathToOldAsPath)
 
-        LinkWorker task = new LinkWorker()
+        LinkWorker task = TestUtils.createTask(LinkWorker)
         task.fromPath = dummyPathFrom
         task.toPath = dummyPathTo
 

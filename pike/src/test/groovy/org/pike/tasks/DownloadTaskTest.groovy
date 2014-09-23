@@ -1,15 +1,11 @@
 package org.pike.tasks
 
 import com.google.common.io.Files
-import org.apache.commons.io.FileUtils
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import org.pike.cache.DummyCacheManager
-import org.pike.test.TestUtils
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.test.TestUtils
 import org.pike.worker.DownloadWorker
 
 /**
@@ -27,10 +23,10 @@ class DownloadTaskTest {
         File dummyZip = TestUtils.projectfile("pike", "src/test/resources/testzip.zip")
         File dummyPathTo = Files.createTempDir()
 
-        DownloadWorker task = new DownloadWorker()
-        task.cacheManager = new DummyCacheManager()
+        DownloadWorker task = TestUtils.createTask(DownloadWorker)
         task.toPath = dummyPathTo
-        task.from = dummyZip.absolutePath
+        task.from = "file:/" + dummyZip.absolutePath
+
 
 
         Operatingsystem os = new Operatingsystem("linux")

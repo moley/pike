@@ -20,6 +20,7 @@ class CreateLinuxScriptTest {
 
         project.defaults {
             pikegradle = 'some pikegradle'
+            currentHost = 'host1'
         }
 
         project.autoinstall {

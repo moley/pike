@@ -1,37 +1,29 @@
-package org.pike.holdertasks
+package org.pike.resolver
 
 import groovy.util.logging.Slf4j
-import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import org.pike.ModelLogger
 import org.pike.autoinitializer.BaseClassAutoInitializer
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
-import org.pike.resolver.DelegatingCompoundResolver
-import org.pike.resolver.ResolveItem
-
-import java.util.logging.Level
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 30.04.13
- * Time: 14:04
- * To change this template use File | Settings | File Templates.
+ * Created by OleyMa on 23.09.14.
  */
 @Slf4j
-class ResolveModelTask extends DefaultTask{
+class ModelResolver {
 
     @TaskAction
-    public resolveModel () {
+    public resolveModel (Project project) {
         log.info("Resolving model")
 
         ModelLogger.logConfiguration("preAutoInitializing", project, true)
-        autoinitializeParents()
+        autoinitializeParents(project)
 
         ModelLogger.logConfiguration("preResolving", project, true)
-        resolveModelElements()
+        resolveModelElements(project)
 
         ModelLogger.logConfiguration("postConfigureTasks", project, false)
         log.info("Model is resolved")
@@ -43,16 +35,16 @@ class ResolveModelTask extends DefaultTask{
     /**
      * autoinitialize properties from base item
      */
-    private void autoinitializeParents () {
+    private void autoinitializeParents (Project project) {
         if (log.debugEnabled)
-          log.debug("autoinitializeParents")
+            log.debug("autoinitializeParents")
         BaseClassAutoInitializer autoinitializer = new BaseClassAutoInitializer()
 
         if (log.debugEnabled)
-          log.debug("after (" + project.operatingsystems + ")")
+            log.debug("after (" + project.operatingsystems + ")")
         for (Operatingsystem nextOs: project.operatingsystems) {
             if (log.debugEnabled)
-              log.debug("Complete fields from baseclass in object " + nextOs)
+                log.debug("Complete fields from baseclass in object " + nextOs)
             autoinitializer.initialize(nextOs, "parent")
         }
     }
@@ -62,7 +54,7 @@ class ResolveModelTask extends DefaultTask{
     /**
      * resolve all model elements
      */
-    private void resolveModelElements() {
+    private void resolveModelElements(Project project) {
         final DelegatingCompoundResolver resolver = new DelegatingCompoundResolver()
         HashSet<Object> resolvedObjects = new HashSet<>()
 

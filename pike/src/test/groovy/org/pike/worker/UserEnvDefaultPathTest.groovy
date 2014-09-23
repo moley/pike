@@ -22,7 +22,7 @@ class UserEnvDefaultPathTest {
     @Test
     public void path () {
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (TestUtils.tmpFile.absolutePath)

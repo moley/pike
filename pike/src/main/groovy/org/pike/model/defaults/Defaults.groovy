@@ -13,7 +13,9 @@ class Defaults {
 
     public static String NEWLINE = System.getProperty("line.separator")
 
-    String defaultuser = System.getProperty("user.name")
+    String fsUser = System.getProperty("user.name")
+
+    String fsGroup
 
     /**
      * domain which is appended by default
@@ -66,7 +68,7 @@ class Defaults {
         objectAsString += "    * pike user            : $pikeuser $NEWLINE"
         objectAsString += "    * pike gradle          : $pikegradle $NEWLINE"
         objectAsString += "    * pike password        : $pikepassword $NEWLINE"
-        objectAsString += "    * defaultuser          : $defaultuser $NEWLINE $NEWLINE"
+        objectAsString += "    * fsUser          : $fsUser $NEWLINE $NEWLINE"
 
         return objectAsString
     }

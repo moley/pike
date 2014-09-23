@@ -27,10 +27,8 @@ class RemoteTaskTest {
         project.gradle.startParameter.taskNames = [taskname]
         project.apply plugin: 'autoinstall'
 
-        project.operatingsystems {
-            linux {
-
-            }
+        project.defaults {
+            currentHost = 'myhost2'
         }
 
         project.hosts {
@@ -94,6 +92,10 @@ class RemoteTaskTest {
         Project project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.gradle.startParameter.taskNames.add("autoinstall")
         project.apply plugin: 'autoinstall'
+
+        project.defaults {
+            currentHost = 'test'
+        }
 
         project.hosts {
             test {

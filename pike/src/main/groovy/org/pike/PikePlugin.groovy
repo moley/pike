@@ -6,7 +6,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.internal.reflect.Instantiator
-import org.pike.holdertasks.*
+import org.pike.common.ProjectInfo
+import org.pike.holdertasks.InstallTask
 import org.pike.info.InfoHostsTask
 import org.pike.logging.LogConfigurator
 import org.pike.model.defaults.Defaults
@@ -14,6 +15,8 @@ import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.model.host.HostGroup
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.resolver.ModelResolver
+import org.pike.worker.PikeWorker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -57,14 +60,39 @@ public class PikePlugin implements Plugin<Project> {
 
         configureDefaults(project)
 
-        checkModel(project)
+        project.afterEvaluate {
+            ModelResolver resolver = new ModelResolver()
+            resolver.resolveModel(project)
+
+            checkModel(project)
+
+            //must be called after resolving and checking model
+            configureWorkerTasks(project)
+        }
+    }
+
+    public void configureWorkerTasks(Project project) {
+        log.info("Configure all tasks")
+        Host currentHost = ProjectInfo.getCurrentHost(project)
+        if (currentHost != null) {
+            project.tasks.withType(PikeWorker).each { PikeWorker task ->
+                if (log.debugEnabled)
+                    log.debug("Configure task " + task.name)
+                task.configure(currentHost)
+            }
+        }
+        else
+            log.info ("Current host not found in configuration, create no worker tasks")
+
+        log.info("Configuration of tasks completed")
+
     }
 
     public configureDefaults (Project project) {
         project.operatingsystems {
 
             linux {
-                homedir = "/home/${project.defaults.defaultuser}"
+                homedir = "/home/${project.defaults.fsUser}"
                 servicedir = "/etc/init.d"
                 pikedir = '/opt/pike'
                 globalconfigfile = '/etc/profile'
@@ -73,11 +101,12 @@ public class PikePlugin implements Plugin<Project> {
             }
 
             macosx {
-                homedir = "/Users/${project.defaults.defaultuser}"
+                homedir = "/Users/${project.defaults.fsUser}"
                 servicedir = "/etc/init.d"
                 pikedir = '/opt/pike'
                 globalconfigfile = '/etc/profile'
                 pikejre32 = 'http://installbuilder.bitrock.com/java/jre1.7.0_67-osx.zip'
+                userconfigfile = "${homedir}/.bashrc"
             }
 
             suse {
@@ -89,7 +118,7 @@ public class PikePlugin implements Plugin<Project> {
             }
 
             windows {
-                homedir = "C:\\Users/${project.defaults.defaultuser}"
+                homedir = "C:\\Users/${project.defaults.fsUser}"
                 appdir = "${homedir}\\jenkins"
                 programdir = "${homedir}\\jenkins\\tools"
                 pikedir = 'C:\\opt\\pike'
@@ -112,18 +141,16 @@ public class PikePlugin implements Plugin<Project> {
     private void checkModel (Project project) {
         log.info("Check model")
 
-        project.afterEvaluate {
+        for (Host nextHost : project.hosts) {
+            if (nextHost.operatingsystem == null)
+                throw new IllegalStateException("You have to configure a operatingsystem for host $nextHost.name")
 
-            for (Host nextHost : project.hosts) {
-                if (nextHost.operatingsystem == null)
-                    throw new IllegalStateException("You have to configure a operatingsystem for host $nextHost.name")
-
-                for (String nextEnv : nextHost.getAllEnvironments(project)) {
-                    Environment env = project.environments.findByName(nextEnv)
-                    if (env == null)
-                        throw new IllegalStateException("Cannot find environment $nextEnv which is defined for host $nextHost.name")
-                }
+            for (String nextEnv : nextHost.getAllEnvironments(project)) {
+                Environment env = project.environments.findByName(nextEnv)
+                if (env == null)
+                    throw new IllegalStateException("Cannot find environment $nextEnv which is defined for host $nextHost.name")
             }
+
 
             log.info("Model is checked")
         }
@@ -143,21 +170,6 @@ public class PikePlugin implements Plugin<Project> {
         installTask.description = "Installs all environments configured for the current host"
         installTask.group = PIKE_REMOTE_GROUP
         containerTasks.add(installTask)
-
-        //task is triggered first to checkenv model and make some resolving things
-
-        log.info("Configure task 'resolveModel' ")
-        ResolveModelTask resolveModelTask = project.tasks.create("resolveModel", ResolveModelTask)
-
-        log.info("Configure task 'deriveTasks' ")
-        DeriveTasksTask deriveTasksTask = project.tasks.create("deriveTasks", DeriveTasksTask)
-        deriveTasksTask.dependsOn resolveModelTask
-
-        for (DefaultTask nextContainerTast : containerTasks) {
-            if (log.debugEnabled)
-                log.debug("Task ${nextContainerTast} dependsOn ${deriveTasksTask}")
-            nextContainerTast.dependsOn deriveTasksTask
-        }
     }
 
     /**

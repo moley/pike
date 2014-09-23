@@ -27,7 +27,7 @@ class DelegatingCompoundResolverTest {
         project.apply plugin: 'pike'
 
         project.defaults {
-            defaultuser = 'nightly'
+            fsUser = 'nightly'
             currentHost = 'testhost'
         }
         project.operatingsystems {

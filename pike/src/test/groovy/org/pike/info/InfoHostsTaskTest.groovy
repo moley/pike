@@ -27,9 +27,7 @@ class InfoHostsTaskTest {
             }
         }
 
-        //TestUtils.prepareModel(project)
         project.evaluate()
-
 
         InfoHostsTask task = project.tasks.getByName('hosts')
         task.show()

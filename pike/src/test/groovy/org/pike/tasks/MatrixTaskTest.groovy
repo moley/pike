@@ -8,11 +8,7 @@ import org.pike.test.TestUtils
 import org.pike.worker.DownloadWorker
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 05.05.13
- * Time: 00:00
- * To change this template use File | Settings | File Templates.
+ * Tests a matrix build
  */
 class MatrixTaskTest {
 
@@ -24,14 +20,14 @@ class MatrixTaskTest {
         project.apply plugin: 'pike'
 
         project.defaults {
-            defaultuser = 'nightly'
+            fsUser = 'nightly'
             currentHost = 'localhost'
 
         }
 
         project.operatingsystems {
             macosx {
-                homedir = "/home/${project.defaults.defaultuser}"
+                homedir = "/home/${project.defaults.fsUser}"
                 programdir = "${homedir}/jenkins/tools"
             }
         }
@@ -64,13 +60,13 @@ class MatrixTaskTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask task = project.tasks.findByName("installJdks17")
-        DownloadWorker worker = task.workers.get(0)
+        DownloadWorker worker = TestUtils.getWorker(task)
         Assert.assertEquals ("http://somewhere/jdk1.7.0_07.zip", worker.from)
         Assert.assertNotNull (task)
 
         DelegatingTask task2 = project.tasks.findByName("installJdks16")
         Assert.assertNotNull (task2)
-        DownloadWorker worker2 = task2.workers.get(0)
+        DownloadWorker worker2 = TestUtils.getWorker(task2)
         Assert.assertEquals ("http://somewhere/jdk1.6.0_something.zip", worker2.from)
         Assert.assertNotNull (task2)
     }

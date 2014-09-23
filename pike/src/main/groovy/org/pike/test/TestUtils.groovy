@@ -1,16 +1,13 @@
 package org.pike.test
 
 import groovy.util.logging.Slf4j
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.GradleConnector
-import org.pike.holdertasks.DeriveTasksTask
-import org.pike.holdertasks.ResolveModelTask
 import org.pike.tasks.DelegatingTask
-import org.pike.tasks.PikeTask
 import org.pike.worker.PikeWorker
-import org.pike.worker.UserenvWorker
 
 import java.nio.file.Files
 
@@ -37,17 +34,57 @@ public class TestUtils {
         return GradleConnector.newConnector().useGradleVersion("2.0") //TODO with gradle wrapper
     }
 
+    public static void getAllWorkers (final Task task, final List<PikeWorker> workers) {
+        println("Check task $task.name")
+        for (Object next: task.dependsOn) {
+            if (next instanceof PikeWorker) {
+                workers.add(0, next)
+                getAllWorkers(next, workers)
+            }
+        }
+    }
 
+    /**
+     * gets the worker task from dependencies of delegating task at given position
+     * @param delegatingTask    delegating task
+     * @param index  position to check
+     * @return worker task
+     * @throws IllegalStateException if no worker task at the given position was found
+     */
+    public static PikeWorker getWorker (final DelegatingTask delegatingTask, final int index = 0) {
 
+        int currentIndex = 0
+        for (Object next: delegatingTask.dependsOn) {
+            if (next instanceof PikeWorker) {
+                if (currentIndex == index) {
+                    log.info(next.detailInfo)
+                    return next
+                }
+                else
+                    currentIndex++
+            }
+        }
+
+        throw new IllegalStateException("Workertask not found on position $index(number of workertasks: ${currentIndex}")
+    }
+
+    /**
+     * gets the worker task from dependencies of delegating task with given name
+     * @param delegatingTask    delegating task
+     *  @param name             name of workertask to search for
+     * @return  worker task, not <code>null</code>
+     * @throws IllegalStateException if no worker task with the given name was found
+     */
     public static PikeWorker getWorker (final DelegatingTask delegatingTask, final String name) {
         String allTasks = ""
         for (Object next: delegatingTask.dependsOn) {
             if (next instanceof PikeWorker) {
-                PikeWorker nextWorker = next as PikeWorker
-                if (nextWorker.name.equals(name))
-                    return nextWorker
+                if (next.name.equals(name)) {
+                    log.info(next.detailInfo)
+                    return next
+                }
                 else
-                    allTasks += " $nextWorker.name"
+                    allTasks += " $next.name"
             }
         }
 
@@ -60,9 +97,13 @@ public class TestUtils {
      * @param clazz  clazz of task
      * @return task
      */
-    public static Task createTask (final Class clazz) {
+    public static DefaultTask createTask (final Class clazz) {
         Project project = ProjectBuilder.builder().build()
-        return project.tasks.create(name:'sometask', type:UserenvWorker)
+        project.apply plugin: 'pike'
+
+        DefaultTask task = project.tasks.create(name:'sometask', type:clazz)
+        project.evaluate()
+        return  task
     }
 
     /**
@@ -83,15 +124,7 @@ public class TestUtils {
 
 
     public static void prepareModel (final Project project) {
-
         project.evaluate()
-
-        ResolveModelTask resolveModelTask = project.tasks.resolveModel
-        resolveModelTask.resolveModel()
-
-        DeriveTasksTask deriveTasksTask = project.tasks.deriveTasks
-        deriveTasksTask.deriveTasks()
-
     }
 
     public static File getTmpFile () {

@@ -6,7 +6,7 @@ apply {
 
 //Pike - Model
 defaults {
-    defaultuser = 'nightly'
+    fsUser = 'nightly'
     pikeuser = 'root'
     pikepassword = 'cool'
 }

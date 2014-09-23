@@ -157,7 +157,7 @@ class DownloadWorker extends PikeWorker {
     public String getDetailInfo () {
         String detailinfo = super.getDetailInfo()
         detailinfo += "    - from         : " + from + NEWLINE
-        detailinfo += "    - to           : " + toPath.absolutePath + NEWLINE
+        detailinfo += "    - to           : " + (toPath != null ? toPath.absolutePath:"") + NEWLINE
         return detailinfo
     }
 }

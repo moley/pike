@@ -1,5 +1,6 @@
 package org.pike.worker
 
+import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -11,12 +12,9 @@ import org.pike.test.TestUtils
 import org.pike.tasks.DelegatingTask
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 02.05.13
- * Time: 22:58
- * To change this template use File | Settings | File Templates.
+ * General tests for environment worker
  */
+@Slf4j
 class UserEnvWorkerGeneralTest {
 
     private String user = System.getProperty("user.name")
@@ -85,14 +83,14 @@ class UserEnvWorkerGeneralTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        UserenvWorker worker = setPropertyHalloTask.workers.get(0)
+        UserenvWorker worker = TestUtils.getWorker(setPropertyHalloTask)
         worker.file (propFilePath)
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        log.info (worker.detailInfo)
+        worker.install()
 
         List<String> text = propFile.text.split(UserenvWorker.NEWLINE)
 
-        println (propFile.text)
+        log.info (propFile.text)
 
         checkFile(text, "java")
 
@@ -105,15 +103,15 @@ class UserEnvWorkerGeneralTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        UserenvWorker worker = TestUtils.getWorker(setPropertyHalloTask, 'hans')
+        UserenvWorker worker = TestUtils.getWorker(setPropertyHalloTask)
         Assert.assertTrue (propFile.absoluteFile.parentFile.mkdirs())
         worker.file (propFilePath)
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        log.info (worker.detailInfo)
+        worker.install()
 
         List<String> text = propFile.text.split(UserenvWorker.NEWLINE)
 
-        println (">" + propFile.text+"<")
+        log.info (">" + propFile.text+"<")
 
         checkFile(text, "java")
 

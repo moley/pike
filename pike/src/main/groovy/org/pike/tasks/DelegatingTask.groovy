@@ -25,11 +25,4 @@ class DelegatingTask extends DefaultTask {
     Environment environment
 
 
-
-    public  String getDetailInfo() {
-        String completeString = "Task " + name + PikeWorker.NEWLINE
-        return completeString
-    }
-
-
 }

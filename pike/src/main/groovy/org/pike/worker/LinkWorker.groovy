@@ -36,7 +36,7 @@ class LinkWorker extends PikeWorker {
 
         Files.createSymbolicLink(fromPath.toPath(), toPath.toPath())
 
-        adaptFileFlags(fromPath, fsUser, group, ordinaryFileFlag)
+        adaptFileFlags(fromPath, fsUser, fsGroup, ordinaryFileFlag)
     }
 
     @Override

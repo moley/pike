@@ -48,6 +48,7 @@ class CacheManager {
         }
 
         downloadStrategies.add(new HttpDownloadStrategy())
+        downloadStrategies.add(new FileDownloadStrategy())
     }
 
     public CacheManager () {

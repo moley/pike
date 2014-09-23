@@ -14,8 +14,7 @@ apply {
 }
 
 defaults {
-    currentHost = 'localhost' //to enable on local machine
-    defaultuser = 'nightly'
+    fsUser = 'nightly'
     rootpath = '${currentPath}/build/test'
 }
 

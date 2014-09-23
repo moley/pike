@@ -3,18 +3,15 @@ package org.pike.worker
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.pike.tasks.DelegatingTask
 import org.pike.test.TestUtils
 
+import static org.junit.Assert.*
+
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 25.04.13
- * Time: 18:34
- * To change this template use File | Settings | File Templates.
+ * Tests removing of properties in propertyfile
  */
 public class PropertyWorkerRemoveTest {
 
@@ -60,12 +57,11 @@ public class PropertyWorkerRemoveTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        PikeWorker workerTask = TestUtils.getWorker(setPropertyHalloTask)
+        println (workerTask.detailInfo)
+        workerTask.install()
 
-        Assert.assertFalse (propFile.absolutePath + "was created by remove task", propFile.exists())
-
-
+        assertFalse (propFile.absolutePath + "was created by remove task", propFile.exists())
     }
 
     @Test
@@ -74,24 +70,25 @@ public class PropertyWorkerRemoveTest {
 
         Properties propSave = new Properties()
         propSave.setProperty("mister", "bean")
-        Assert.assertTrue (propFile.getParent() + " could not be created", propFile.getParentFile().mkdirs())
+        assertTrue (propFile.getParent() + " could not be created", propFile.getParentFile().mkdirs())
         propFile.createNewFile()
         propSave.store(new FileOutputStream(propFile), "")
 
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        PikeWorker workerTask = TestUtils.getWorker(setPropertyHalloTask)
+        println (workerTask.detailInfo)
+        workerTask.install()
 
         Properties prop = new Properties()
         prop.load(new FileInputStream(propFile))
         String valueProp1 = prop.get("property1")
-        Assert.assertNull("property1 exists after removing a non existend property1, that's strange", valueProp1)
+        assertNull("property1 exists after removing a non existend property1, that's strange", valueProp1)
 
         String valueProp2 = prop.get("mister")
-        Assert.assertNotNull("Value mister was removed", valueProp2)
-        Assert.assertEquals ("Invalid value set", "bean", valueProp2)
+        assertNotNull("Value mister was removed", valueProp2)
+        assertEquals ("Invalid value set", "bean", valueProp2)
 
     }
 
@@ -109,7 +106,7 @@ public class PropertyWorkerRemoveTest {
 
         Properties propSave = new Properties()
         propSave.setProperty("mister", "bean")
-        Assert.assertTrue (propFile.getParent() + " could not be created", propFile.getParentFile().mkdirs())
+        assertTrue (propFile.getParent() + " could not be created", propFile.getParentFile().mkdirs())
         propFile.createNewFile()
         propSave.store(new FileOutputStream(propFile), "")
 
@@ -117,13 +114,15 @@ public class PropertyWorkerRemoveTest {
 
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        PikeWorker workerTask = TestUtils.getWorker(setPropertyHalloTask)
+
+        println (workerTask.detailInfo)
+        workerTask.install()
 
         Properties prop = new Properties()
         prop.load(new FileInputStream(propFile))
         String valueProp1 = prop.get("property1")
-        Assert.assertNull("Property1 not set at all", valueProp1)
+        assertNull("Property1 not set at all", valueProp1)
 
     }
 

@@ -6,6 +6,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
+import org.pike.test.TestUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +22,7 @@ class UserEnvWorkerAliasTest {
 
         File tmpFile = File.createTempFile(getClass().getName(), 'alias')
 
-        UserenvWorker worker = new UserenvWorker()
+        UserenvWorker worker = TestUtils.createTask(UserenvWorker)
         worker.operatingsystem = new Operatingsystem("linux")
         worker.defaults = new Defaults()
         worker.file (tmpFile.absolutePath)

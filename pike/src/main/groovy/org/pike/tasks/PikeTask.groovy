@@ -37,9 +37,9 @@ public abstract class PikeTask extends DefaultTask {
         if (user)
             return user
         if (defaults)
-            return defaults.defaultuser
+            return defaults.fsUser
 
-        return project.defaults.defaultuser
+        return project.defaults.fsUser
 
     }
 

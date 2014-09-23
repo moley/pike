@@ -1,6 +1,7 @@
 package org.pike.resolver
 
 import groovy.util.logging.Log
+import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.pike.common.NamedElement
 import org.pike.resolver.components.CurrentPathResolver
@@ -14,7 +15,7 @@ import org.pike.resolver.components.Resolver
  * Time: 23:45
  * To change this template use File | Settings | File Templates.
  */
-@Log
+@Slf4j
 class ResolveItem {
 
     Object object
@@ -45,7 +46,8 @@ class ResolveItem {
      */
     public void resolve (Project project) {
 
-        log.fine("Resolving " + object + "- " + getter.name)
+        if (log.debugEnabled)
+          log.debug("Resolving " + object + "- " + getter.name)
 
         if (isResolved)
             return

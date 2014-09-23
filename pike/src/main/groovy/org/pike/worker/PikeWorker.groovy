@@ -24,9 +24,7 @@ import java.nio.file.Path
  * To change this template use File | Settings | File Templates.
  */
 @Slf4j
-public abstract class PikeWorker extends DefaultTask{
-
-    Project project
+public abstract class PikeWorker extends DefaultTask {
 
     CacheManager cacheManager = new CacheManager()
 
@@ -50,13 +48,12 @@ public abstract class PikeWorker extends DefaultTask{
 
     String paramvalue
 
-    String ordinaryFileFlag = '644'
+    String ordinaryFileFlag
 
     String executableFileFlag = '755'
 
 
-    public void configure (final PikeWorker otherWorker) {
-        project = otherWorker.project
+    public void configure(final PikeWorker otherWorker) {
         cacheManager = otherWorker.cacheManager
         operatingsystem = otherWorker.operatingsystem
         defaults = otherWorker.defaults
@@ -70,7 +67,7 @@ public abstract class PikeWorker extends DefaultTask{
      * installPike the task, set all relevant model elements
      * @param host
      */
-    public void configure (final Host host) {
+    public void configure(final Host host) {
         this.host = host
         this.operatingsystem = host.operatingsystem
         if (this.autoconfigClosure != null)
@@ -78,53 +75,50 @@ public abstract class PikeWorker extends DefaultTask{
 
     }
 
-    public String directoryName (final String url) {
+    public String directoryName(final String url) {
         String cutoff = url.substring(url.lastIndexOf("/") + 1)
         return cutoff.substring(0, cutoff.lastIndexOf("."))
     }
 
-    public group (final String group) {
+    public group(final String group) {
         if (log.debugEnabled)
-        log.debug("User configures group=${group}")
+            log.debug("User configures group=${group}")
         this.fsGroup = group
     }
 
-    public user (final String user) {
+    public user(final String user) {
         this.fsUser = user
     }
 
-    public Defaults setDefaults (final Defaults defaults) {
+    public Defaults setDefaults(final Defaults defaults) {
         this.defaults = defaults
     }
 
-    public Defaults getDefaults () {
+    public Defaults getDefaults() {
         return defaults != null ? defaults : project.defaults
     }
 
-    public String getFsUser () {
+    public String getFsUser() {
         if (this.fsUser != null)
             return this.fsUser
         if (defaults != null)
-            return defaults.defaultuser
+            return defaults.fsUser
 
-        return project.defaults.defaultuser
+        return project.defaults.fsUser
 
     }
 
-    public String getFsGroup () {
+    public String getFsGroup() {
         if (this.fsGroup != null) {
             if (log.debugEnabled)
-              log.debug("Group set to ${this.fsGroup} ")
+                log.debug("Group set to ${this.fsGroup} ")
             return this.fsGroup
         }
 
-        if (getFsUser() != null) {
-            if (log.debugEnabled)
-                log.debug("Group set to ${getFsUser()} like user")
-            return getFsUser()
-        }
-        else
-            throw new IllegalStateException('Group could not be determined, because neither group nor user defined')
+        if (defaults != null)
+            return defaults.fsGroup
+
+        return project.defaults.fsGroup
     }
 
 
@@ -154,81 +148,65 @@ public abstract class PikeWorker extends DefaultTask{
         if (getDefaults().rootpath)
             completeFile = osProvider.addPath(getDefaults().rootpath, path)
 
-        File file = new File (osProvider.getOsDependendPath(completeFile))
+        File file = new File(osProvider.getOsDependendPath(completeFile))
         if (log.debugEnabled)
-          log.debug("toFile " + path + "->" + completeFile + "->" + file.absolutePath)
+            log.debug("toFile " + path + "->" + completeFile + "->" + file.absolutePath)
 
-        return new File (osProvider.getOsDependendPath(completeFile))
+        return new File(osProvider.getOsDependendPath(completeFile))
     }
 
 
-
-
-
-    public String getDetailInfo () {
-        return  "  * worker " + getClass().name + NEWLINE +
-                "    - environment  : ${environment.name}$NEWLINE" +
+    public String getDetailInfo() {
+        String env = environment != null ? environment.name : null
+        return "  * worker " + getClass().name + NEWLINE +
+                "    - environment  : ${env}$NEWLINE" +
                 "    - workername   : ${name}$NEWLINE" +
-                "    - user         : ${user}$NEWLINE" +
+                "    - fsUser       : ${fsUser}$NEWLINE" +
+                "    - fsUser      : ${fsGroup}$NEWLINE" +
                 "    - paramkey     : ${paramkey} $NEWLINE" +
                 "    - paramvalue   : ${paramvalue}$NEWLINE"
     }
-
-
 
     /**
      * adapts file to user and flags
      * @param fileToAdapt file to be adapted to user from worker or default and fileflags from worker
      */
-    protected void adaptFileFlags (File fileToAdapt, String fsUser, String fsGroup, String fileFlags) {
+    protected void adaptFileFlags(File fileToAdapt, String fsUser, String fsGroup, String fileFlags) {
 
         //TODO solve with Java NIO
-        if (! (operatingsystem.provider instanceof WindowsProvider)) {
+        if (!(operatingsystem.provider instanceof WindowsProvider)) {
 
             if (fsUser == null)
-                throw new IllegalStateException('No user set. Please set an user at environment or defaultuser')
+                throw new IllegalStateException('No user set. Please set an user at environment or fsUser')
 
+            String command = "chown -R $fsUser:$fsGroup $fileToAdapt.absolutePath"
             if (fsGroup == null)
-                throw new IllegalStateException('No group set. Please set an group at environment or defaultgroup')
+                command = "chown -R $fsUser $fileToAdapt.absolutePath"
 
+            log.info(command)
+            Process process = Runtime.getRuntime().exec(command)
+            int returnCode = process.waitFor()
+            log.info("Modify user $fsUser and group $fsGroup of file $fileToAdapt.absolutePath (returncode $returnCode)")
+            if (returnCode != 0)
+                throw new IllegalStateException("$command failed")
 
-            if (fsUser != null && fsGroup != null) {
-
-                String command = "chown -R $fsUser:$fsGroup $fileToAdapt.absolutePath"
-                log.info(command)
-                Process process = Runtime.getRuntime().exec(command)
-                int returnCode = process.waitFor()
-                log.info("Modify user $fsUser and group $fsGroup of file $fileToAdapt.absolutePath (returncode $returnCode)")
-                if (returnCode != 0)
-                    throw new IllegalStateException("$command failed")
-            }
-            else
-              log.info("Skip modifying user $fsUser and group $fsGroup of file $fileToAdapt.absolutePath")
 
             if (fileFlags != null) {
 
                 String command2 = "chmod -R $fileFlags $fileToAdapt.absolutePath"
                 log.info(command2)
-                Process process = Runtime.getRuntime().exec(command2)
-                int returnCode = process.waitFor()
+                process = Runtime.getRuntime().exec(command2)
+                returnCode = process.waitFor()
                 log.info("Modify fileflags $fileFlags of file $fileToAdapt.absolutePath (returncode $returnCode)")
                 if (returnCode != 0)
                     throw new IllegalStateException("$command2 failed")
-            }
-            else
+            } else
                 log.info("Skip modifying fileflags of file $fileToAdapt.absolutePath")
         }
     }
 
-
-
     @TaskAction
-    public abstract void install ()
+    public abstract void install()
 
-
-    public abstract boolean uptodate ()
-
-
-
-
+    public abstract boolean uptodate()
 }

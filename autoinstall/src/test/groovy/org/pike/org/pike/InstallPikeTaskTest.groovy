@@ -24,6 +24,7 @@ class InstallPikeTaskTest {
 
         project.defaults {
             pikegradle = 'some pikegradle'
+            currentHost = 'host1'
         }
 
         project.autoinstall {

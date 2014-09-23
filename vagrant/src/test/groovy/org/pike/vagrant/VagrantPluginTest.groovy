@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.holdertasks.ResolveModelTask
 
 /**
  * Created by OleyMa on 11.08.14.
@@ -48,8 +47,6 @@ class VagrantPluginTest {
 
         project.evaluate()
 
-        ResolveModelTask resolveModelTask = project.tasks.resolveModel
-        resolveModelTask.resolveModel()
 
         project.tasks.each {log.info(it.name)}
 

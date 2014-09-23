@@ -2,31 +2,26 @@ package org.pike.worker
 
 import org.junit.Assert
 import org.junit.Test
+import org.pike.test.TestUtils
+
+import java.nio.file.Files
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 20.09.13
- * Time: 22:45
- * To change this template use File | Settings | File Templates.
+ * Tests remove worker
  */
 class RemoveWorkerTest {
 
-    File file = new File ("hallo")
+    File file = Files.createTempFile('removeworker', System.currentTimeMillis().toString()).toFile()
 
     @Test
     public void test() {
-        Assert.assertTrue (file.createNewFile())
+        Assert.assertTrue (file.exists())
 
-        RemoveWorker worker = new RemoveWorker()
-        worker.file("hallo")
+        RemoveWorker worker = TestUtils.createTask(RemoveWorker)
+        worker.file(file.absolutePath)
         worker.install()
 
         Assert.assertFalse (file.exists())
     }
 
-    public void after () {
-        if (file.exists())
-           Assert.assertTrue (file.delete())
-    }
 }

@@ -1,23 +1,23 @@
 package org.pike.tasks
 
 import com.google.common.io.Files
+import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.pike.test.TestUtils
 import org.pike.worker.UserenvWorker
 
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
+
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 02.05.13
- * Time: 22:58
- * To change this template use File | Settings | File Templates.
+ * tests userenv task
  */
+@Slf4j
 class UserenvTaskTest {
 
     private String user = System.getProperty("user.name")
@@ -89,10 +89,9 @@ class UserenvTaskTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        UserenvWorker worker = setPropertyHalloTask.workers.get(0)
+        UserenvWorker worker = TestUtils.getWorker(setPropertyHalloTask)
         worker.file (propFilePath)
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        worker.install()
 
         List<String> text = propFile.text.split(UserenvWorker.NEWLINE)
 
@@ -110,15 +109,14 @@ class UserenvTaskTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        UserenvWorker worker = setPropertyHalloTask.workers.get(0)
-        Assert.assertTrue (propFile.absoluteFile.parentFile.mkdirs())
+        UserenvWorker worker = TestUtils.getWorker(setPropertyHalloTask)
+        assertTrue (propFile.absoluteFile.parentFile.mkdirs())
         worker.file (propFilePath)
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        worker.install()
 
         List<String> text = propFile.text.split(UserenvWorker.NEWLINE)
 
-        println (">After: " + propFile.text+"<")
+        log.info (">After: " + propFile.text+"<")
 
         checkFile(text, "java")
 
@@ -126,13 +124,13 @@ class UserenvTaskTest {
 
     private void checkFile (final List<String> text, String pathend) {
 
-        Assert.assertEquals ("Pikeentry PATH GRADLE_HOME not found in line 0 (${text})", 0, text.indexOf("# pike    BEGIN (PATH GRADLE_HOME)"))
-        Assert.assertEquals ("Pikeentry PATH GRADLE_HOME not found in line 4 (${text})", 4, text.indexOf('# pike    BEGIN (PATH JAVA_HOME)'))
+        assertEquals ("Pikeentry PATH GRADLE_HOME not found in line 0 (${text})", 0, text.indexOf("# pike    BEGIN (PATH GRADLE_HOME)"))
+        assertEquals ("Pikeentry PATH GRADLE_HOME not found in line 4 (${text})", 4, text.indexOf('# pike    BEGIN (PATH JAVA_HOME)'))
 
         String javahomeString = "export JAVA_HOME=/home/${user}/swarm/tools/" + pathend
-        Assert.assertEquals ("line $javahomeString not found in $text", 5, text.indexOf(javahomeString))
+        assertEquals ("line $javahomeString not found in $text", 5, text.indexOf(javahomeString))
 
-        Assert.assertEquals (6, text.indexOf('export PATH=$JAVA_HOME/bin:$PATH'))
-        Assert.assertEquals (7, text.indexOf('# pike    END (PATH JAVA_HOME)'))
+        assertEquals (6, text.indexOf('export PATH=$JAVA_HOME/bin:$PATH'))
+        assertEquals (7, text.indexOf('# pike    END (PATH JAVA_HOME)'))
     }
 }

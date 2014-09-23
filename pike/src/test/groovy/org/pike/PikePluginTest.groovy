@@ -1,5 +1,6 @@
 package org.pike
 
+import groovy.util.logging.Slf4j
 import org.gradle.api.DefaultTask
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.internal.project.ProjectInternal
@@ -11,10 +12,12 @@ import org.pike.model.host.Host
 import org.pike.tasks.DelegatingTask
 import org.pike.test.TestUtils
 import org.pike.worker.DownloadWorker
+import org.pike.worker.PikeWorker
 
 /**
  * Tests for pike plugin
  */
+@Slf4j
 class PikePluginTest {
 
     final String CURRENT_USER = System.getProperty("user.name")
@@ -25,7 +28,7 @@ class PikePluginTest {
         ProjectInternal project = ProjectBuilder.builder().withName("autocreateTasksTest").build()
         project.apply plugin: 'pike'
 
-        Assert.assertEquals(CURRENT_USER, project.defaults.defaultuser)
+        Assert.assertEquals(CURRENT_USER, project.defaults.fsUser)
 
     }
 
@@ -75,8 +78,6 @@ class PikePluginTest {
         ModelLogger.logConfiguration("test", project, false)
 
         TestUtils.prepareModel(project)
-
-
     }
 
     @Test
@@ -100,7 +101,8 @@ class PikePluginTest {
 
         DelegatingTask installtask = project.tasks.installAnything
         Assert.assertNotNull('Task installAnything was not created', installtask)
-        Host host = installtask.getWorkers().get(0).host
+        PikeWorker pikeworker = TestUtils.getWorker(installtask)
+        Host host = pikeworker.host
         Assert.assertNotNull('Host is not injected', host)
         Assert.assertNotNull('IP is not set', host.ip)
         Assert.assertNotNull('Hostname is not set', host.hostname)
@@ -116,7 +118,7 @@ class PikePluginTest {
         String DEFAULTUSER = 'user'
 
         project.defaults {
-            defaultuser = DEFAULTUSER
+            fsUser = DEFAULTUSER
             currentHost = 'build11'
         }
 
@@ -147,22 +149,22 @@ class PikePluginTest {
         TestUtils.prepareModel(project)
 
 
-        println (project.environments.buildnode)
+        log.info (project.environments.buildnode.toString())
 
         Environment env = project.environments.buildnode
-        Assert.assertEquals ("Invalid number of tasks created", 3, env.createdTaskNames.size())
-        println (project.tasks)
+        Assert.assertEquals ("Invalid number of tasks created", 1, env.createdTaskNames.size())
+        log.info (project.tasks.toString())
 
         DelegatingTask installtask = project.tasks.installBuildnode
-        DownloadWorker downloadWorker = installtask.workers.get(0)
+        DownloadWorker downloadWorker = TestUtils.getWorker(installtask)
 
         Assert.assertEquals ("installBuildnode", installtask.name)
         Assert.assertEquals ("buildnode", downloadWorker.environment.name)
-        Assert.assertEquals ("download(0)", downloadWorker.name)
+        Assert.assertEquals ("_installBuildnode0download", downloadWorker.name)
         DefaultTask containerTaskInstall = project.tasks.install
         checkTaskContainsDependency(containerTaskInstall, "installBuildnode")
 
-        Assert.assertEquals(DEFAULTUSER, project.defaults.defaultuser)
+        Assert.assertEquals(DEFAULTUSER, project.defaults.fsUser)
 
     }
 

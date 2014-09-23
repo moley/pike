@@ -7,6 +7,7 @@ import org.gradle.internal.reflect.Instantiator
 import org.pike.common.NamedElement
 import org.pike.environment.EnvCollector
 import org.pike.tasks.DelegatingTask
+import org.pike.worker.CombinedWorker
 import org.pike.worker.PikeWorker
 
 /**
@@ -103,7 +104,6 @@ public class Environment extends NamedElement {
                 genericTaskObject.project = project
                 genericTaskObject.paramkey = matrixParamKey
                 genericTaskObject.paramvalue = matrixParamValue
-                genericTaskObject.dependsOn project.tasks.deriveTasks
 
                 Task holdertasks = project.tasks.findByName('install')
                 holdertasks.dependsOn genericTaskObject
@@ -131,7 +131,6 @@ public class Environment extends NamedElement {
                 pikeTask.environment = task.environment
                 pikeTask.group = TASKGROUP_WORKER
                 pikeTask.onlyIf {! pikeTask.uptodate()}
-                pikeTask.dependsOn project.tasks.deriveTasks
 
                 task.dependsOn pikeTask
 

@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 import org.pike.cache.CacheManager
-import org.pike.holdertasks.ResolveModelTask
 import org.pike.test.TestUtils
 
 /**
@@ -30,15 +29,15 @@ class AutoinstallPluginMultipleTest {
         project.apply plugin: 'autoinstall'
 
         project.defaults {
-            defaultuser = 'nightly'
-            currentHost = 'vtbuild11-x'
+            fsUser = 'nightly'
+            currentHost = 'testhostLinux1'
             pikegradle = pikeGradle
         }
 
         project.operatingsystems {
 
             linux {
-                homedir = "home/${project.defaults.defaultuser}"
+                homedir = "home/${project.defaults.fsUser}"
                 programdir = "tools"
                 pikedir = "pike"
                 pikejre32 = pikeJre
@@ -67,9 +66,6 @@ class AutoinstallPluginMultipleTest {
         }
 
         project.evaluate()
-
-        ResolveModelTask resolveModelTask = project.tasks.resolveModel
-        resolveModelTask.resolveModel()
 
         project.tasks.each { log.info(it.name) }
 

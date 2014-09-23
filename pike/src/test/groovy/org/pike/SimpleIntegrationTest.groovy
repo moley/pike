@@ -9,11 +9,7 @@ import org.pike.holdertasks.InstallTask
 import org.pike.test.TestUtils
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 25.09.13
- * Time: 19:46
- * To change this template use File | Settings | File Templates.
+ * A simple integration test
  */
 class SimpleIntegrationTest {
 
@@ -27,7 +23,7 @@ class SimpleIntegrationTest {
 
         //Pike - Model
         project.defaults {
-            defaultuser = 'nightly'
+            fsUser = 'nightly'
             currentHost = 'localhost'
             rootpath = '${currentPath}/rootpath4Test'
         }
@@ -36,7 +32,6 @@ class SimpleIntegrationTest {
             macosx {
                 programdir = "${homedir}/swarm/tools"
                 appconfigfile = '/etc/sysconfig/jenkins/global.sh'
-                userconfigfile =  "${homedir}/.bashrc" //TODO make global
                 globalconfigfile = '/etc/profile'
             }
         }
@@ -78,16 +73,8 @@ class SimpleIntegrationTest {
 
         TestUtils.prepareModel(project)
 
-        Collection <String> expectedTasks = ["checkenv",
-                "checkenvConfincludes",
-                "checkenvJdks16",
-                "checkenvJdks17",
+        Collection <String> expectedTasks = [
                 "clean",
-                "deinstall",
-                "deinstallConfincludes",
-                "deinstallJdks16",
-                "deinstallJdks17",
-                "deriveTasks",
                 "install",
                 "installConfincludes",
                 "installJdks16",

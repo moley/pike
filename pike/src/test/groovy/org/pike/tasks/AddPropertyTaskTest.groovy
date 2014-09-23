@@ -7,13 +7,10 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.pike.test.TestUtils
+import org.pike.worker.PikeWorker
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 25.04.13
- * Time: 18:34
- * To change this template use File | Settings | File Templates.
+ * tests for adding property to a propertyfile
  */
 class AddPropertyTaskTest {
 
@@ -59,8 +56,8 @@ class AddPropertyTaskTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        PikeWorker worker = TestUtils.getWorker(setPropertyHalloTask)
+        worker.install()
 
         Properties prop = new Properties()
         prop.load(new FileInputStream(propFile))
@@ -93,8 +90,8 @@ class AddPropertyTaskTest {
         TestUtils.prepareModel(project)
 
         DelegatingTask setPropertyHalloTask = project.tasks.findByName ("installTestenv")
-        println (setPropertyHalloTask.getDetailInfo())
-        setPropertyHalloTask.install()
+        PikeWorker worker = TestUtils.getWorker(setPropertyHalloTask)
+        worker.install()
 
         Properties prop = new Properties()
         prop.load(new FileInputStream(propFile))

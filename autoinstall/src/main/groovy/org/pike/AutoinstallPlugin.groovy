@@ -9,15 +9,11 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.pike.holdertasks.ResolveModelTask
 import org.pike.model.Autoinstall
-import org.pike.model.defaults.Defaults
 import org.pike.model.host.Host
 import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.os.LinuxProvider
 import org.pike.os.WindowsProvider
-
-import java.nio.file.Files
 
 @Slf4j
 class AutoinstallPlugin implements Plugin<Project> {
@@ -46,7 +42,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 Operatingsystem os = entry.os
                 BitEnvironment bitEnvironment = entry.bitEnvironment
 
-                ResolveModelTask resolveModelTask = project.tasks.resolveModel
 
                 String osName = os.name
                 String osSuffix = os.name
@@ -69,7 +64,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 prepareGradle.to installPathForOs
                 prepareGradle.simplifyTo
                 prepareGradle.description = "Prepare gradle for installer of operatingsystem $osName"
-                prepareGradle.dependsOn resolveModelTask
                 prepareOperatingsystemTask.dependsOn prepareGradle
 
                 //JRE
@@ -82,7 +76,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 prepareJre.to installPathForOs
                 prepareJre.simplifyTo 'jre'
                 prepareJre.description = "Prepare jre for installer of operatingsystem $osName"
-                prepareJre.dependsOn resolveModelTask
                 prepareOperatingsystemTask.dependsOn prepareJre
 
                 //libs
@@ -92,7 +85,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 prepareLibs.from AutoinstallUtil.getLocalLibs(project)
                 prepareLibs.into(installPathLibs)
                 prepareLibs.description = "Prepare libraries for installer of operatingsystem $osName"
-                prepareLibs.dependsOn resolveModelTask
                 prepareOperatingsystemTask.dependsOn prepareLibs
 
 
@@ -112,7 +104,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 createScript.gradleDir = simplifiedGradle
                 createScript.osSuffix = osSuffix
                 createScript.description = "Prepare startscript for installer of operatingsystem $osName"
-                createScript.dependsOn resolveModelTask
                 prepareOperatingsystemTask.dependsOn createScript
 
 
@@ -120,7 +111,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 CreateBootstrapScript bootstrapScriptTask = project.tasks.create("prepareInstaller${osSuffix}Bootstrap" , CreateBootstrapScript)
                 bootstrapScriptTask.group = GROUP_AUTOINSTALL
                 bootstrapScriptTask.toPath = installPathForOs
-                bootstrapScriptTask.dependsOn resolveModelTask
                 bootstrapScriptTask.description = "Prepare bootstrap script for installer of operatingsystem $osName"
                 prepareOperatingsystemTask.dependsOn bootstrapScriptTask
 
@@ -134,7 +124,6 @@ class AutoinstallPlugin implements Plugin<Project> {
                 prepareConfigurations.includeEmptyDirs false
                 prepareConfigurations.into(installPathForOs)
                 log.info("Configuration: $prepareConfigurations")
-                prepareConfigurations.dependsOn resolveModelTask
                 prepareConfigurations.description = "Prepare configurations for installer of operatingsystem $osName"
                 prepareOperatingsystemTask.dependsOn prepareConfigurations
 
@@ -159,7 +148,6 @@ class AutoinstallPlugin implements Plugin<Project> {
 
             StartRemoteBuildTask startRemoteBuildTask = project.tasks.create('provision', StartRemoteBuildTask)
             startRemoteBuildTask.group = GROUP_AUTOINSTALL
-            startRemoteBuildTask.dependsOn project.tasks.resolveModel
             startRemoteBuildTask.description = "Start provisioning of parameterized or default host"
 
         }

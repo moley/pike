@@ -6,6 +6,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
+import org.pike.test.TestUtils
 import org.pike.worker.java.CertUtils
 
 /**
@@ -59,9 +60,9 @@ class JavaWorkerTest {
         if (certsFile.exists())
             Assert.assertTrue ("Certsfile could not be removed", certsFile.delete())
 
-        Thread.sleep(200)
+        Thread.sleep(200) //TODO check md5 sum changed
 
-        JavaWorker javaworker = new JavaWorker()
+        JavaWorker javaworker = TestUtils.createTask(JavaWorker)
         javaworker.project = project
         javaworker.jdkHome(tmpJava.absolutePath)
         javaworker.certificate(host)

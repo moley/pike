@@ -41,7 +41,12 @@ class ProjectInfo {
         //if default ist configured than use this
         if (currentHost != null) {
             log.info ("Checking if host $host.name matches current host from defaults $currentHost")
-            final boolean matches = host.name.equalsIgnoreCase(currentHost) || host.hostname.equalsIgnoreCase(currentHost)
+
+            final boolean matches = host.name.equalsIgnoreCase(currentHost)
+
+            if (!matches && host.hostname != null)
+              matches = host.hostname.equalsIgnoreCase(currentHost)
+
             if (matches)
                 return true
         }
@@ -108,7 +113,7 @@ class ProjectInfo {
                  hostnames += nextHost.name
             }
 
-            throw new IllegalStateException ("Current host not found in configuration (Valid hosts: $hostnames)")
+            log.warn("Current host not found in configuration (Valid hosts: $hostnames)")
 
     }
 }

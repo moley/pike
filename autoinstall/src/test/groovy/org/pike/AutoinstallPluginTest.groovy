@@ -2,13 +2,11 @@ package org.pike
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
-import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.tasks.Copy
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
 import org.pike.cache.CacheManager
-import org.pike.holdertasks.ResolveModelTask
 import org.pike.test.TestUtils
 
 /**
@@ -31,15 +29,15 @@ class AutoinstallPluginTest {
         project.apply plugin: 'autoinstall'
 
         project.defaults {
-            defaultuser = 'nightly'
-            currentHost = 'vtbuild11-x'
+            fsUser = 'nightly'
+            currentHost = 'testhost'
             pikegradle = pikeGradle
         }
 
         project.operatingsystems {
 
             linux {
-                homedir = "home/${project.defaults.defaultuser}"
+                homedir = "home/${project.defaults.fsUser}"
                 programdir = "tools"
                 pikedir = "pike"
                 pikejre32 = pikeJre
@@ -69,8 +67,6 @@ class AutoinstallPluginTest {
 
         project.evaluate()
 
-        ResolveModelTask resolveModelTask = project.tasks.resolveModel
-        resolveModelTask.resolveModel()
 
         project.tasks.each {log.info(it.name)}
 
