@@ -42,8 +42,6 @@ public class PikePlugin implements Plugin<Project> {
      */
     public void apply(Project project) {
 
-        LogConfigurator.configureLogging(project)
-
         log = LoggerFactory.getLogger(PikePlugin.class)
         log.info("Info testlog")
         log.debug("Debug testlog")

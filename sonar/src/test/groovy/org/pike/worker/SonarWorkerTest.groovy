@@ -1,14 +1,11 @@
 package org.pike.worker
 
-import com.google.common.io.Files
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.model.defaults.Defaults
-import org.pike.model.operatingsystem.Operatingsystem
 import org.pike.tasks.DelegatingTask
 import org.pike.test.TestUtils
 
@@ -37,7 +34,7 @@ class SonarWorkerTest {
     public void execute() {
 
 
-        File dummyPathTo = Files.createTempDir()
+        File dummyPathTo = File.createTempDir()
         log.info("Test started in path " + dummyPathTo.absolutePath)
 
         File sonarZip = TestUtils.projectfile("sonar", "src/test/resources/sonarqube-4.3.zip").absoluteFile

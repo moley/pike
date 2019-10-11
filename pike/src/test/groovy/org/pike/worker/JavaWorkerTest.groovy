@@ -63,7 +63,6 @@ class JavaWorkerTest {
         Thread.sleep(200) //TODO check md5 sum changed
 
         JavaWorker javaworker = TestUtils.createTask(JavaWorker)
-        javaworker.project = project
         javaworker.jdkHome(tmpJava.absolutePath)
         javaworker.certificate(host)
         javaworker.install()

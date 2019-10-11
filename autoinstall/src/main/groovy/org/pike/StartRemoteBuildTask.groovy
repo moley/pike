@@ -4,8 +4,8 @@ import groovy.util.logging.Log4j
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.internal.tasks.options.Option
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.gradle.logging.ProgressLoggerFactory
 import org.pike.autoinstall.PropertyChangeProgressLogging
 import org.pike.model.environment.Environment

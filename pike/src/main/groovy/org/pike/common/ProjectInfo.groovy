@@ -42,7 +42,7 @@ class ProjectInfo {
         if (currentHost != null) {
             log.info ("Checking if host $host.name matches current host from defaults $currentHost")
 
-            final boolean matches = host.name.equalsIgnoreCase(currentHost)
+            boolean matches = host.name.equalsIgnoreCase(currentHost)
 
             if (!matches && host.hostname != null)
               matches = host.hostname.equalsIgnoreCase(currentHost)

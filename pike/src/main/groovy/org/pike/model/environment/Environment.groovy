@@ -97,8 +97,6 @@ public class Environment extends NamedElement {
                     log.info("Creating task " + taskName)
                 DelegatingTask genericTaskObject = project.task([type: DelegatingTask], taskName) as DelegatingTask
                 genericTaskObject.group = TASKGROUP_PLANS
-
-                genericTaskObject.name = taskName
                 genericTaskObject.environment = this
                 genericTaskObject.group = TASKGROUP_PLANS
                 genericTaskObject.project = project
@@ -125,7 +123,6 @@ public class Environment extends NamedElement {
 
                 PikeWorker pikeTask = project.task([type: workerClass], workerTaskName) as PikeWorker
                 pikeTask.autoconfigClosure = autoconfigClosure
-                pikeTask.project = project
                 pikeTask.paramkey = task.paramkey
                 pikeTask.paramvalue = task.paramvalue
                 pikeTask.environment = task.environment

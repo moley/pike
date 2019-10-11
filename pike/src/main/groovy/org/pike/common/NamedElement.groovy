@@ -1,11 +1,12 @@
 package org.pike.common
 
-import org.gradle.api.internal.DynamicObject
+
 import org.gradle.api.internal.DynamicObjectAware
-import org.gradle.api.internal.ExtensibleDynamicObject
 import org.gradle.api.plugins.Convention
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.internal.extensibility.ExtensibleDynamicObject
+import org.gradle.internal.metaobject.DynamicObject
 import org.gradle.internal.reflect.Instantiator
 
 /**
@@ -25,7 +26,7 @@ class NamedElement implements ExtensionAware, DynamicObjectAware  {
 
     public NamedElement (String name, Instantiator instantiator = null) {
         setName(name)
-        this.extensibleDynamicObject =  new ExtensibleDynamicObject(this, instantiator)
+        this.extensibleDynamicObject =  new ExtensibleDynamicObject(this, NamedElement.class, instantiator)
     }
 
     private void setName (final String name) {

@@ -1,7 +1,6 @@
 package org.pike.worker.java
 
 import groovy.util.logging.Slf4j
-import org.apache.commons.codec.binary.Base64
 
 import javax.net.ssl.*
 import java.nio.charset.Charset

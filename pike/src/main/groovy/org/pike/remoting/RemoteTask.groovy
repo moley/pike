@@ -3,7 +3,7 @@ package org.pike.remoting
 import groovy.util.logging.Slf4j
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.internal.tasks.options.Option
+import org.gradle.api.tasks.options.Option
 import org.pike.model.environment.Environment
 import org.pike.model.host.Host
 import org.pike.tasks.PikeTask

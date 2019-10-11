@@ -1,6 +1,7 @@
 package org.pike.cache
 
-import com.google.common.io.Files
+
+import org.apache.commons.io.FileUtils
 
 /**
  * Created by OleyMa on 23.09.14.
@@ -22,7 +23,7 @@ class FileDownloadStrategy implements IDownloadStrategy{
         if (! file.exists())
             throw new IllegalStateException("Url ${file.absolutePath} does not exist")
 
-        Files.copy(file, cacheFile)
+        FileUtils.copyFile(file, cacheFile)
 
 
     }

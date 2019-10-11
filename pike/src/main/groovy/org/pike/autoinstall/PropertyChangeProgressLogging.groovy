@@ -1,7 +1,7 @@
 package org.pike.autoinstall
 
 import org.gradle.api.internal.AbstractTask
-import org.gradle.logging.ProgressLogger
+import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.logging.ProgressLoggerFactory
 
 import java.beans.PropertyChangeEvent

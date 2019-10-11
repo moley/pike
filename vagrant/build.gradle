@@ -3,6 +3,8 @@ apply plugin: 'groovy'
 dependencies {
     compile project(':pike')
     compile project(':autoinstall')
+    compile 'commons-io:commons-io:2.6'
+
     testCompile ('org.spockframework:spock-core:0.7-groovy-2.0') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'//because gradle needs a newer version
     }

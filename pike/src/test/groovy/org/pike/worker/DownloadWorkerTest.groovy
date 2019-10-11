@@ -2,6 +2,7 @@ package org.pike.worker
 
 import com.google.common.io.Files
 import groovy.util.logging.Slf4j
+import org.gradle.api.GradleException
 import org.junit.Test
 import org.pike.model.defaults.Defaults
 import org.pike.model.operatingsystem.Operatingsystem
@@ -85,7 +86,7 @@ class DownloadWorkerTest {
 
     }
 
-    @Test
+    @Test(expected = GradleException.class)
     public void testNotExistingWithBin () {
         File dummyPathTo = new File ("/tmp/xyz" + System.currentTimeMillis())
         assertFalse ("DummyPath $dummyPathTo.absolutePath already exists", dummyPathTo.exists())

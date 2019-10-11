@@ -86,7 +86,7 @@ class SimpleIntegrationTest {
 
 
         InstallTask installTask = project.tasks.install
-        installTask.execute()
+        installTask.install()
 
 
     }
