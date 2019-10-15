@@ -23,16 +23,6 @@ subprojects {
         compile gradleApi()
     }
 
-    // Tests in package integration are only called in task integrationtest
-    test {
-        exclude "**/integration/**"
-    }
-
-    task integrationtest(type: Test) {
-        include "**/integration/**"
-        jvmArgs "-XX:MaxPermSize=128m"
-    }
-
     repositories {
         mavenCentral()
         maven {
@@ -42,66 +32,14 @@ subprojects {
     }
 
     group = 'org.pike'
-    version = '0.8'
+    version = '0.9'
 
     println ("Configuring for $project.name with version $project.version")
 
-    ext.publish = true
-    bintray {
-        user = System.properties['bintray.username']
-        key = System.properties['bintray.password']
-        configurations = ['published', 'archives']
-        dryRun=false
-        publish = true
-        pkg {
-            repo = 'pike'
-            name = "${project.name}"
-            desc = 'what a fantastic package indeed!'
-            websiteUrl = 'https://github.com/moley/pike'
-            issueTrackerUrl = 'https://github.com/moley/pike/issues'
-            vcsUrl = 'https://github.com/moley/pike.git'
-            licenses = ['Apache-2.0']
-            labels = ['pike', 'devop', 'gorilla']
-            attributes= ['plat': ['linux', 'osx']]
-            publicDownloadNumbers = true
-            version.attributes = [ 'gradle-plugin': "org.pike.${project.name}:org.pike:${project.name}" ]
-        }
-    }
+
+
+
     
-}
-
-
-subprojects {
-    apply plugin: 'maven'
-
-    if (project.plugins.hasPlugin('java')) {
-        configurations {
-            published
-        }
-        dependencies {
-            testCompile 'junit:junit:4.7'
-        }
-
-        task sourceJar(type: Jar) {
-            from sourceSets.main.allSource
-            classifier = 'sources'
-        }
-        task javadocJar(type: Jar, dependsOn: javadoc) {
-            classifier = 'javadoc'
-            from javadoc.destinationDir
-        }
-
-
-        // Add the sourceJars to non-extractor modules
-        artifacts {
-            published sourceJar
-            published javadocJar
-        }
-    }
-}
-
-configurations {
-    published
 }
 
 

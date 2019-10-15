@@ -2,3 +2,6 @@ build.log
 pikeDev.iml
 pikeDev.ipr
 pikeDev.iws
+build/
+.gradle/
+.idea/

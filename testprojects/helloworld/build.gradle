@@ -1,12 +1,30 @@
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
-        maven { url "http://dl.bintray.com/markusoley/pike"}
     }
-
     dependencies {
-        classpath "org.pike:autoinstall:0.+"
+        classpath 'org.pike:pike:0.9'
     }
 }
 
-apply from: 'pike.gradle'
+apply {
+    plugin 'pike'
+}
+
+pike {
+    git {
+        gitmodule ('pike', 'https://github.com/moley/pike.git') {
+            configuration {
+                encoding 'UTF-8'
+            }
+        }
+        gitmodule ('leguan', 'https://github.com/moley/leguan')
+    }
+
+    configuration {
+        encoding 'ISO-8859-15'
+        basepath 'build/basepath'
+    }
+
+}
