@@ -25,9 +25,6 @@ class CloneGitTask extends PikeTask {
 
     @TaskAction
     public void cloneGitModule () {
-
-        logger.lifecycle("Clone git module " + pikeExtension.force)
-
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
 
         if (mergedConfiguration.basepath == null)

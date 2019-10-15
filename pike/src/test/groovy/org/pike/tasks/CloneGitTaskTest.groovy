@@ -60,6 +60,7 @@ class CloneGitTaskTest {
                 basepath 'build/basepath'
             }
         }
+        project.evaluate()
         CloneGitTask cloneGitTaskPike = project.tasks.findByName("clonePike")
         CloneCommand theCloneCommand = new CloneCommand()
         def mockForCloneCommand = new MockFor(CloneCommand)
