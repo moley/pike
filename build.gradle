@@ -16,6 +16,7 @@ allprojects {
 subprojects {
 
     apply plugin: 'groovy'
+    apply plugin: 'jacoco'
     apply plugin: 'com.jfrog.bintray'
 
     dependencies {
@@ -34,7 +35,7 @@ subprojects {
     group = 'org.pike'
     version = '0.9'
 
-    println ("Configuring for $project.name with version $project.version")
+    println("Configuring for $project.name with version $project.version")
 
     test {
         testLogging {
@@ -44,10 +45,19 @@ subprojects {
         }
     }
 
+    jacocoTestReport {
+        reports {
+            xml.enabled = true
+            html.enabled = true
+        }
+    }
+}
 
 
 
-    
+
+
+
 }
 
 
