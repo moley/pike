@@ -25,7 +25,12 @@ class CloneGitTask extends PikeTask {
 
     @TaskAction
     public void cloneGitModule () {
+
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
+        if (mergedConfiguration.basepath == null)
+            throw new MissingConfigurationException("A basepath must be configured globally or at gitmodule")
+        File basepath = project.file(mergedConfiguration.basepath)
+        clonePath = new File(basepath, module.name)
 
         if (mergedConfiguration.basepath == null)
             throw new MissingConfigurationException("No basepath configured");
@@ -49,7 +54,7 @@ class CloneGitTask extends PikeTask {
             //>TODO Pull
         }
         else {
-            final ProgressLoggerWrapper progressLoggerWrapper = new ProgressLoggerWrapper(this, "Cloning " + module.cloneUrl)
+            final ProgressLoggerWrapper progressLoggerWrapper = new ProgressLoggerWrapper(project, "Cloning " + module.cloneUrl)
             cloneCommand = cloneCommand.setProgressMonitor(new ProgressMonitor() {
 
                 private int totalWork

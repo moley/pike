@@ -1,31 +1,22 @@
 package org.pike.utils
 
-import org.gradle.api.DefaultTask
+
+import org.gradle.api.Project
+import org.gradle.internal.logging.progress.ProgressLoggerFactory
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
-
 
 public class ProgressLoggerWrapper implements PropertyChangeListener {
 
     final def progressLogger
 
-    public ProgressLoggerWrapper (final DefaultTask task, final String description) {
-        //get ProgressLoggerFactory class
-        Class<?> progressLoggerFactoryClass;
-        try {
-            //Gradle 2.14 and higher
-            progressLoggerFactoryClass = Class.forName("org.gradle.internal.logging.progress.ProgressLoggerFactory");
-        } catch (ClassNotFoundException e) {
-            //prior to Gradle 2.14
-            progressLoggerFactoryClass = Class.forName("org.gradle.logging.ProgressLoggerFactory");
-        }
-        if (task != null) {
-            def progressLoggerFactory = task.services.get(progressLoggerFactoryClass)
-            progressLogger = progressLoggerFactory.newOperation(task.class)
-            progressLogger.setDescription(description)
-            start(description)
-        }
+    public ProgressLoggerWrapper (final Project project, final String description) {
+        def serviceRegistry = project.services
+        ProgressLoggerFactory progressLoggerFactory = serviceRegistry.get(ProgressLoggerFactory.class)
+        progressLogger = progressLoggerFactory.newOperation(description)
+        progressLogger.setDescription(description)
+        start(description)
     }
 
     void setDescription (final String description) {

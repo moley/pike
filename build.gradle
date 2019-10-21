@@ -36,6 +36,14 @@ subprojects {
 
     println ("Configuring for $project.name with version $project.version")
 
+    test {
+        testLogging {
+            events "started", "passed", "skipped", "failed"
+            exceptionFormat 'full'
+            showStackTraces = 'true'
+        }
+    }
+
 
 
 

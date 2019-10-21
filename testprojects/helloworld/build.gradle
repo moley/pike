@@ -22,6 +22,10 @@ pike {
         gitmodule ('leguan', 'https://github.com/moley/leguan')
     }
 
+    idea {
+        version '2019.2.3'
+    }
+
     configuration {
         encoding 'ISO-8859-15'
         basepath 'build/basepath'

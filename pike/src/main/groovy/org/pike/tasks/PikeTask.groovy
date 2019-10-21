@@ -5,7 +5,11 @@ import org.pike.configuration.PikeExtension
 
 class PikeTask extends DefaultTask {
 
+    {group = 'Pike'}
+
     PikeExtension pikeExtension
+
+
 
 
 }

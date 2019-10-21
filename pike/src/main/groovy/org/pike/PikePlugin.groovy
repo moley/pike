@@ -6,6 +6,8 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.pike.configuration.PikeExtension
 import org.pike.tasks.InstallTask
+import org.pike.tasks.PrepareEclipseTask
+import org.pike.tasks.PrepareIdeaTask
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,13 +20,19 @@ import org.pike.tasks.InstallTask
 public class PikePlugin implements Plugin<Project> {
 
 
+
     @Override
     void apply(Project project) {
 
         project.plugins.apply(BasePlugin) //for clean task
 
-        project.tasks.register('install', InstallTask)
-        PikeExtension pikeExtension = project.extensions.create('pike', PikeExtension, project)
+
+        PikeExtension pikeExtension = project.extensions.create(PikeExtension.NAME, PikeExtension, project)
+
+        InstallTask installTask = project.tasks.register('install', InstallTask).get()
+        installTask.pikeExtension = pikeExtension
+
+
 
 
     }

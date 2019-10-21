@@ -1,0 +1,11 @@
+language: java
+install: true
+
+jdk:
+  - openjdk11
+
+script:
+  - ./gradlew build check -s
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
