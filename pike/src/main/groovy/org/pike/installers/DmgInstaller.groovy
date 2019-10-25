@@ -12,21 +12,34 @@ class DmgInstaller implements Installer {
 
     ProcessWrapper processWrapper = new ProcessWrapper()
 
-    private File getAppDir(final File volumeDir) {
-        for (File next : volumeDir.listFiles()) {
-            if (next.name.endsWith(".app"))
-                return next
+
+    private File getAppDir (final String volumePath) {
+        File appFolder = null
+        File volumeFolder = new File(volumePath)
+        for (File next: volumeFolder.listFiles()) {
+            if (next.name.endsWith(".app")) {
+                if (appFolder == null)
+                  appFolder = next
+                else
+                    throw new IllegalStateException("More than one app folder found in " + volumePath + "(" + appFolder.name + "-" + next.name + ")")
+            }
         }
 
-        throw new IllegalStateException("No path found  suffixed with app in " + volumeDir.absolutePath)
+        if (appFolder == null)
+            throw new IllegalStateException("No app folder found in " + volumePath)
+
+        return appFolder
+
     }
 
     @Override
-    void install(final File installationDir, File downloadedFile) {
+    void install(File installationDir, File downloadedFile) {
+        installationDir = new File ('/Applications').absoluteFile //because dmg must be installed to //Applications
 
         project.logger.lifecycle("Installing " + downloadedFile.name + " to " + installationDir.absolutePath)
 
         //Mount
+        project.logger.info("Mounting " + downloadedFile.absolutePath)
         String[] mountCommand = ['hdiutil', 'mount', downloadedFile.absolutePath]
         ProcessResult resultMount = processWrapper.execute(mountCommand)
         if (resultMount.resultCode != 0)
@@ -34,20 +47,18 @@ class DmgInstaller implements Installer {
 
         //Copy content
         String volumePath = getVolumePath(resultMount.output)
-        String volumeName = volumePath.split("/").last()
-        if (!installationDir.name.equals(volumeName))
-            throw new IllegalStateException("Installation dir wrong " + installationDir.absolutePath + "-" + volumeName)
+        File appFolderOrigin = getAppDir(volumePath)
+        File appFolderInstalled = new File (installationDir, appFolderOrigin.name)
 
-        if (!installationDir.exists()) {
+        if (!appFolderInstalled.exists()) {
             project.logger.lifecycle("Copy " + volumePath + " to " + installationDir.absolutePath)
-            File volume = new File(volumePath)
-            File app = getAppDir(volume)
-            FileUtils.copyDirectory(app, installationDir)
+            FileUtils.copyDirectory(appFolderOrigin, installationDir)
         }
         else
-            project.logger.lifecycle("Installation dir " + installationDir.absolutePath + " already exists")
+            project.logger.lifecycle("Installation dir " + appFolderInstalled.absolutePath + " already exists")
 
         //Unmount
+        project.logger.info("Unmounting " + volumePath)
         String[] unmountCommand = ['hdiutil', 'unmount', volumePath]
         ProcessResult resultUnmount = processWrapper.execute(mountCommand)
         if (resultUnmount.resultCode != 0)

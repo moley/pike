@@ -1,13 +1,10 @@
 package org.pike
 
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.pike.configuration.PikeExtension
 import org.pike.tasks.InstallTask
-import org.pike.tasks.PrepareEclipseTask
-import org.pike.tasks.PrepareIdeaTask
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,12 +23,15 @@ public class PikePlugin implements Plugin<Project> {
 
         project.plugins.apply(BasePlugin) //for clean task
 
+        project.logger.lifecycle("JDK:        " + System.getProperty('java.version'))
+        project.logger.lifecycle("JavaHome   " + System.getenv('JAVA_HOME'))
+        project.logger.lifecycle("Gradle:     " + project.gradle.gradleVersion)
+
 
         PikeExtension pikeExtension = project.extensions.create(PikeExtension.NAME, PikeExtension, project)
 
         InstallTask installTask = project.tasks.register('install', InstallTask).get()
         installTask.pikeExtension = pikeExtension
-
 
 
 

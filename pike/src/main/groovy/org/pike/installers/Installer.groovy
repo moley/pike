@@ -7,5 +7,10 @@ interface Installer {
 
     void setProject(Project project)
 
-    public void install (final File outputDir, final File downloadedFile)
+    /**
+     * installs the tool into outputDir
+     * @param outputDir         outputDir to install tool to
+     * @param downloadedFile    downloaded tool file
+     */
+    void install (File outputDir, File downloadedFile)
 }

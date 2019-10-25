@@ -1,7 +1,6 @@
 package org.pike.configuration
 
 import org.gradle.api.Project
-import org.pike.exceptions.MissingConfigurationException
 import org.pike.tasks.git.CloneGitTask
 import org.pike.utils.StringUtils
 import org.pike.utils.TaskUtils

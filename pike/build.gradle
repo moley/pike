@@ -8,6 +8,7 @@ dependencies {
   compile 'commons-io:commons-io:2.6'
   compile 'org.eclipse.jgit:org.eclipse.jgit:5.5.1.201910021850-r'
   compile 'org.apache.httpcomponents:httpclient:4.5.10'
+  compile 'com.diffplug.gradle:goomph:3.17.1'
   testCompile 'com.google.guava:guava:28.1-jre'
   testCompile 'junit:junit:4.12'
 }

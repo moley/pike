@@ -2,6 +2,7 @@ package org.pike.installers
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+import org.pike.configuration.FileType
 import org.pike.utils.ProgressLoggerWrapper
 
 
@@ -22,6 +23,8 @@ class Download {
 
     File cachedFile
 
+    FileType fileType
+
 
     private long processedBytes = 0;
 
@@ -37,9 +40,11 @@ class Download {
 
         String absoluteName = source.replace("/", "#").replace(":", "#")
 
+        if (fileType != null && ! source.endsWith(fileType.suffix))
+            name = name + fileType.suffix
+
         URI uri = URI.create(source)
         URL url = uri.toURL()
-
 
         cachedFile = new File (cacheDir, absoluteName)
         downloadedFile = new File (toDir, name)

@@ -1,2 +1,3 @@
 include 'pike'
+include 'integrationtests'
 rootProject.name = 'pike'

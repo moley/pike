@@ -26,9 +26,18 @@ pike {
         version '2019.2.3'
     }
 
+    eclipse {
+        repo 'https://download.eclipse.org/releases/2019-09/'
+        feature 'org.eclipse.egit'
+    }
+
     configuration {
         encoding 'ISO-8859-15'
         basepath 'build/basepath'
     }
 
 }
+
+tasks.build.dependsOn tasks.install
+tasks.build.dependsOn tasks.eclipseInstall
+tasks.build.dependsOn tasks.ideaInstall

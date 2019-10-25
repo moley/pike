@@ -50,8 +50,6 @@ class CloneGitTask extends PikeTask {
             }
             else
                 logger.lifecycle("Path " + clonePath.absolutePath + " already exists. If you want to merge remote commits, add commandline parameter --force")
-
-            //>TODO Pull
         }
         else {
             final ProgressLoggerWrapper progressLoggerWrapper = new ProgressLoggerWrapper(project, "Cloning " + module.cloneUrl)

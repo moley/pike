@@ -4,9 +4,9 @@ import org.gradle.api.Project
 import org.pike.configuration.OperatingSystem
 import org.pike.configuration.PikeExtension
 
-class Tool {
+class ToolInstaller {
 
-    HashMap<OperatingSystem, String> urls = new HashMap<OperatingSystem, String>()
+    HashMap<OperatingSystem, ToolInstallerPlatformDetails> platformDetailsHashMap = new HashMap<OperatingSystem, ToolInstallerPlatformDetails>()
 
     Project project
 
@@ -18,12 +18,11 @@ class Tool {
 
     InstallerFactory installerFactory = new InstallerFactory()
 
-    private String getUrl (OperatingSystem operatingSystem) {
-        String url =  urls.get(operatingSystem)
-        if (url == null)
-            throw new IllegalStateException("No url for operatingsystem " + operatingSystem.name())
-
-        return url
+    ToolInstallerPlatformDetails getPlatformDetails (OperatingSystem operatingSystem) {
+        ToolInstallerPlatformDetails platformDetails =  platformDetailsHashMap.get(operatingSystem)
+        if (platformDetails == null)
+            throw new IllegalStateException("No platformdetails for operatingsystem " + operatingSystem.name() + " found")
+        return platformDetails
     }
 
     void install(OperatingSystem operatingSystem) {
@@ -32,21 +31,21 @@ class Tool {
 
         PikeExtension pikeExtension = project.extensions.pike
 
-        String remoteUrl = getUrl(operatingSystem)
+        ToolInstallerPlatformDetails platformDetails = getPlatformDetails(operatingSystem)
         Download download = new Download()
         download.project = project
-        download.source = remoteUrl
+        download.source = platformDetails.url
+        download.fileType = platformDetails.fileType
         download.toDir = project.file('build/pike/tools/' + name + 'Downloaded')
         download.force = pikeExtension.force
         download.executeDownload()
 
         File downloadedFile = download.downloadedFile
 
-        File installPath = project.file('/Applications')
 
         Installer installer = installerFactory.getInstaller(downloadedFile)
         installer.project = project
-        installer.install(installPath, downloadedFile)
+        installer.install(installationPath, downloadedFile)
 
     }
 }

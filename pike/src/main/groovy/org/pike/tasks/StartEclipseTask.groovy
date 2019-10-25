@@ -6,7 +6,7 @@ import org.pike.installers.ToolInstaller
 import org.pike.utils.ProcessResult
 import org.pike.utils.ProcessWrapper
 
-class StartIdeaTask extends PikeTask{
+class StartEclipseTask extends PikeTask{
 
     {
         description = 'Starts an IntelliJ instance for the given project'
@@ -23,7 +23,7 @@ class StartIdeaTask extends PikeTask{
         if (OperatingSystem.current.equals(OperatingSystem.MACOS)) {
             File startFile = project.file("/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea")
 
-            String [] commands = [startFile.absolutePath, project.projectDir.absolutePath]
+            String [] commands = [startFile.absolutePath]
             ProcessResult result = processWrapper.execute(commands)
             if (result.resultCode != 0)
                 throw new IllegalStateException("Could not start idea " + result.error)

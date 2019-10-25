@@ -1,8 +1,9 @@
 package org.pike.configuration
 
 import org.gradle.api.Project
-import org.pike.tasks.PrepareEclipseTask
-import org.pike.tasks.PrepareIdeaTask
+import org.pike.tasks.InstallEclipseTask
+import org.pike.tasks.InstallIdeaTask
+import org.pike.tasks.StartEclipseTask
 import org.pike.tasks.StartIdeaTask
 
 
@@ -18,7 +19,6 @@ class PikeExtension extends Configurable {
 
     Idea idea
 
-
     public PikeExtension (final Project project) {
         this.project = project
     }
@@ -28,7 +28,7 @@ class PikeExtension extends Configurable {
         idea.pikeExtension = this
         project.configure(idea, closure)
 
-        PrepareIdeaTask prepareIdeaTask = project.tasks.register('ideaPrepare', PrepareIdeaTask).get()
+        InstallIdeaTask prepareIdeaTask = project.tasks.register('ideaInstall', InstallIdeaTask).get()
         prepareIdeaTask.pikeExtension = this
 
         StartIdeaTask startIdeaTask = project.tasks.register("ideaStart", StartIdeaTask).get()
@@ -41,8 +41,17 @@ class PikeExtension extends Configurable {
         eclipse.pikeExtension = this
         project.configure(eclipse, closure)
 
-        PrepareEclipseTask prepareEclipseTask = project.tasks.register('prepareEclipse', PrepareEclipseTask).get()
+        project.apply plugin: 'com.diffplug.gradle.oomph.ide' // because adding tasks to the graph is only allowed in configuration phase
+
+        InstallEclipseTask prepareEclipseTask = project.tasks.register('eclipseInstall', InstallEclipseTask).get()
         prepareEclipseTask.pikeExtension = this
+        prepareEclipseTask.finalizedBy(project.tasks.ideSetupP2) // Dependency to ide task of goomph
+        prepareEclipseTask.finalizedBy(project.tasks.ideSetupWorkspace) // Dependency to ide task of goomph
+
+        StartEclipseTask startEclipseTask = project.tasks.register("eclipseStart", StartEclipseTask).get()
+        startEclipseTask.pikeExtension = this
+        startEclipseTask.dependsOn(project.tasks.ide)
+        startEclipseTask.dependsOn(prepareEclipseTask)
     }
 
     void git (Closure closure) {
