@@ -1,14 +1,17 @@
 package org.pike.tasks
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.pike.PikePlugin
 import org.pike.configuration.OperatingSystem
 import org.pike.installers.ToolInstaller
 import org.pike.utils.ProcessResult
 import org.pike.utils.ProcessWrapper
 
-class StartEclipseTask extends PikeTask{
+class StartEclipseTask extends DefaultTask{
 
     {
+        group = PikePlugin.PIKE_GROUP
         description = 'Starts an IntelliJ instance for the given project'
     }
 
@@ -21,7 +24,7 @@ class StartEclipseTask extends PikeTask{
     public void startIdea () {
 
         if (OperatingSystem.current.equals(OperatingSystem.MACOS)) {
-            File startFile = project.file("/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea")
+            File startFile = project.file("/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea") //TODO nicer
 
             String [] commands = [startFile.absolutePath]
             ProcessResult result = processWrapper.execute(commands)

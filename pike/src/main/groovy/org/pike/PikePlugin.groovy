@@ -16,6 +16,7 @@ import org.pike.tasks.InstallTask
 
 public class PikePlugin implements Plugin<Project> {
 
+    public final static String PIKE_GROUP = 'Pike'
 
 
     @Override
@@ -28,10 +29,9 @@ public class PikePlugin implements Plugin<Project> {
         project.logger.lifecycle("Gradle:     " + project.gradle.gradleVersion)
 
 
-        PikeExtension pikeExtension = project.extensions.create(PikeExtension.NAME, PikeExtension, project)
+        project.extensions.create(PikeExtension.NAME, PikeExtension, project)
 
-        InstallTask installTask = project.tasks.register('install', InstallTask).get()
-        installTask.pikeExtension = pikeExtension
+        project.tasks.register('install', InstallTask)
 
 
 

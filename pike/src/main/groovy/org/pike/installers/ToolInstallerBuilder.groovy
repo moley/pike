@@ -26,10 +26,10 @@ class ToolInstallerBuilder {
     }
 
 
-    public ToolInstallerBuilder platformDetails(final OperatingSystem operatingSystem, final String url, final FileType suffix = null) {
+    public ToolInstallerBuilder platformDetails(final OperatingSystem operatingSystem, final String url, final FileType fileType = null) {
         ToolInstallerPlatformDetails platformDetails = new ToolInstallerPlatformDetails()
         platformDetails.url = url
-        platformDetails.suffix = suffix
+        platformDetails.fileType = fileType
         tool.platformDetailsHashMap.put(operatingSystem, platformDetails)
     }
 

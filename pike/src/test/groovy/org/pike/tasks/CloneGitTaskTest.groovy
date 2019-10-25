@@ -7,7 +7,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
 import org.pike.PikePlugin
-import org.pike.tasks.git.CloneGitTask
 
 class CloneGitTaskTest {
 

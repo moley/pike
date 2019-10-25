@@ -1,13 +1,14 @@
 package org.pike.tasks
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import org.pike.configuration.Configuration
+import org.pike.PikePlugin
 import org.pike.configuration.Eclipse
-import org.pike.configuration.Module
 
-class InstallEclipseTask extends PikeTask {
+class InstallEclipseTask extends DefaultTask {
 
     {
+        group = PikePlugin.PIKE_GROUP
         description = 'Installs and configures an eclipse instance for the given project'
     }
 

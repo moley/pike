@@ -1,13 +1,18 @@
 package org.pike.tasks
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.pike.configuration.OperatingSystem
+import org.pike.configuration.PikeExtension
 import org.pike.installers.ToolInstaller
 import org.pike.installers.ToolInstallerBuilder
+import org.pike.PikePlugin
 
-class InstallIdeaTask extends PikeTask{
+
+class InstallIdeaTask extends DefaultTask {
 
     {
+        group = PikePlugin.PIKE_GROUP
         description = 'Installs and configures an IntelliJ instance for the given project'
     }
 
@@ -18,7 +23,10 @@ class InstallIdeaTask extends PikeTask{
     ToolInstaller tool
 
     @TaskAction
-    public void prepareIdea () {
+    public void prepareIdea() {
+
+        PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
+
 
         if (version == null) {
             version = pikeExtension.idea?.version
@@ -37,11 +45,7 @@ class InstallIdeaTask extends PikeTask{
         tool = toolBuilder.get()
 
 
-
         tool.install(OperatingSystem.current)
-
-
-
 
 
     }

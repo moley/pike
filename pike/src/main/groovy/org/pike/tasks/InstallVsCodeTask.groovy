@@ -1,14 +1,18 @@
 package org.pike.tasks
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.pike.PikePlugin
 import org.pike.configuration.FileType
 import org.pike.configuration.OperatingSystem
+import org.pike.configuration.PikeExtension
 import org.pike.installers.ToolInstaller
 import org.pike.installers.ToolInstallerBuilder
 
-class InstallVsCodeTask extends PikeTask{
+class InstallVsCodeTask extends DefaultTask{
 
     {
+        group = PikePlugin.PIKE_GROUP
         description = 'Installs and configures an Visual studio code instance for the given project'
     }
 
@@ -21,6 +25,7 @@ class InstallVsCodeTask extends PikeTask{
     @TaskAction
     public void prepareVsCode () {
 
+        PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         if (version == null) {
             version = pikeExtension.idea?.version
         }

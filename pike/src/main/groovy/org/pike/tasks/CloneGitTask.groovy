@@ -1,19 +1,24 @@
-package org.pike.tasks.git
+package org.pike.tasks
 
 import org.eclipse.jgit.api.CloneCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.PullCommand
-import org.eclipse.jgit.api.PullResult
 import org.eclipse.jgit.lib.ProgressMonitor
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.pike.PikePlugin
 import org.pike.configuration.Configuration
 import org.pike.configuration.Module
+import org.pike.configuration.PikeExtension
 import org.pike.exceptions.MissingConfigurationException
-import org.pike.tasks.PikeTask
 import org.pike.utils.ProgressLoggerWrapper
 
+class CloneGitTask extends DefaultTask {
 
-class CloneGitTask extends PikeTask {
+    {
+        group = PikePlugin.PIKE_GROUP
+    }
+
 
     Module module
 
@@ -26,6 +31,7 @@ class CloneGitTask extends PikeTask {
     @TaskAction
     public void cloneGitModule () {
 
+        PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
         if (mergedConfiguration.basepath == null)
             throw new MissingConfigurationException("A basepath must be configured globally or at gitmodule")
