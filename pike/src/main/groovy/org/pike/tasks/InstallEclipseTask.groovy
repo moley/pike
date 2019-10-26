@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.pike.PikePlugin
 import org.pike.configuration.Eclipse
+import org.pike.configuration.PikeExtension
 
 class InstallEclipseTask extends DefaultTask {
 
@@ -18,6 +19,7 @@ class InstallEclipseTask extends DefaultTask {
 
         getLogger().info("prepare eclipse ide")
 
+        PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         Eclipse eclipse = pikeExtension.eclipse
 
         project.oomphIde.repoEclipseLatest()

@@ -19,6 +19,9 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'com.jfrog.bintray'
 
+    sourceCompatibility = JavaVersion.VERSION_8
+    targetCompatibility = JavaVersion.VERSION_8
+
     dependencies {
         compile localGroovy()
         compile gradleApi()
@@ -39,7 +42,7 @@ subprojects {
 
     test {
         testLogging {
-            events "started", "passed", "skipped", "failed"
+            events "skipped", "failed"
             exceptionFormat 'full'
             showStackTraces = 'true'
         }

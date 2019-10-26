@@ -1,13 +1,12 @@
 os:
   - linux
   - osx
-  - windows
 
 language: java
 install: true
 
 jdk:
-  - openjdk11
+  - openjdk8
 
 script:
   - ./gradlew build check -s
