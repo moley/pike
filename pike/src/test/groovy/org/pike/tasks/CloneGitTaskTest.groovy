@@ -34,8 +34,6 @@ class CloneGitTaskTest {
         CloneGitTask cloneGitTaskPike = project.tasks.findByName("clonePike")
         CloneGitTask cloneGitTaskLeguan = project.tasks.findByName("cloneLeguan")
 
-        Assert.assertNotNull(cloneGitTaskPike.pikeExtension)
-        Assert.assertNotNull(cloneGitTaskLeguan.pikeExtension)
         Assert.assertNotNull ("No task created for gitmodule pike", cloneGitTaskPike)
         Assert.assertNotNull ("No task created for gitmodule leguan", cloneGitTaskLeguan)
 
