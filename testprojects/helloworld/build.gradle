@@ -15,29 +15,33 @@ apply {
 pike {
     git {
         gitmodule ('pike', 'https://github.com/moley/pike.git') {
+
+        }
+        gitmodule ('leguan', 'https://github.com/moley/leguan') {
             configuration {
-                encoding 'UTF-8'
+                encoding 'UTF-8'    // would lead to error in eclipse because workspace wide configuration,
+                // so we override it with a property in gradle.properties
             }
         }
-        gitmodule ('leguan', 'https://github.com/moley/leguan')
     }
 
     idea {
         version '2019.2.3'
+        globalConfFolder 'IdeaIC2019.2'
     }
 
     eclipse {
         repo 'https://download.eclipse.org/releases/2019-09/'
         feature 'org.eclipse.egit'
+        feature 'org.eclipse.buildship'
     }
 
     configuration {
         encoding 'ISO-8859-15'
-        basepath 'build/basepath'
+        spacesForTabs true
+        tabWidth 2
+        showMemory true
+        showLineNumbers true
     }
 
 }
-
-tasks.build.dependsOn tasks.install
-tasks.build.dependsOn tasks.eclipseInstall
-tasks.build.dependsOn tasks.ideaInstall

@@ -3,37 +3,31 @@ package org.pike.tasks
 import org.gradle.api.tasks.GradleBuild
 import org.gradle.api.tasks.TaskAction
 import org.pike.PikePlugin
-import org.pike.configuration.Configuration
 import org.pike.configuration.Module
 import org.pike.configuration.PikeExtension
-import org.pike.exceptions.MissingConfigurationException
-
+import org.pike.utils.ConfigureUtils
 
 class BuildModuleTask extends GradleBuild{
 
     {
         group = PikePlugin.PIKE_GROUP
-        description = 'builds a module as preparation for importing it in the IDE'
     }
 
 
     Module module
 
+    ConfigureUtils configureUtils = new ConfigureUtils()
+
 
     @TaskAction
     public void buildModule () {
-        ArrayList<String> buildTasks = new ArrayList<String>()
-        buildTasks.add('testClasses')
 
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
-        Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
-        if (mergedConfiguration.basepath == null)
-            throw new MissingConfigurationException("A basepath must be configured globally or at gitmodule")
-        File basepath = project.file(mergedConfiguration.basepath)
-        File clonePath = new File(basepath, module.name)
+        File basePath = configureUtils.getBasePath(project, module.configuration)
+        File clonePath = new File(basePath, module.name)
         buildFile = new File (clonePath, 'build.gradle')
         dir = clonePath
-        tasks = buildTasks
+        tasks = pikeExtension.initialBuildTasks
         logger.lifecycle("Starting build in " + clonePath.absolutePath)
         build()
     }

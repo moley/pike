@@ -27,7 +27,7 @@ class HelloWorldTest {
 
         //if you use a different than usual build file name:
         BuildLauncher build = projectConnection.newBuild()
-        build.forTasks('clean','build')
+        build.forTasks('clean', 'installEclipse', 'configureEclipse', 'installIdea', 'configureIdea')
 
         try {
 
@@ -42,7 +42,7 @@ class HelloWorldTest {
 
                 @Override
                 void onFailure(GradleConnectionException e) {
-                    throw e
+                    throw new IllegalStateException("Build was not successful\nOutput:" + byteArrayOutputStream.toString(), e)
                 }
             })
         }finally {

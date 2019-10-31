@@ -4,20 +4,18 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.pike.configuration.PikeExtension
+import org.pike.configuration.WithGradlePropertiesEnricher
+import org.pike.tasks.CloneTask
+import org.pike.tasks.ConfigureTask
+import org.pike.tasks.DeleteTask
 import org.pike.tasks.InstallTask
 
 /**
- * Created with IntelliJ IDEA.
- * User: OleyMa
- * Date: 14.04.13
- * Time: 09:43
- * To change this template use File | Settings | File Templates.
- */
-
+ * Plugin implementation class for pike
+ **/
 public class PikePlugin implements Plugin<Project> {
 
     public final static String PIKE_GROUP = 'Pike'
-
 
     @Override
     void apply(Project project) {
@@ -29,10 +27,21 @@ public class PikePlugin implements Plugin<Project> {
         project.logger.lifecycle("Gradle:     " + project.gradle.gradleVersion)
 
 
-        project.extensions.create(PikeExtension.NAME, PikeExtension, project)
+        PikeExtension pikeExtension = project.extensions.create(PikeExtension.NAME, PikeExtension, project)
+        project.afterEvaluate {
+            WithGradlePropertiesEnricher withGradlePropertiesEnricher = new WithGradlePropertiesEnricher()
+            withGradlePropertiesEnricher.enrich(project, pikeExtension)
 
-        project.tasks.register('install', InstallTask)
+            pikeExtension.checkOverlappingConfigurations ()
+        }
 
+        InstallTask installTask = project.tasks.register('install', InstallTask).get()
+        ConfigureTask configureTask = project.tasks.register('configure', ConfigureTask).get()
+        CloneTask cloneTask = project.tasks.register('clone', CloneTask).get()
+        DeleteTask deleteTask = project.tasks.register('delete', DeleteTask).get()
+
+        installTask.dependsOn configureTask
+        installTask.dependsOn cloneTask
 
 
     }

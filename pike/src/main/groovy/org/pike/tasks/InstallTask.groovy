@@ -10,7 +10,7 @@ class InstallTask extends DefaultTask {
 
     {
         group = PikePlugin.PIKE_GROUP
-        description = 'Does all the configuration defined in the pike-Closure in the current project'
+        description = 'Does all the installation of configured tools and checkout of all modules  defined in the pike-Closure in the current project'
     }
 
     @Option(option = "force", description = "Makes a clean configuration (e.g. pull on existing git clones)")
