@@ -6,9 +6,7 @@ import org.pike.utils.ProcessResult
 import org.pike.utils.ProcessWrapper
 
 
-class DmgInstaller implements Installer {
-
-    Project project
+class DmgInstaller extends AbstractInstaller {
 
     ProcessWrapper processWrapper = new ProcessWrapper()
 
