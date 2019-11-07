@@ -31,6 +31,7 @@ class ConfigureModuleIdeaTask extends DefaultTask {
 
         ToolConfiguratorBuilder toolConfiguratorBuilder = new ToolConfiguratorBuilder(project, InstallIdeaTask.TOOLNAME)
         toolConfiguratorBuilder = toolConfiguratorBuilder.platformDetails(OperatingSystem.MACOS, "${System.getProperty('user.home')}/Library/Preferences/${idea.globalConfFolder}")
+        toolConfiguratorBuilder = toolConfiguratorBuilder.platformDetails(OperatingSystem.LINUX, "${System.getProperty('user.home')}/Library/Preferences/${idea.globalConfFolder}")
         ToolConfigurator toolConfigurator = toolConfiguratorBuilder.get()
 
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)

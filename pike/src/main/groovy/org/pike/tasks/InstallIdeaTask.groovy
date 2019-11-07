@@ -42,8 +42,6 @@ class InstallIdeaTask extends DefaultTask {
         toolBuilder.platformDetails(OperatingSystem.MACOS, "https://download.jetbrains.com/idea/ideaIC-${version}.dmg?_ga=2.209614864.307856837.1571235091-1189283095.1568013896")
         toolBuilder.platformDetails(OperatingSystem.WINDOWS, "https://download.jetbrains.com/idea/ideaIC-${version}.win.zip?_ga=2.239423617.307856837.1571235091-1189283095.1568013896")
 
-        toolBuilder.installationPath()
-
         tool = toolBuilder.get()
 
 

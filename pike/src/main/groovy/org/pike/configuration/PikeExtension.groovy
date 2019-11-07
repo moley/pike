@@ -48,8 +48,8 @@ class PikeExtension extends Configurable {
         ConfigureIdeaTask configureIdeaTask = project.tasks.register('configureIdea', ConfigureIdeaTask).get()
 
         StartIdeaTask startIdeaTask = project.tasks.register("startIdea", StartIdeaTask).get()
-        startIdeaTask.dependsOn(installIdeaTask)
-        startIdeaTask.dependsOn(configureIdeaTask)
+        //startIdeaTask.dependsOn(installIdeaTask)
+        //startIdeaTask.dependsOn(configureIdeaTask)
 
     }
 
