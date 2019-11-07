@@ -31,10 +31,17 @@ class DmgInstaller extends AbstractInstaller {
     }
 
     @Override
-    void install(File installationDir, File downloadedFile) {
-        installationDir = new File ('/Applications').absoluteFile //because dmg must be installed to //Applications
+    void install(File outputDir, File downloadedFile) {
 
-        project.logger.lifecycle("Installing " + downloadedFile.name + " to " + installationDir.absolutePath)
+        if (outputDir == null)
+            throw new IllegalStateException("Parameter 'outputDir' must be set")
+
+        if (downloadedFile == null)
+            throw new IllegalStateException("Parameter 'downloadedFile' must be set")
+
+        outputDir = new File ('/Applications').absoluteFile //because dmg must be installed to //Applications
+
+        project.logger.lifecycle("Installing " + downloadedFile.name + " to " + outputDir.absolutePath)
 
         //Mount
         project.logger.info("Mounting " + downloadedFile.absolutePath)
@@ -46,11 +53,11 @@ class DmgInstaller extends AbstractInstaller {
         //Copy content
         String volumePath = getVolumePath(resultMount.output)
         File appFolderOrigin = getAppDir(volumePath)
-        File appFolderInstalled = new File (installationDir, appFolderOrigin.name)
+        File appFolderInstalled = new File (outputDir, appFolderOrigin.name)
 
         if (!appFolderInstalled.exists()) {
-            project.logger.lifecycle("Copy " + volumePath + " to " + installationDir.absolutePath)
-            FileUtils.copyDirectory(appFolderOrigin, installationDir)
+            project.logger.lifecycle("Copy " + volumePath + " to " + outputDir.absolutePath)
+            FileUtils.copyDirectory(appFolderOrigin, outputDir)
         }
         else
             project.logger.lifecycle("Installation dir " + appFolderInstalled.absolutePath + " already exists")
