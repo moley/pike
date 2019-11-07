@@ -25,7 +25,15 @@ class ToolInstaller {
         return platformDetails
     }
 
+    public void defaultInstallationPath () {
+        if (installationPath == null) {
+            installationPath = project.file('build/pike/tools/' + name)
+        }
+    }
+
     void install(OperatingSystem operatingSystem) {
+
+        defaultInstallationPath()
 
         project.logger.info("Install " + name + " on operatingsystem " + operatingSystem.name())
 
