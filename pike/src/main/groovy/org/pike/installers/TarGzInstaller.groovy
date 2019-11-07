@@ -1,6 +1,7 @@
 package org.pike.installers
 
 import org.rauschig.jarchivelib.Archiver
+import org.rauschig.jarchivelib.ArchiverFactory
 
 class TarGzInstaller extends AbstractInstaller{
 
