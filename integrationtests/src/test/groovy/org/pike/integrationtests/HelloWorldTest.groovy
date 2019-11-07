@@ -27,7 +27,7 @@ class HelloWorldTest {
 
         //if you use a different than usual build file name:
         BuildLauncher build = projectConnection.newBuild()
-        build.forTasks('clean', 'installEclipse', 'configureEclipse', 'installIdea', 'configureIdea')
+        build.forTasks('clean', 'installEclipse', 'configureEclipse') //, 'installIdea', 'configureIdea')
         build.addArguments('-s')
 
         try {
