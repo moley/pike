@@ -6,7 +6,7 @@ import org.pike.PikePlugin
 import org.pike.configuration.Idea
 import org.pike.configuration.OperatingSystem
 import org.pike.installers.ToolInstaller
-import org.pike.installers.ToolInstallerBuilder
+import org.pike.utils.FileUtils
 import org.pike.utils.ProcessResult
 import org.pike.utils.ProcessWrapper
 
@@ -19,13 +19,12 @@ class StartIdeaTask extends DefaultTask{
 
     ProcessWrapper processWrapper = new ProcessWrapper()
 
+    FileUtils fileUtils = new FileUtils()
+
     Idea idea
 
 
-    private File getSingleChild (final File folder) {
-        println ("Child: " + folder.listFiles().length)
-        return folder.listFiles()[0]
-    }
+
     @TaskAction
     public void startIdea () {
 
@@ -38,8 +37,8 @@ class StartIdeaTask extends DefaultTask{
             startFile = project.file("/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea") //TODO nicer
         }
         else if (OperatingSystem.current.equals(OperatingSystem.LINUX)) {
-            File installationDir = toolInstaller.defaultInstallationPath()
-            startFile = new File (getSingleChild(installationDir), 'bin/idea.sh')
+            File installationDir = toolInstaller.getInstallationPathOrDefault()
+            startFile = new File (fileUtils.getSingleChild(installationDir), 'bin/idea.sh')
         }
 
         println ("Starting binary  " + startFile.absolutePath)

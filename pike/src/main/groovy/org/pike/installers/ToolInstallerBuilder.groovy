@@ -1,40 +1,49 @@
 package org.pike.installers
 
 import org.gradle.api.Project
-import org.pike.configuration.FileType
 import org.pike.configuration.OperatingSystem
 
-
-class ToolInstallerBuilder {
-
-    private ToolInstaller tool = new ToolInstaller()
+public class ToolInstallerBuilder {
 
     Project project
 
-    File installationPath
+    String name
+
+    String version
+
+    boolean installationPathMustExist
+
+    private ToolInstallerPlatformBuilder allPlatformInstallerBuilder = new ToolInstallerPlatformBuilder()
+
+    private HashMap<OperatingSystem, ToolInstallerPlatformBuilder> platformInstallerBuilders = new HashMap<OperatingSystem, ToolInstallerPlatformBuilder>()
 
     public ToolInstallerBuilder(Project project, final String name, final String version) {
         this.project = project
-        this.tool.project = project
-        this.tool.name = name
-        this.tool.version = version
+        this.name = name
+        this.version = version
     }
 
-    public ToolInstallerBuilder installationPath (final File installationpath) {
-        this.tool.installationPath = installationpath
+    public ToolInstallerPlatformBuilder platform (final OperatingSystem operatingSystem) {
+        ToolInstallerPlatformBuilder platformBuilder = platformInstallerBuilders.get(operatingSystem)
+        if (platformBuilder == null) {
+            platformBuilder = new ToolInstallerPlatformBuilder()
+            platformInstallerBuilders.put(operatingSystem, platformBuilder)
+        }
+
+        return platformBuilder
+    }
+
+    public ToolInstallerPlatformBuilder all () {
+        return allPlatformInstallerBuilder
+    }
+
+    public ToolInstallerBuilder installationPathMustExist () {
+        this.installationPathMustExist = true
         return this
     }
 
-
-    public ToolInstallerBuilder platformDetails(final OperatingSystem operatingSystem, final String url, final FileType fileType = null) {
-        ToolInstallerPlatformDetails platformDetails = new ToolInstallerPlatformDetails()
-        platformDetails.url = url
-        platformDetails.fileType = fileType
-        tool.platformDetailsHashMap.put(operatingSystem, platformDetails)
-    }
-
-    public ToolInstaller get(){
-        return tool
+    public ToolInstaller get(OperatingSystem operatingSystem){
+        return new ToolInstaller(this, operatingSystem)
     }
 
 

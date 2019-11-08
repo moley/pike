@@ -28,6 +28,7 @@ pike {
     idea {
         version '2019.2.3'
         globalConfFolder 'IdeaIC2019.2'
+        plugin 'https://plugins.jetbrains.com/files/6546/71101/EclipseFormatter.zip?updateId=71101&pluginId=6546&family=INTELLIJ'
     }
 
     eclipse {

@@ -70,11 +70,15 @@ class Download {
               cachedFile.getParentFile().mkdirs()
           stream(url, inputStream, cachedFile)
         }
+        else
+            project.logger.info("Cached file exists, reusing downloaded file")
 
         if (! downloadedFile.exists()) {
             project.logger.lifecycle("Copy file " + downloadedFile.absolutePath + " from cache")
             FileUtils.copyFile(cachedFile, downloadedFile)
         }
+        else
+            project.logger.info("Downloaded file exists, skip download")
 
 
     }

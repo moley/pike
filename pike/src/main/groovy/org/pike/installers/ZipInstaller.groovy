@@ -1,10 +1,9 @@
 package org.pike.installers
 
-
 import org.rauschig.jarchivelib.Archiver
 import org.rauschig.jarchivelib.ArchiverFactory
 
-class TarGzInstaller extends ArchiveInstaller{
+class ZipInstaller extends ArchiveInstaller{
 
     @Override
     File install(File outputDir, File downloadedFile) {
@@ -14,14 +13,10 @@ class TarGzInstaller extends ArchiveInstaller{
         if (downloadedFile == null)
             throw new IllegalStateException("Parameter 'downloadedFile' must be set")
 
-        Archiver archiver = ArchiverFactory.createArchiver("tar", "gz")
+        Archiver archiver = ArchiverFactory.createArchiver("zip")
         archiver.extract(downloadedFile, outputDir)
 
         String rootPath = getSingleRootPath(archiver, downloadedFile)
         return new File (outputDir, rootPath)
-
-
-
-
     }
 }

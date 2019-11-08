@@ -9,6 +9,8 @@ class InstallerFactory {
             return new DmgInstaller()
         else if (downloadedFile.name.endsWith("tar.gz"))
             return new TarGzInstaller()
+        else if (downloadedFile.name.endsWith(".zip"))
+            return new ZipInstaller()
         else
             throw new IllegalStateException("No installer for file " + downloadedFile.name + " found")
 

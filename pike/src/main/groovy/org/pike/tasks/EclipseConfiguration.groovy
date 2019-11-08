@@ -2,6 +2,8 @@ package org.pike.tasks
 
 import org.gradle.api.logging.Logger
 import org.pike.configuration.Configuration
+import org.pike.configurators.file.FileConfigurator
+import org.pike.configurators.file.PropertiesConfigurator
 
 class EclipseConfiguration extends CollectingConfiguration {
 
@@ -44,10 +46,10 @@ class EclipseConfiguration extends CollectingConfiguration {
     public void apply(Configuration configuration, final boolean dryRun) {
         super.apply(configuration, dryRun)
 
-        workspace(FILE_RESOURCES_PREFS, KEY_ENCODING, configuration.encoding, dryRun)
-        workspace(FILE_UI_EDITORS_PREFS, KEY_SPACES_FOR_TABS, configuration.spacesForTabs, dryRun)
-        workspace(FILE_UI_EDITORS_PREFS, KEY_TAB_WIDTH, configuration.tabWidth, dryRun)
-        workspace(FILE_UI_PREFS, KEY_SHOW_MEMORY, configuration.showMemory, dryRun)
+        workspace(FILE_RESOURCES_PREFS, KEY_ENCODING, configuration.encoding, dryRun, PropertiesConfigurator.class)
+        workspace(FILE_UI_EDITORS_PREFS, KEY_SPACES_FOR_TABS, configuration.spacesForTabs, dryRun, PropertiesConfigurator.class)
+        workspace(FILE_UI_EDITORS_PREFS, KEY_TAB_WIDTH, configuration.tabWidth, dryRun, PropertiesConfigurator.class)
+        workspace(FILE_UI_PREFS, KEY_SHOW_MEMORY, configuration.showMemory, dryRun, PropertiesConfigurator.class)
 
         //TODO Formatter
         //TODO compare ignore whitespace
@@ -58,7 +60,7 @@ class EclipseConfiguration extends CollectingConfiguration {
     }
 
 
-    private void workspace(String file, String key, Object value, boolean dryRun) {
+    private void workspace(String file, String key, Object value, boolean dryRun, Class<? extends FileConfigurator> clazz) {
 
         if (value == null)
             return
@@ -68,23 +70,15 @@ class EclipseConfiguration extends CollectingConfiguration {
         if (!dryRun) {
             if (workspaceConfigPath == null)
                 throw new IllegalStateException("Workspace ConfigPath not set")
-            Properties properties = new Properties()
+
             File configFile = new File(workspaceConfigPath, file)
-
-            if (configFile.exists())
-                properties.load(new FileInputStream(configFile))
-
-            properties.setProperty(key, value.toString())
-            if (logger)
-                logger.lifecycle("Set " + key + " = " + value + " (" + configFile.absolutePath + ")")
-
-
-            properties.store(new FileOutputStream(configFile), 'Saved by pike at ' + new Date())
+            FileConfigurator configurator = getFileConfigurator(clazz)
+            configurator.configure(logger, configFile, key, value.toString(), dryRun)
         }
 
     }
 
-    public void project(String file, String key, String value, boolean dryRun) {
+    public void project(String file, String key, Object value, boolean dryRun, Class<? extends FileConfigurator> clazz) {
         if (value == null)
             return
 
@@ -94,15 +88,8 @@ class EclipseConfiguration extends CollectingConfiguration {
             for (File nextProjectConf : projectConfigPaths) {
                 File configFile = new File(nextProjectConf, file)
 
-
-                if (configFile.exists())
-                    properties.load(new FileInputStream(configFile))
-
-                properties.setProperty(key, value)
-                if (logger)
-                    logger.lifecycle("Set " + key + " = " + value + " (" + configFile.absolutePath + ")")
-
-                properties.store(new FileOutputStream(configFile), 'Saved by pike at ' + new Date())
+                FileConfigurator configurator = getFileConfigurator(clazz)
+                configurator.configure(logger, configFile, key, value.toString(), dryRun)
             }
         }
 

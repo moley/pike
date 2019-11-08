@@ -3,10 +3,9 @@ package org.pike.installers
 import org.gradle.api.Project
 import org.pike.configuration.OperatingSystem
 import org.pike.configuration.PikeExtension
+import org.pike.utils.ObjectMergeUtil
 
 class ToolInstaller {
-
-    HashMap<OperatingSystem, ToolInstallerPlatformDetails> platformDetailsHashMap = new HashMap<OperatingSystem, ToolInstallerPlatformDetails>()
 
     Project project
 
@@ -14,48 +13,66 @@ class ToolInstaller {
 
     String version
 
-    File installationPath
-
     InstallerFactory installerFactory = new InstallerFactory()
 
-    ToolInstallerPlatformDetails getPlatformDetails (OperatingSystem operatingSystem) {
-        ToolInstallerPlatformDetails platformDetails =  platformDetailsHashMap.get(operatingSystem)
-        if (platformDetails == null)
-            throw new IllegalStateException("No platformdetails for operatingsystem " + operatingSystem.name() + " found")
-        return platformDetails
+    OperatingSystem operatingSystem
+
+    ToolInstallerPlatformBuilder operatingSystemPlatformBuilder
+
+    ObjectMergeUtil<ToolInstallerPlatformBuilder> toolInstallerPlatformBuilderObjectMergeUtil = new ObjectMergeUtil<ToolInstallerPlatformBuilder>()
+
+    boolean installationPathMustExist
+
+
+    public ToolInstaller (final ToolInstallerBuilder toolInstallerBuilder, OperatingSystem operatingSystem) {
+        if (toolInstallerBuilder == null)
+            throw new IllegalArgumentException("Parameter 'toolInstallerBuilder' must not be null")
+        if (operatingSystem == null)
+            throw new IllegalArgumentException("Parameter 'operatingSystem' must not be null")
+
+        this.project = toolInstallerBuilder.project
+        this.name = toolInstallerBuilder.name
+        this.version = toolInstallerBuilder.version
+        this.operatingSystem = operatingSystem
+        this.operatingSystemPlatformBuilder = toolInstallerPlatformBuilderObjectMergeUtil.merge(toolInstallerBuilder.all(), toolInstallerBuilder.platform(operatingSystem))
+        this.installationPathMustExist = toolInstallerBuilder.installationPathMustExist
     }
 
-    public File defaultInstallationPath () {
+    public File getInstallationPathOrDefault() {
+        File installationPath = operatingSystemPlatformBuilder.installationPath
         if (installationPath == null) {
-            installationPath = project.file('build/pike/tools/' + name)
+            return project.file('build/pike/tools/' + name)
         }
 
         return installationPath
     }
 
-    void install(OperatingSystem operatingSystem) {
-
-        defaultInstallationPath()
+    File install() {
 
         project.logger.info("Install " + name + " on operatingsystem " + operatingSystem.name())
 
         PikeExtension pikeExtension = project.extensions.pike
 
-        ToolInstallerPlatformDetails platformDetails = getPlatformDetails(operatingSystem)
         Download download = new Download()
         download.project = project
-        download.source = platformDetails.url
-        download.fileType = platformDetails.fileType
+        download.source = operatingSystemPlatformBuilder.url
+        download.fileType = operatingSystemPlatformBuilder.fileType
         download.toDir = project.file('build/pike/tools/' + name + 'Downloaded')
         download.force = pikeExtension.force
         download.executeDownload()
 
         File downloadedFile = download.downloadedFile
 
-
         Installer installer = installerFactory.getInstaller(downloadedFile)
         installer.project = project
-        installer.install(installationPath, downloadedFile)
 
+        File installationPath = installationPathOrDefault
+        installationPath = installer.getDefaultInstallationDir(installationPath)
+
+
+        if (installationPathMustExist && ! installationPath.exists())
+            throw new IllegalStateException("Installation path " + installationPath.absolutePath + " is expected to exist, check configuration")
+
+        return installer.install(installationPath, downloadedFile)
     }
 }

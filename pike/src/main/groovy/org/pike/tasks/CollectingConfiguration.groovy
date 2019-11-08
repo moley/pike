@@ -2,6 +2,7 @@ package org.pike.tasks
 
 import org.gradle.api.logging.Logger
 import org.pike.configuration.Configuration
+import org.pike.configurators.file.FileConfigurator
 
 
 abstract class CollectingConfiguration {
@@ -13,6 +14,19 @@ abstract class CollectingConfiguration {
     Collection<File> projectConfigPaths
 
     Logger logger
+
+    HashMap<Class<? extends FileConfigurator>, FileConfigurator> configuratorHashMap = new HashMap<Class<? extends FileConfigurator>, FileConfigurator>()
+
+
+    public FileConfigurator getFileConfigurator (final Class<? extends FileConfigurator> clazz) {
+        FileConfigurator fileConfigurator = configuratorHashMap.get(clazz)
+        if (fileConfigurator == null) {
+            fileConfigurator = clazz.getDeclaredConstructor().newInstance()
+            configuratorHashMap.put(clazz, fileConfigurator)
+        }
+
+        return fileConfigurator
+    }
 
     public void collectConfiguration (final String context, final String relativeFile, final String key, final Object value) {
         String completeKey = context + " -> " + relativeFile + " -> " + key
@@ -26,6 +40,8 @@ abstract class CollectingConfiguration {
               throw new IllegalStateException("Overlapping configuration found in " + completeKey + " (Value cannot be " + value.toString() + " and " + savedValue + " at once)")
         }
     }
+
+
 
     void apply(Configuration configuration, final boolean dryRun) {
         if (logger) {

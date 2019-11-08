@@ -31,15 +31,18 @@ class DmgInstaller extends AbstractInstaller {
     }
 
     @Override
-    void install(File outputDir, File downloadedFile) {
+    File getDefaultInstallationDir(File installationDir) {
+        return new File ('/Applications').absoluteFile
+    }
+
+    @Override
+    File install(File outputDir, File downloadedFile) {
 
         if (outputDir == null)
             throw new IllegalStateException("Parameter 'outputDir' must be set")
 
         if (downloadedFile == null)
             throw new IllegalStateException("Parameter 'downloadedFile' must be set")
-
-        outputDir = new File ('/Applications').absoluteFile //because dmg must be installed to //Applications
 
         project.logger.lifecycle("Installing " + downloadedFile.name + " to " + outputDir.absolutePath)
 
@@ -65,9 +68,11 @@ class DmgInstaller extends AbstractInstaller {
         //Unmount
         project.logger.info("Unmounting " + volumePath)
         String[] unmountCommand = ['hdiutil', 'unmount', volumePath]
-        ProcessResult resultUnmount = processWrapper.execute(mountCommand)
+        ProcessResult resultUnmount = processWrapper.execute(unmountCommand)
         if (resultUnmount.resultCode != 0)
-            throw new IllegalStateException("Could not unmount the dmg file ${volume}. Command $unmountCommand results in error: " + resultUnmount.error)
+            throw new IllegalStateException("Could not unmount the dmg file ${volumePath}. Command $unmountCommand results in error: " + resultUnmount.error)
+
+        return appFolderInstalled
 
     }
 

@@ -10,6 +10,7 @@ import org.pike.tasks.InstallIdeaTask
 import org.pike.tasks.InstallVsCodeTask
 import org.pike.tasks.StartEclipseTask
 import org.pike.tasks.StartIdeaTask
+import org.pike.utils.ObjectMergeUtil
 
 
 class PikeExtension extends Configurable {
@@ -27,6 +28,8 @@ class PikeExtension extends Configurable {
     VsCode vsCode
 
     List<String> initialBuildTasks = ['testClasses']
+
+    ObjectMergeUtil<Configuration> configurationMergeUtil = new ObjectMergeUtil<Configuration>()
 
     public PikeExtension (final Project project) {
         this.project = project
@@ -79,29 +82,7 @@ class PikeExtension extends Configurable {
     }
 
     Configuration getMergedConfiguration (Configuration specificConfiguration) {
-        Configuration globalConfiguration = configuration
-
-        Configuration mergedConfiguration = new Configuration()
-        mergedConfiguration.properties.each { prop, val ->
-            if(prop in ["metaClass","class"]) return
-
-            if (globalConfiguration != null) {
-                Object valueFromGlobalConfiguration = globalConfiguration.getProperty(prop)
-                if (valueFromGlobalConfiguration != null)
-                    mergedConfiguration.setProperty(prop, valueFromGlobalConfiguration)
-            }
-
-            if (specificConfiguration != null) {
-                Object valueFromSpecificConfiguration = specificConfiguration.getProperty(prop)
-                if (valueFromSpecificConfiguration != null)
-                    mergedConfiguration.setProperty(prop, valueFromSpecificConfiguration)
-            }
-        }
-
-        return mergedConfiguration
-
-
-
+        return configurationMergeUtil.merge(configuration, specificConfiguration)
     }
 
     void checkOverlappingConfigurations () {
