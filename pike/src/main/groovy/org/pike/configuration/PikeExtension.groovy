@@ -7,7 +7,6 @@ import org.pike.tasks.EclipseConfiguration
 import org.pike.tasks.IdeaConfiguration
 import org.pike.tasks.InstallEclipseTask
 import org.pike.tasks.InstallIdeaTask
-import org.pike.tasks.InstallVsCodeTask
 import org.pike.tasks.StartEclipseTask
 import org.pike.tasks.StartIdeaTask
 import org.pike.utils.ObjectMergeUtil
@@ -39,7 +38,8 @@ class PikeExtension extends Configurable {
         vsCode = new VsCode()
         project.configure(vsCode, closure)
 
-        project.tasks.register('installVisual', InstallVsCodeTask)
+        //TODO
+
     }
 
     void idea (Closure closure) {
@@ -94,7 +94,8 @@ class PikeExtension extends Configurable {
 
         for (Module next: git.modules) {
             Configuration mergedConfiguration = getMergedConfiguration(next.configuration)
-            configurations.add(mergedConfiguration)
+            if (mergedConfiguration != null)
+              configurations.add(mergedConfiguration)
         }
 
         if (configurations.size() >= 2) {

@@ -18,7 +18,7 @@ class ObjectMergeUtil<T> {
      */
     public T merge (T genericObject, T specificObject) {
         if (genericObject == null && specificObject == null)
-            throw new IllegalArgumentException("One of the parameters 'genericObject' and 'specificObject' must not be null")
+            return null
 
         Class<T> genericClazz = genericObject.getClass()
         Class<T> specificClazz = specificObject.getClass()

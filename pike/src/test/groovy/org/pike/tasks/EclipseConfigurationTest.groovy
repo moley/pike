@@ -1,9 +1,28 @@
 package org.pike.tasks
 
+import com.google.common.io.Files
 import org.junit.Test
 import org.pike.configuration.Configuration
 
 class EclipseConfigurationTest {
+
+    @Test
+    public void eclipseConfiguration () {
+        File rootPath = Files.createTempDir()
+        File workspaceConfigPath = new File (rootPath, "workspace")
+        File projectConfigPath = new File (rootPath, "project")
+
+        Configuration configuration = new Configuration()
+        configuration.encoding = 'ISO-8859-15'
+        configuration.showLineNumbers = Boolean.TRUE
+        configuration.showMemory = Boolean.TRUE
+        configuration.tabWidth = 2
+        configuration.spacesForTabs = Boolean.TRUE
+
+        EclipseConfiguration eclipseConfiguration = new EclipseConfiguration(null, workspaceConfigPath, Arrays.asList(projectConfigPath) )
+        eclipseConfiguration.apply(configuration, false)
+        println rootPath.absolutePath
+    }
 
     @Test(expected = IllegalStateException)
     public void overlappingDifferentInSameFile () {

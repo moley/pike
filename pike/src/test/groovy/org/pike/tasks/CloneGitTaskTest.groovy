@@ -7,8 +7,26 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
 import org.pike.PikePlugin
+import org.pike.configuration.Module
+import org.pike.exceptions.MissingConfigurationException
 
 class CloneGitTaskTest {
+
+    @Test(expected = MissingConfigurationException)
+    public void modulenameMissing () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+        project.pike {
+            configuration {
+                basepath = project.file('build/pike')
+            }
+        }
+        CloneGitTask cloneGitTask = project.tasks.register('modulenameMissing', CloneGitTask).get()
+        cloneGitTask.module = new Module()
+        cloneGitTask.cloneGitModule()
+
+
+    }
 
     @Test
     public void taskPerGitModule () {

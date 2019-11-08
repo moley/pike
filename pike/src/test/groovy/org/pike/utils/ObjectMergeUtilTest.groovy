@@ -58,8 +58,8 @@ class ObjectMergeUtilTest {
         Assert.assertEquals ("hello", merged.field)
     }
 
-    @Test(expected = IllegalArgumentException)
+    @Test
     public void bothNull () {
-        merger.merge( null, null)
+        Assert.assertNull (merger.merge( null, null))
     }
 }

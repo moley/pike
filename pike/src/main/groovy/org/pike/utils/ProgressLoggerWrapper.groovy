@@ -15,7 +15,7 @@ public class ProgressLoggerWrapper implements PropertyChangeListener {
         def serviceRegistry = project.services
         ProgressLoggerFactory progressLoggerFactory = serviceRegistry.get(ProgressLoggerFactory.class)
         progressLogger = progressLoggerFactory.newOperation(description)
-        progressLogger.setDescription(description)
+        setDescription(description)
         start(description)
     }
 
@@ -32,7 +32,7 @@ public class ProgressLoggerWrapper implements PropertyChangeListener {
      *
      * @param startMessage Message
      */
-    void start(String startMessage){
+    private void start(String startMessage){
         progressLogger.started(startMessage)
     }
 

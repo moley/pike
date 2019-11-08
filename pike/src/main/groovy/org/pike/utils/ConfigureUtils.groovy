@@ -9,6 +9,9 @@ class ConfigureUtils {
     public File getBasePath (final Project project, final Configuration configuration ) {
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(configuration)
+        if (mergedConfiguration == null)
+            throw new IllegalStateException("No configuration dsl provided. Add a closure pike.configuration() to define a basepath")
+
         if (mergedConfiguration.basepath == null)
             return project.projectDir
         else

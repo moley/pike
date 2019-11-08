@@ -32,14 +32,12 @@ class CloneGitTask extends DefaultTask {
     public void cloneGitModule () {
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
 
-        File basePath = configureUtils.getBasePath(project, module.configuration)
-        File clonePath = new File(basePath, module.name)
 
         if (module.name == null)
             throw new MissingConfigurationException("No modulename configured")
 
-        if (clonePath == null)
-            throw new MissingConfigurationException("No clonepath configured")
+        File basePath = configureUtils.getBasePath(project, module.configuration)
+        File clonePath = new File(basePath, module.name)
 
         if (clonePath.exists()) {
             if (pikeExtension.force) {

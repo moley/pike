@@ -17,7 +17,10 @@ class PropertiesConfigurator implements FileConfigurator{
             logger.lifecycle("Set " + key + " = " + value + " (" + configFile.absolutePath + ")")
 
 
-        properties.store(new FileOutputStream(configFile), 'Saved by pike at ' + new Date())
+        if (! dryRun) {
+            configFile.parentFile.mkdirs()
+            properties.store(new FileOutputStream(configFile), 'Saved by pike at ' + new Date())
+        }
 
     }
 }
