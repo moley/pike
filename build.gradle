@@ -42,7 +42,7 @@ subprojects {
 
     test {
         testLogging {
-            events "skipped", "failed"
+            events "started", "skipped", "failed"
             exceptionFormat 'full'
             showStackTraces = 'true'
         }
