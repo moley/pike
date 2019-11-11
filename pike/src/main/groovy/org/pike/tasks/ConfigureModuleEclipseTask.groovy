@@ -26,7 +26,7 @@ class ConfigureModuleEclipseTask extends DefaultTask {
     ConfigureUtils configureUtils = new ConfigureUtils()
 
 
-    private File getWorkspacePath() {
+    File getWorkspacePath() {
         String buildDirPath = project.buildDir.absolutePath
         File workspacesPath = new File(System.getProperty("user.home"), '.goomph/ide-workspaces')
         for (File next : workspacesPath.listFiles()) {
@@ -58,7 +58,7 @@ class ConfigureModuleEclipseTask extends DefaultTask {
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
 
-        File workspaceConfigPath = workspacePath
+        File workspaceConfigPath = getWorkspacePath()
         File projectConfigPath = new File (clonePath, '.settings')
 
 
