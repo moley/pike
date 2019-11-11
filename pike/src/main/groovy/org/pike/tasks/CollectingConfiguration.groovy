@@ -43,18 +43,38 @@ abstract class CollectingConfiguration {
 
 
 
-    void apply(Configuration configuration, final boolean dryRun) {
+    /**
+     * applies the configurations
+     *
+     * @param logger,                   maybe <code>null</code>
+     * @param globalConfigPath          config path for global configurations
+     * @param workspaceConfigPath       config path for workspace configurations
+     * @param projectConfigPaths        list of config paths for project configurations
+     * @param configuration             configuration to apply
+     * @param dryRun                    true: don't write anything, only check overlapping configurations
+     */
+    void apply(final Logger logger,
+               final File globalConfigPath,
+               final File workspaceConfigPath,
+               final Collection<File> projectConfigPaths,
+               Configuration configuration,
+               final boolean dryRun) {
         if (logger) {
             logger.info ("Apply configurations (" + dryRun + ")")
             logger.info ("   - Global configuration path         : " + globalConfigPath)
             logger.info ("   - Workspace configuration path      : " + workspaceConfigPath)
             logger.info ("   - Project configuration paths       : " + projectConfigPaths.toString().replace(", ", "\n"))
         }
+
+        this.logger = logger
+        this.workspaceConfigPath = workspaceConfigPath
+        this.globalConfigPath = globalConfigPath
+        this.projectConfigPaths = projectConfigPaths
     }
 
     public void check (final Collection<Configuration> configurations) {
         for (Configuration next: configurations) {
-            apply(next, true)
+            apply(null, null, null, [], next, true)
         }
     }
 

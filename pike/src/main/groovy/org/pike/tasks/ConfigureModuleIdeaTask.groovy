@@ -22,12 +22,17 @@ class ConfigureModuleIdeaTask extends DefaultTask {
 
     ConfigureUtils configureUtils = new ConfigureUtils()
 
+    IdeaConfiguration ideaConfiguration
+
     @TaskAction
     public void configureModule() {
 
         File basepath = configureUtils.getBasePath(project, module.configuration)
         File clonePath = new File(basepath, module.name)
         logger.lifecycle("Configure module in " + clonePath.absolutePath)
+
+        if (idea.globalConfFolder == null)
+            throw new IllegalStateException("No global configuration path defined in closure pike.idea{}. Define one which matches your version (e.g. globalConfFolder = 'IdeaIC2019.2')")
 
         ToolConfiguratorBuilder toolConfiguratorBuilder = new ToolConfiguratorBuilder(project, InstallIdeaTask.TOOLNAME)
         toolConfiguratorBuilder = toolConfiguratorBuilder.platformDetails(OperatingSystem.MACOS, "${System.getProperty('user.home')}/Library/Preferences/${idea.globalConfFolder}")
@@ -40,8 +45,8 @@ class ConfigureModuleIdeaTask extends DefaultTask {
         ToolConfiguratorPlatformDetails platformDetails = toolConfigurator.getPlatformDetails(OperatingSystem.getCurrent())
         File globalConfigPath = new File (platformDetails.globalConfigurationPath)
 
-        IdeaConfiguration ideaConfiguration = new IdeaConfiguration(project.logger, globalConfigPath, projectConfigPaths)
-        ideaConfiguration.apply(mergedConfiguration, false)
+        ideaConfiguration = new IdeaConfiguration()
+        ideaConfiguration.apply(project.logger, globalConfigPath, null, projectConfigPaths, mergedConfiguration, false)
 
 
     }

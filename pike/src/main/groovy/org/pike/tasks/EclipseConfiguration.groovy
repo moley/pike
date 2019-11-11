@@ -16,35 +16,16 @@ class EclipseConfiguration extends CollectingConfiguration {
     public final static String KEY_SHOW_MEMORY = 'SHOW_MEMORY_MONITOR'
 
 
-
     /**
-     * constructor
-     * @param logger the gradle logger, can be <code>null</code>
-     * @param workspaceConfigPath configuration path for workspace configurations
-     * @param projectConfigPaths list of paths for project configurations
+     * {@inheritDoc}
      */
-    public EclipseConfiguration(final Logger logger,
-                                final File workspaceConfigPath,
-                                final Collection<File> projectConfigPaths) {
-        this.workspaceConfigPath = workspaceConfigPath
-        this.projectConfigPaths = projectConfigPaths
-        this.logger = logger
-    }
-
-    /**
-     * default constructor. Should only be used when calling check
-     */
-    public EclipseConfiguration() {
-    }
-
-    /**
-     * applies the configurations
-     *
-     * @param configuration configuration to apply
-     * @param dryRun true: don't write anything, only check overlapping configurations
-     */
-    public void apply(Configuration configuration, final boolean dryRun) {
-        super.apply(configuration, dryRun)
+    public void apply(final Logger logger,
+                      final File globalConfigPath,
+                      final File workspaceConfigPath,
+                      final Collection<File> projectConfigPaths,
+                      Configuration configuration,
+                      final boolean dryRun) {
+        super.apply(logger, globalConfigPath, workspaceConfigPath, projectConfigPaths, configuration, dryRun)
 
         workspace(FILE_RESOURCES_PREFS, KEY_ENCODING, configuration.encoding, dryRun, PropertiesConfigurator.class)
         workspace(FILE_UI_EDITORS_PREFS, KEY_SPACES_FOR_TABS, configuration.spacesForTabs, dryRun, PropertiesConfigurator.class)

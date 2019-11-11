@@ -19,8 +19,8 @@ class EclipseConfigurationTest {
         configuration.tabWidth 2
         configuration.spacesForTabs Boolean.TRUE
 
-        EclipseConfiguration eclipseConfiguration = new EclipseConfiguration(null, workspaceConfigPath, Arrays.asList(projectConfigPath) )
-        eclipseConfiguration.apply(configuration, false)
+        EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
+        eclipseConfiguration.apply(null, null, workspaceConfigPath, Arrays.asList(projectConfigPath), configuration, false)
         println rootPath.absolutePath
     }
 

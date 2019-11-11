@@ -14,7 +14,7 @@ class IdeaConfigurationTest {
     @Test
     public void ideaConfiguration () {
         File rootPath = Files.createTempDir()
-        File workspaceConfigPath = new File (rootPath, "workspace")
+        File globalConfigPath = new File (rootPath, "global")
         File projectConfigPath = new File (rootPath, "project")
 
         Configuration configuration = new Configuration()
@@ -24,8 +24,8 @@ class IdeaConfigurationTest {
         configuration.tabWidth 2
         configuration.spacesForTabs Boolean.TRUE
 
-        IdeaConfiguration ideaConfiguration = new IdeaConfiguration(null, workspaceConfigPath, Arrays.asList(projectConfigPath) )
-        ideaConfiguration.apply(configuration, false)
+        IdeaConfiguration ideaConfiguration = new IdeaConfiguration()
+        ideaConfiguration.apply(null, globalConfigPath, null, Arrays.asList(projectConfigPath) , configuration, false)
         println rootPath.absolutePath
     }
 

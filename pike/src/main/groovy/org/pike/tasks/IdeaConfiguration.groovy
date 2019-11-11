@@ -7,20 +7,17 @@ import org.pike.configurators.file.XmlConfigurator
 
 class IdeaConfiguration extends CollectingConfiguration {
 
-    public IdeaConfiguration() {
-    }
-
-    public IdeaConfiguration(final Logger logger,
-                             final File globalConfigPath,
-                             final Collection<File> projectConfigPaths) {
-        this.projectConfigPaths = projectConfigPaths
-        this.globalConfigPath = globalConfigPath
-        this.logger = logger
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    void apply(Configuration configuration, boolean dryRun) {
-        super.apply(configuration, dryRun)
+    void apply(final Logger logger,
+               final File globalConfigPath,
+               final File workspaceConfigPath,
+               final Collection<File> projectConfigPaths,
+               Configuration configuration,
+               final boolean dryRun) {
+        super.apply(logger, globalConfigPath, workspaceConfigPath, projectConfigPaths, configuration, dryRun)
 
         global("options/editor.xml", "/application/component[@name='EditorSettings']/option[@name='ARE_LINE_NUMBERS_SHOWN']", configuration.showLineNumbers, dryRun, XmlConfigurator.class)
         global("options/ui.lnf.xml", "/application/component[@name='UISettings']/option[@name='SHOW_MEMORY_INDICATOR']", configuration.showMemory, dryRun, XmlConfigurator.class)

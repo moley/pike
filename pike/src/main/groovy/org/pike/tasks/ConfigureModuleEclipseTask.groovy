@@ -72,10 +72,11 @@ class ConfigureModuleEclipseTask extends DefaultTask {
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
 
-        EclipseConfiguration eclipseConfiguration = new EclipseConfiguration(project.logger,
+        EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
+        eclipseConfiguration.apply(project.logger,
+                null,
                 workspaceConfigPath,
-                projectConfigPaths)
-        eclipseConfiguration.apply(mergedConfiguration, false)
+                projectConfigPaths, mergedConfiguration, false)
 
     }
 }

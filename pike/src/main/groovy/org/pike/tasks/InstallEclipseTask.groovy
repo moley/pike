@@ -27,20 +27,20 @@ class InstallEclipseTask extends DefaultTask {
 
         project.oomphIde.repoEclipseLatest()
         for (String nextRepo : eclipse.repos) {
-            oomphIdeExtension.repo nextRepo
+            this.oomphIdeExtension.repo nextRepo
         }
 
         String javahomeBin = new File (System.getenv("JAVA_HOME"), 'bin').absolutePath
         logger.info("Set java home to " + javahomeBin)
         //set java vm path
-        oomphIdeExtension.eclipseIni {
+        this.oomphIdeExtension.eclipseIni {
             set '-vm', javahomeBin
         }
 
 
         //Install features
         for (String nextFeature : eclipse.features) {
-            oomphIdeExtension.feature nextFeature
+            this.oomphIdeExtension.feature nextFeature
         }
 
 
@@ -74,19 +74,21 @@ org.eclipse.core.net/proxyData/HTTP/hasAuth=false
 
             project.logger.info( "Configured proxy with " + proxyConf.text)
 
-            oomphIdeExtension.p2director {
+            this.oomphIdeExtension.p2director {
                 addArg('plugincustomization', proxyConf.absolutePath)
             }
         }
 
-        oomphIdeExtension {
-            jdt {}
-            style {
+        this.oomphIdeExtension.jdt{
+
+        }
+
+        this.oomphIdeExtension.style {
                 classicTheme()
                 niceText()        // nice fonts and visible whitespace
                 lineNumbers true
             }
         }
 
-    }
+
 }
