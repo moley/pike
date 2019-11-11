@@ -1,5 +1,6 @@
 package org.pike.tasks
 
+import com.diffplug.gradle.oomph.OomphIdeExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.pike.PikePlugin
@@ -13,6 +14,8 @@ class InstallEclipseTask extends DefaultTask {
         description = 'Installs and configures an eclipse instance for the given project'
     }
 
+    OomphIdeExtension oomphIdeExtension = project.oomphIde
+
 
     @TaskAction
     public void prepareEclipse() {
@@ -24,20 +27,20 @@ class InstallEclipseTask extends DefaultTask {
 
         project.oomphIde.repoEclipseLatest()
         for (String nextRepo : eclipse.repos) {
-            project.oomphIde.repo nextRepo
+            oomphIdeExtension.repo nextRepo
         }
 
         String javahomeBin = new File (System.getenv("JAVA_HOME"), 'bin').absolutePath
         logger.info("Set java home to " + javahomeBin)
         //set java vm path
-        project.oomphIde.eclipseIni {
+        oomphIdeExtension.eclipseIni {
             set '-vm', javahomeBin
         }
 
 
         //Install features
         for (String nextFeature : eclipse.features) {
-            project.oomphIde.feature nextFeature
+            oomphIdeExtension.feature nextFeature
         }
 
 
@@ -71,12 +74,12 @@ org.eclipse.core.net/proxyData/HTTP/hasAuth=false
 
             project.logger.info( "Configured proxy with " + proxyConf.text)
 
-            project.oomphIde.p2director {
+            oomphIdeExtension.p2director {
                 addArg('plugincustomization', proxyConf.absolutePath)
             }
         }
 
-        project.oomphIde {
+        oomphIdeExtension {
             jdt {}
             style {
                 classicTheme()

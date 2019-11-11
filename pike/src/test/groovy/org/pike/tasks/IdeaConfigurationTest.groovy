@@ -18,11 +18,11 @@ class IdeaConfigurationTest {
         File projectConfigPath = new File (rootPath, "project")
 
         Configuration configuration = new Configuration()
-        configuration.encoding = 'ISO-8859-15'
-        configuration.showLineNumbers = Boolean.TRUE
-        configuration.showMemory = Boolean.TRUE
-        configuration.tabWidth = 2
-        configuration.spacesForTabs = Boolean.TRUE
+        configuration.encoding 'ISO-8859-15'
+        configuration.showLineNumbers Boolean.TRUE
+        configuration.showMemory Boolean.TRUE
+        configuration.tabWidth 2
+        configuration.spacesForTabs Boolean.TRUE
 
         IdeaConfiguration ideaConfiguration = new IdeaConfiguration(null, workspaceConfigPath, Arrays.asList(projectConfigPath) )
         ideaConfiguration.apply(configuration, false)

@@ -13,11 +13,11 @@ class EclipseConfigurationTest {
         File projectConfigPath = new File (rootPath, "project")
 
         Configuration configuration = new Configuration()
-        configuration.encoding = 'ISO-8859-15'
-        configuration.showLineNumbers = Boolean.TRUE
-        configuration.showMemory = Boolean.TRUE
-        configuration.tabWidth = 2
-        configuration.spacesForTabs = Boolean.TRUE
+        configuration.encoding 'ISO-8859-15'
+        configuration.showLineNumbers Boolean.TRUE
+        configuration.showMemory Boolean.TRUE
+        configuration.tabWidth 2
+        configuration.spacesForTabs Boolean.TRUE
 
         EclipseConfiguration eclipseConfiguration = new EclipseConfiguration(null, workspaceConfigPath, Arrays.asList(projectConfigPath) )
         eclipseConfiguration.apply(configuration, false)
