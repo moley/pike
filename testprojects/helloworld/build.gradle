@@ -38,7 +38,7 @@ pike {
     }
 
     configuration {
-        encoding 'ISO-8859-15'
+        encoding 'US-ASCII'
         spacesForTabs true
         tabWidth 2
         showMemory true

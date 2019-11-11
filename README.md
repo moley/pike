@@ -36,6 +36,8 @@ pike {
 
     idea {
         version '2019.2.3'
+        globalConfFolder 'IdeaIC2019.2'
+        plugin 'https://plugins.jetbrains.com/files/6546/71101/EclipseFormatter.zip?updateId=71101&pluginId=6546&family=INTELLIJ'
     }
 
     eclipse {
@@ -66,19 +68,19 @@ If you want to override this configurations you can add gradle properties at you
 or at a global location (*~/.gradle/gradle.properties*). As soon as these properties are prefixed with **pike.** they 
 are tried to be taken in account: 
 * pike.encoding : defines a global encoding
-* pike.leguan.encoding : defines an encoding for the project
+* pike.leguan.encoding : defines an encoding for the module leguan
 
-Be aware that some configurations are not sensible at all locations, due to the IDEs save the configurations on different 
+Be aware that not all configurations are sensible at all locations, due to the IDEs save the configurations on different 
 places. For example: If you define different encodings in your modules the configuration of your eclipse IDE will fail 
 with an exception because Eclipse saves the encoding once per workspace and must be unique across your project.
 
-| **Configuration**   | **Eclipse**  | IntelliJ   |
-|---------------------|--------------|------------|
-| encoding            |      x       |     -      |
-| spacesForTabs       |      x       |     -      |
-| tabWidth            |      x       |     -      |
-| showMemory          |      x       |     x      |
-| showLineNumbers     |     x        |     x      |
+| **Configuration**       | **Eclipse**  | **IntelliJ**   |
+|-------------------------|--------------|------------|
+| encoding ('UTF-8')      |      x       |     x      |
+| spacesForTabs ()        |      x       |     -      |
+| tabWidth (2)            |      x       |     -      |
+| showMemory (true)       |      x       |     x      |
+| showLineNumbers (true)  |      x       |     x      |
 
 
 

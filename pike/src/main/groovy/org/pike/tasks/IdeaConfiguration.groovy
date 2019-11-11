@@ -14,14 +14,16 @@ class IdeaConfiguration extends CollectingConfiguration {
     void apply(final Logger logger,
                final File globalConfigPath,
                final File workspaceConfigPath,
-               final Collection<File> projectConfigPaths,
+               final File projectConfigPath,
                Configuration configuration,
                final boolean dryRun) {
-        super.apply(logger, globalConfigPath, workspaceConfigPath, projectConfigPaths, configuration, dryRun)
+        super.apply(logger, globalConfigPath, workspaceConfigPath, projectConfigPath, configuration, dryRun)
 
         global("options/editor.xml", "/application/component[@name='EditorSettings']/option[@name='ARE_LINE_NUMBERS_SHOWN']", configuration.showLineNumbers, dryRun, XmlConfigurator.class)
         global("options/ui.lnf.xml", "/application/component[@name='UISettings']/option[@name='SHOW_MEMORY_INDICATOR']", configuration.showMemory, dryRun, XmlConfigurator.class)
 
+        project ("encodings.xml", "/project/component[@name='Encoding']/file[@url='PROJECT']->charset", configuration.encoding, dryRun, XmlConfigurator.class)
+        project("encodings.xml", "/project/component[@name='Encoding']->defaultCharsetForPropertiesFiles", configuration.encoding, dryRun, XmlConfigurator.class)
     }
 
 
@@ -42,11 +44,19 @@ class IdeaConfiguration extends CollectingConfiguration {
 
     }
 
-    public void project(String file, String key, Object value, boolean dryRun) {
+    public void project(String file, String key, Object value, boolean dryRun, Class<? extends FileConfigurator> clazz) {
         if (value == null)
             return
 
-        throw new IllegalStateException("TODO")
+        if (!dryRun) {
+            if (globalConfigPath == null)
+                throw new IllegalStateException("GlobalConfigPath not set")
+
+            File configFile = new File(projectConfigPath, file)
+
+            FileConfigurator configurator = getFileConfigurator(clazz)
+            configurator.configure(logger, configFile, key, value.toString(), dryRun)
+        }
     }
 
 }

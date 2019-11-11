@@ -7,6 +7,7 @@ import org.pike.configuration.Idea
 import org.pike.configuration.OperatingSystem
 import org.pike.installers.ToolInstaller
 import org.pike.utils.FileUtils
+import org.pike.utils.PikeProperties
 import org.pike.utils.ProcessResult
 import org.pike.utils.ProcessWrapper
 
@@ -19,26 +20,22 @@ class StartIdeaTask extends DefaultTask{
 
     ProcessWrapper processWrapper = new ProcessWrapper()
 
-    FileUtils fileUtils = new FileUtils()
 
-    Idea idea
-
-
+    PikeProperties pikeProperties = new PikeProperties(project)
 
     @TaskAction
     public void startIdea () {
 
-        ToolInstaller toolInstaller = new ToolInstaller()
-        toolInstaller.project = project
-        toolInstaller.name = InstallIdeaTask.TOOLNAME
+        File installationDir = pikeProperties.getFileProperty(InstallIdeaTask.IDEA_INSTALLPATH)
+        if (installationDir == null)
+            throw new IllegalStateException("No installation dir for idea set, please call task installIdea before")
 
         File startFile = null
         if (OperatingSystem.current.equals(OperatingSystem.MACOS)) {
-            startFile = project.file("/Applications/IntelliJ IDEA CE.app/Contents/MacOS/idea") //TODO nicer
+            startFile = new File(installationDir, "Contents/MacOS/idea")
         }
         else if (OperatingSystem.current.equals(OperatingSystem.LINUX)) {
-            File installationDir = toolInstaller.getInstallationPathOrDefault()
-            startFile = new File (fileUtils.getSingleChild(installationDir), 'bin/idea.sh')
+            startFile = new File (installationDir, 'bin/idea.sh')
         }
 
         println ("Starting binary  " + startFile.absolutePath)

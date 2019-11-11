@@ -22,10 +22,10 @@ class EclipseConfiguration extends CollectingConfiguration {
     public void apply(final Logger logger,
                       final File globalConfigPath,
                       final File workspaceConfigPath,
-                      final Collection<File> projectConfigPaths,
+                      final File projectConfigPath,
                       Configuration configuration,
                       final boolean dryRun) {
-        super.apply(logger, globalConfigPath, workspaceConfigPath, projectConfigPaths, configuration, dryRun)
+        super.apply(logger, globalConfigPath, workspaceConfigPath, projectConfigPath, configuration, dryRun)
 
         workspace(FILE_RESOURCES_PREFS, KEY_ENCODING, configuration.encoding, dryRun, PropertiesConfigurator.class)
         workspace(FILE_UI_EDITORS_PREFS, KEY_SPACES_FOR_TABS, configuration.spacesForTabs, dryRun, PropertiesConfigurator.class)
@@ -66,13 +66,11 @@ class EclipseConfiguration extends CollectingConfiguration {
         if (!dryRun) {
             if (projectConfigPaths == null )
                 throw new IllegalStateException("Project Config Paths not set")
-            for (File nextProjectConf : projectConfigPaths) {
-                File configFile = new File(nextProjectConf, file)
 
-                FileConfigurator configurator = getFileConfigurator(clazz)
-                configurator.configure(logger, configFile, key, value.toString(), dryRun)
-            }
+            File configFile = new File(projectConfigPath, file)
+
+            FileConfigurator configurator = getFileConfigurator(clazz)
+            configurator.configure(logger, configFile, key, value.toString(), dryRun)
         }
-
     }
 }

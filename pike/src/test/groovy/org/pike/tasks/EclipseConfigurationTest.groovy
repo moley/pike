@@ -9,6 +9,7 @@ class EclipseConfigurationTest {
     @Test
     public void eclipseConfiguration () {
         File rootPath = Files.createTempDir()
+        File globalConfigPath = new File (rootPath, "global")
         File workspaceConfigPath = new File (rootPath, "workspace")
         File projectConfigPath = new File (rootPath, "project")
 
@@ -20,7 +21,7 @@ class EclipseConfigurationTest {
         configuration.spacesForTabs Boolean.TRUE
 
         EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
-        eclipseConfiguration.apply(null, null, workspaceConfigPath, Arrays.asList(projectConfigPath), configuration, false)
+        eclipseConfiguration.apply(null, globalConfigPath, workspaceConfigPath, projectConfigPath, configuration, false)
         println rootPath.absolutePath
     }
 

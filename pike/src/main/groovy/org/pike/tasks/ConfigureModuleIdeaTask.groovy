@@ -1,6 +1,6 @@
 package org.pike.tasks
 
-import groovy.io.FileType
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.pike.PikePlugin
@@ -44,24 +44,11 @@ class ConfigureModuleIdeaTask extends DefaultTask {
 
         ToolConfiguratorPlatformDetails platformDetails = toolConfigurator.getPlatformDetails(OperatingSystem.getCurrent())
         File globalConfigPath = new File (platformDetails.globalConfigurationPath)
+        File projectConfigPath = new File (clonePath, '.idea')
 
         ideaConfiguration = new IdeaConfiguration()
-        ideaConfiguration.apply(project.logger, globalConfigPath, null, projectConfigPaths, mergedConfiguration, false)
+        ideaConfiguration.apply(project.logger, globalConfigPath, null, projectConfigPath, mergedConfiguration, false)
 
-
-    }
-
-    public List<File> getProjectConfigPaths() {
-        List<File> foundSettingsPaths = new ArrayList<File>()
-        project.projectDir.eachFileRecurse(FileType.DIRECTORIES) {
-            if (it.name.equals('.idea')) {
-                project.logger.info("Found project config path " + it.absolutePath)
-                foundSettingsPaths.add(it)
-            }
-        }
-
-        project.logger.info("Found " + foundSettingsPaths.size() + " project config paths in project dir " + project.projectDir.absolutePath)
-        return foundSettingsPaths
 
     }
 }

@@ -1,6 +1,6 @@
 package org.pike.tasks
 
-import groovy.io.FileType
+
 import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -26,7 +26,7 @@ class ConfigureModuleEclipseTask extends DefaultTask {
     ConfigureUtils configureUtils = new ConfigureUtils()
 
 
-    public File getWorkspaceConfigPath() {
+    private File getWorkspacePath() {
         String buildDirPath = project.buildDir.absolutePath
         File workspacesPath = new File(System.getProperty("user.home"), '.goomph/ide-workspaces')
         for (File next : workspacesPath.listFiles()) {
@@ -48,20 +48,6 @@ class ConfigureModuleEclipseTask extends DefaultTask {
         throw new IllegalStateException("No workspace found for project path " + project.projectDir.absolutePath)
     }
 
-    public List<File> getProjectConfigPaths() {
-        List<File> foundSettingsPaths = new ArrayList<File>()
-        project.projectDir.eachFileRecurse(FileType.DIRECTORIES) {
-            if (it.name.equals('.settings')) {
-                project.logger.info("Found project config path " + it.absolutePath)
-                foundSettingsPaths.add(it)
-            }
-        }
-
-        project.logger.info("Found " + foundSettingsPaths.size() + " project config paths in project dir " + project.projectDir.absolutePath)
-        return foundSettingsPaths
-
-    }
-
     @TaskAction
     public void configureModule() {
 
@@ -72,11 +58,15 @@ class ConfigureModuleEclipseTask extends DefaultTask {
         PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
         Configuration mergedConfiguration = pikeExtension.getMergedConfiguration(module.configuration)
 
+        File workspaceConfigPath = workspacePath
+        File projectConfigPath = new File (clonePath, '.settings')
+
+
         EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
         eclipseConfiguration.apply(project.logger,
                 null,
                 workspaceConfigPath,
-                projectConfigPaths, mergedConfiguration, false)
+                projectConfigPath, mergedConfiguration, false)
 
     }
 }

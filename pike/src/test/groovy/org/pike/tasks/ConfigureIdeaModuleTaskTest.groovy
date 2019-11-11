@@ -16,7 +16,7 @@ class ConfigureIdeaModuleTaskTest {
         project.plugins.apply(PikePlugin)
         project.pike {
             configuration {
-
+                encoding 'UTF-8'
             }
         }
 

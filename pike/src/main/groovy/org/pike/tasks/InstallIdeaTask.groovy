@@ -9,6 +9,7 @@ import org.pike.configuration.PikeExtension
 import org.pike.installers.ToolInstaller
 import org.pike.installers.ToolInstallerBuilder
 import org.pike.PikePlugin
+import org.pike.utils.PikeProperties
 
 
 class InstallIdeaTask extends DefaultTask {
@@ -20,9 +21,13 @@ class InstallIdeaTask extends DefaultTask {
 
     public final static String TOOLNAME = 'IntelliJ'
 
+    public final static String IDEA_INSTALLPATH = 'pike.idea.installpath'
+
     String version
 
     ToolInstaller tool
+
+    PikeProperties pikeProperties = new PikeProperties(project)
 
     @TaskAction
     public void prepareIdea() {
@@ -47,6 +52,7 @@ class InstallIdeaTask extends DefaultTask {
 
         tool = toolBuilder.get(OperatingSystem.current)
         File installationPath = tool.install()
+        pikeProperties.setProperty(IDEA_INSTALLPATH, installationPath.absolutePath)
 
         for (String nextPlugin: idea.plugins) {
             logger.lifecycle("Install plugin " + nextPlugin)

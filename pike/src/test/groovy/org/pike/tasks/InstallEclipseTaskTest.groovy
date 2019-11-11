@@ -1,12 +1,10 @@
 package org.pike.tasks
 
-import com.diffplug.gradle.oomph.OomphIdeExtension
-import groovy.mock.interceptor.MockFor
+
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 import org.pike.PikePlugin
-
 
 class InstallEclipseTaskTest {
 
