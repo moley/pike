@@ -18,11 +18,14 @@ class DeleteModuleTask extends DefaultTask {
     Module module
 
 
-    @TaskAction
-    public void cloneGitModule () {
 
+    File getClonePath () {
         File basePath = configureUtils.getBasePath(project, module.configuration)
-        File clonePath = new File(basePath, module.name)
+        return new File(basePath, module.name)
+    }
+
+    @TaskAction
+    public void deleteGitModule () {
 
         if (clonePath.exists())
           FileUtils.deleteDirectory(clonePath)

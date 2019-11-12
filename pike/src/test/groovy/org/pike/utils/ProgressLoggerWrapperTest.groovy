@@ -1,10 +1,9 @@
-package org.org.pike.utils
+package org.pike.utils
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
-import org.pike.utils.ProgressLoggerWrapper
 
 import java.beans.PropertyChangeEvent
 

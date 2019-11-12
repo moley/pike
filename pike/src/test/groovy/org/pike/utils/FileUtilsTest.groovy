@@ -1,10 +1,8 @@
-package org.org.pike.utils
+package org.pike.utils
 
 import com.google.common.io.Files
 import org.junit.Assert
 import org.junit.Test
-import org.pike.utils.FileUtils
-
 
 class FileUtilsTest {
 
