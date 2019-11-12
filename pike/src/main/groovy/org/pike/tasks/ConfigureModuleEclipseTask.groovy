@@ -25,6 +25,9 @@ class ConfigureModuleEclipseTask extends DefaultTask {
 
     ConfigureUtils configureUtils = new ConfigureUtils()
 
+    EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
+
+
 
     File getWorkspacePath() {
         String buildDirPath = project.buildDir.absolutePath
@@ -60,9 +63,6 @@ class ConfigureModuleEclipseTask extends DefaultTask {
 
         File workspaceConfigPath = getWorkspacePath()
         File projectConfigPath = new File (clonePath, '.settings')
-
-
-        EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
         eclipseConfiguration.apply(project.logger,
                 null,
                 workspaceConfigPath,

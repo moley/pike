@@ -8,7 +8,7 @@ import org.pike.configuration.Idea
 import org.pike.configuration.Module
 
 
-class ConfigureIdeaModuleTaskTest {
+class ConfigureModuleIdeaTaskTest {
 
     @Test
     public void task () {

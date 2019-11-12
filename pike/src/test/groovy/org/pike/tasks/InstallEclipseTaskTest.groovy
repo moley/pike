@@ -20,6 +20,10 @@ class InstallEclipseTaskTest {
             }
         }
 
+        InstallEclipseTask installEclipseTask = project.tasks.installEclipse
+        installEclipseTask.prepareEclipse()
+
+        //the state of OomphIdeExtension is writeOnly, so we have no assertions here
 
     }
 }
