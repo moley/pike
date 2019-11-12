@@ -43,7 +43,10 @@ public class ToolInstallerBuilder {
     }
 
     public ToolInstaller get(OperatingSystem operatingSystem){
-        return new ToolInstaller(this, operatingSystem)
+        ToolInstaller newToolInstaller = new ToolInstaller()
+        newToolInstaller.setToolInstallerBuilder(this)
+        newToolInstaller.setOperatingSystem(operatingSystem)
+        return newToolInstaller
     }
 
 

@@ -23,20 +23,23 @@ class ToolInstaller {
 
     boolean installationPathMustExist
 
-
-    public ToolInstaller (final ToolInstallerBuilder toolInstallerBuilder, OperatingSystem operatingSystem) {
+    public void setToolInstallerBuilder (final ToolInstallerBuilder toolInstallerBuilder) {
         if (toolInstallerBuilder == null)
             throw new IllegalArgumentException("Parameter 'toolInstallerBuilder' must not be null")
-        if (operatingSystem == null)
-            throw new IllegalArgumentException("Parameter 'operatingSystem' must not be null")
-
         this.project = toolInstallerBuilder.project
         this.name = toolInstallerBuilder.name
         this.version = toolInstallerBuilder.version
-        this.operatingSystem = operatingSystem
         this.operatingSystemPlatformBuilder = toolInstallerPlatformBuilderObjectMergeUtil.merge(toolInstallerBuilder.all(), toolInstallerBuilder.platform(operatingSystem))
         this.installationPathMustExist = toolInstallerBuilder.installationPathMustExist
     }
+
+    public void setOperatingSystem (final OperatingSystem operatingSystem) {
+        if (operatingSystem == null)
+            throw new IllegalArgumentException("Parameter 'operatingSystem' must not be null")
+
+        this.operatingSystem = operatingSystem
+    }
+
 
     public File getInstallationPathOrDefault() {
         File installationPath = operatingSystemPlatformBuilder.installationPath
