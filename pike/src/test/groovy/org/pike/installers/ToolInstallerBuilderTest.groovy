@@ -8,6 +8,24 @@ import org.pike.configuration.OperatingSystem
 
 class ToolInstallerBuilderTest {
 
+
+    @Test
+    public void globalUrl () {
+        Project project = ProjectBuilder.builder().build()
+        ToolInstallerBuilder toolBuilder = new ToolInstallerBuilder(project, 'name', 'version')
+        toolBuilder.platform(OperatingSystem.LINUX).url(OperatingSystem.LINUX.name())
+        toolBuilder.all().url("all")
+
+        ToolInstaller toolInstallerFromGlobal = toolBuilder.get(OperatingSystem.MACOS)
+        ToolInstallerPlatformBuilder operatingSystemFromGlobal = toolInstallerFromGlobal.operatingSystemPlatformBuilder
+        Assert.assertEquals ("Default URL incorrect", "all", operatingSystemFromGlobal.url)
+
+        ToolInstaller toolInstallerFromSpecific = toolBuilder.get(OperatingSystem.LINUX)
+        ToolInstallerPlatformBuilder operatingSystemFromSpecific = toolInstallerFromSpecific.operatingSystemPlatformBuilder
+        Assert.assertEquals ("Default URL incorrect", OperatingSystem.LINUX.name(), operatingSystemFromSpecific.url)
+
+
+    }
     @Test
     public void platformDependentUrl () {
         Project project = ProjectBuilder.builder().build()

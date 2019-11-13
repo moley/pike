@@ -16,7 +16,7 @@ class StartIdeaTaskTest {
     public void startIdea () {
         Project project = ProjectBuilder.builder().build()
         PikeProperties pikeProperties = new PikeProperties(project)
-        pikeProperties.setProperty(InstallIdeaTaskTest.IDEA_INSTALLPATH, project.file('build/installpath').absolutePath)
+        pikeProperties.setProperty(InstallIdeaTask.IDEA_INSTALLPATH, project.file('build/installpath').absolutePath)
         project.plugins.apply(PikePlugin)
         project.pike {
             idea {

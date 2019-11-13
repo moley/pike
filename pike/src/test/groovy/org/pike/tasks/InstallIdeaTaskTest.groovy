@@ -18,14 +18,15 @@ class InstallIdeaTaskTest {
 
         File installPath = Files.createTempDir()
         def mockedToolInstaller = new MockFor(ToolInstaller)
-        mockedToolInstaller.demand.setToolInstallerBuilder{ToolInstallerBuilder a-> println "ToolInstallerBuilder: " + a} //IDEA itself
         mockedToolInstaller.demand.setOperatingSystem{OperatingSystem a-> Assert.assertEquals (OperatingSystem.current, a)}
+        mockedToolInstaller.demand.setToolInstallerBuilder{ToolInstallerBuilder a-> println "ToolInstallerBuilder: " + a} //IDEA itself
         mockedToolInstaller.demand.install {return installPath}
 
+        mockedToolInstaller.demand.setOperatingSystem{OperatingSystem a-> "OperatingSystem: " + a}
         mockedToolInstaller.demand.setToolInstallerBuilder{ToolInstallerBuilder a-> println "ToolInstallerBuilder: " + a
             Assert.assertTrue ("InstallationPath of plugins not contained in InstallationPath of Idea", a.platform(OperatingSystem.getCurrent()).installationPath.absolutePath.startsWith(installPath.absolutePath))
         } //Plugin
-        mockedToolInstaller.demand.setOperatingSystem{OperatingSystem a-> "OperatingSystem: " + a}
+
         mockedToolInstaller.demand.install {return installPath}
 
         mockedToolInstaller.use {

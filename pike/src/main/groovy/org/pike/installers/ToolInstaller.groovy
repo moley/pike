@@ -17,6 +17,8 @@ class ToolInstaller {
 
     OperatingSystem operatingSystem
 
+    Download download = new Download()
+
     ToolInstallerPlatformBuilder operatingSystemPlatformBuilder
 
     ObjectMergeUtil<ToolInstallerPlatformBuilder> toolInstallerPlatformBuilderObjectMergeUtil = new ObjectMergeUtil<ToolInstallerPlatformBuilder>()
@@ -26,6 +28,7 @@ class ToolInstaller {
     public void setToolInstallerBuilder (final ToolInstallerBuilder toolInstallerBuilder) {
         if (toolInstallerBuilder == null)
             throw new IllegalArgumentException("Parameter 'toolInstallerBuilder' must not be null")
+
         this.project = toolInstallerBuilder.project
         this.name = toolInstallerBuilder.name
         this.version = toolInstallerBuilder.version
@@ -56,7 +59,6 @@ class ToolInstaller {
 
         PikeExtension pikeExtension = project.extensions.pike
 
-        Download download = new Download()
         download.name = name
         download.project = project
         download.source = operatingSystemPlatformBuilder.url

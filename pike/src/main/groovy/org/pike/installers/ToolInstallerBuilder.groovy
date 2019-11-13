@@ -24,6 +24,9 @@ public class ToolInstallerBuilder {
     }
 
     public ToolInstallerPlatformBuilder platform (final OperatingSystem operatingSystem) {
+        if (operatingSystem == null)
+            throw new IllegalArgumentException("Parameter 'operatingSystem' must not be null")
+
         ToolInstallerPlatformBuilder platformBuilder = platformInstallerBuilders.get(operatingSystem)
         if (platformBuilder == null) {
             platformBuilder = new ToolInstallerPlatformBuilder()
@@ -44,8 +47,8 @@ public class ToolInstallerBuilder {
 
     public ToolInstaller get(OperatingSystem operatingSystem){
         ToolInstaller newToolInstaller = new ToolInstaller()
-        newToolInstaller.setToolInstallerBuilder(this)
         newToolInstaller.setOperatingSystem(operatingSystem)
+        newToolInstaller.setToolInstallerBuilder(this)
         return newToolInstaller
     }
 
