@@ -57,6 +57,7 @@ class ToolInstaller {
         PikeExtension pikeExtension = project.extensions.pike
 
         Download download = new Download()
+        download.name = name
         download.project = project
         download.source = operatingSystemPlatformBuilder.url
         download.fileType = operatingSystemPlatformBuilder.fileType

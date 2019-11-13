@@ -25,12 +25,16 @@ class Download {
 
     FileType fileType
 
+    String name
+
 
     private long processedBytes = 0;
 
 
 
     public void executeDownload () {
+        if (source == null)
+            throw new IllegalStateException("You did not configure a source in download of " + name)
         processedBytes = 0;
 
         String name = source.substring(source.lastIndexOf("/") + 1)
