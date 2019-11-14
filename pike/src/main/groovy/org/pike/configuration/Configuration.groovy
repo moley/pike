@@ -1,12 +1,12 @@
 package org.pike.configuration
 
+import org.gradle.api.Project
+
 class Configuration {
 
     String encoding
 
-    Boolean spacesForTabs
-
-    Integer tabWidth
+    Formatter formatter
 
     Boolean showMemory
 
@@ -14,9 +14,7 @@ class Configuration {
 
     String basepath
 
-    void spacesForTabs (final boolean spacesForTabs) {
-        this.spacesForTabs = spacesForTabs
-    }
+    Project project
 
     void encoding (String encoding) {
         this.encoding = encoding
@@ -26,9 +24,6 @@ class Configuration {
         this.basepath = basepath
     }
 
-    void tabWidth (final int tabWidth) {
-        this.tabWidth = tabWidth
-    }
 
     void showMemory (final boolean showMemory) {
         this.showMemory = showMemory
@@ -36,6 +31,12 @@ class Configuration {
 
     void showLineNumbers (final boolean showLineNumbers) {
         this.showLineNumbers = showLineNumbers
+    }
+
+    void formatter (Closure closure) {
+        formatter = new Formatter()
+        formatter.project = project
+        project.configure(formatter, closure)
     }
 
 }

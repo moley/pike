@@ -8,6 +8,27 @@ import org.pike.PikePlugin
 
 public class PikeExtensionTest {
 
+
+    @Test
+    public void formatter () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+        project.pike {
+            configuration {
+                encoding 'encodingGlobal'
+                basepath 'basepathGlobal'
+                formatter {
+                    name 'MyGlobalOne'
+                    spacesForTabs true
+                    tabWidth 8
+                }
+            }
+        }
+
+        PikeExtension pikeExtension = project.extensions.pike
+        Assert.assertNotNull ("Formatter not found", pikeExtension.configuration.formatter)
+    }
+
     @Test
     void mergeConfigurationBoth () {
         Project project = ProjectBuilder.builder().build()

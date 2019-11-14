@@ -1,2 +1,5 @@
 leguan/
-pike/
+gradle-java-apidoc-plugin/
+gradlew*Formatter
+/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties

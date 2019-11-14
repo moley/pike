@@ -5,11 +5,34 @@ import org.apache.commons.io.FileUtils
 import org.junit.Assert
 import org.junit.Test
 import org.pike.configuration.Configuration
+import org.pike.configuration.Formatter
 
 import java.nio.charset.Charset
 
 
 class IdeaConfigurationTest {
+
+
+    @Test
+    public void formatter () {
+        Formatter formatter = new Formatter()
+        formatter.name("MyFormatter")
+        formatter.tabWidth(7)
+        formatter.previewLinePos(80)
+        formatter.spacesForTabs(true)
+        IdeaConfiguration ideaConfiguration = new IdeaConfiguration()
+        String formatterString = ideaConfiguration.getFormatterXml(formatter)
+        println formatterString
+        Assert.assertTrue("Header incorrect", formatterString.startsWith("""<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+"""))
+        Assert.assertTrue("Header incorrect", formatterString.endsWith("""</codeStyleSettings>
+  </code_scheme>
+</component>"""))
+
+        Assert.assertTrue ("TabChar invalid", formatterString.contains('<option name="USE_TAB_CHARACTER" value="false"/>'))
+        Assert.assertTrue ("TabSize invalid", formatterString.contains(' <option name="TAB_SIZE" value="7"/>'))
+    }
 
     @Test
     public void ideaConfiguration () {
@@ -24,6 +47,10 @@ class IdeaConfigurationTest {
         configuration.showMemory Boolean.TRUE
         configuration.tabWidth 2
         configuration.spacesForTabs Boolean.TRUE
+
+        Formatter formatter = new Formatter()
+        formatter.name("MyFormatter")
+        configuration.formatter = formatter
 
         IdeaConfiguration ideaConfiguration = new IdeaConfiguration()
         ideaConfiguration.apply(null, globalConfigPath, workspaceConfigPath, projectConfigPath , configuration, false)

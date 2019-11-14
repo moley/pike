@@ -14,7 +14,7 @@ apply {
 
 pike {
     git {
-        gitmodule ('pike', 'https://github.com/moley/pike.git') {
+        gitmodule ('gradle-java-apidoc-plugin', 'https://github.com/moley/gradle-java-apidoc-plugin') {
 
         }
         gitmodule ('leguan', 'https://github.com/moley/leguan') {
@@ -39,10 +39,17 @@ pike {
 
     configuration {
         encoding 'US-ASCII'
-        spacesForTabs true
-        tabWidth 2
         showMemory true
         showLineNumbers true
+
+        formatter {
+            name 'MyGlobalOne'
+            spacesForTabs true
+            tabWidth 5
+            indent 12
+            previewLinePos 78
+        }
+
     }
 
 }

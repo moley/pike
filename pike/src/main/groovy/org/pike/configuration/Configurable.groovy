@@ -11,6 +11,7 @@ class Configurable {
 
     void configuration (Closure closure) {
         configuration = new Configuration()
+        configuration.project = project
         project.configure(configuration, closure)
     }
 

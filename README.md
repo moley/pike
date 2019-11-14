@@ -74,13 +74,21 @@ Be aware that not all configurations are sensible at all locations, due to the I
 places. For example: If you define different encodings in your modules the configuration of your eclipse IDE will fail 
 with an exception because Eclipse saves the encoding once per workspace and must be unique across your project.
 
-| **Configuration**       | **Eclipse**  | **IntelliJ**   |
-|-------------------------|--------------|------------|
-| encoding ('UTF-8')      |      x       |     x      |
-| spacesForTabs ()        |      x       |     -      |
-| tabWidth (2)            |      x       |     -      |
-| showMemory (true)       |      x       |     x      |
-| showLineNumbers (true)  |      x       |     x      |
+| **Configuration**       | **Eclipse**  | **IntelliJ**   |  Description           |
+|-------------------------|--------------|------------|----------------------------|
+| encoding ('UTF-8')      |      x       |     x      | Encoding                   |
+| showMemory (true)       |      x       |     x      | Show memory indicator      |
+| showLineNumbers (true)  |      x       |     x      | Show line numbers          |
+
+
+| **Formatter    **       | **Eclipse**  | **IntelliJ**    |   Description         |
+|-------------------------|--------------|------------|----------------------------|
+| name ('Some name')      |      x       |     x      | The name of the formatter  |
+| spacesForTabs (true)    |      x       |     x      | true: Spaces, false: Tabs  |
+| tabWidth (2)            |      x       |     x      | Tab Width                  |
+| indent (2)              |      x       |     x      | Indention level            |
+| lineSplit (80)          |      x       |     x      | Position of hard wrap line (preview margin |
+
 
 
 
