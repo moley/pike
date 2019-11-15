@@ -29,18 +29,23 @@ pike {
         version '2019.2.3'
         globalConfFolder 'IdeaIC2019.2'
         plugin 'https://plugins.jetbrains.com/files/6546/71101/EclipseFormatter.zip?updateId=71101&pluginId=6546&family=INTELLIJ'
+        xmx '277M'
     }
 
     eclipse {
         repo 'https://download.eclipse.org/releases/2019-09/'
         feature 'org.eclipse.egit'
         feature 'org.eclipse.buildship'
+        xmx '277M'
     }
 
     configuration {
         encoding 'US-ASCII'
         showMemory true
         showLineNumbers true
+        compareDialogWhitespaces false
+        disableAutomaticXmlValidation
+        sonarqubeUrl 'https://sonar.org'
 
         formatter {
             name 'MyGlobalOne'

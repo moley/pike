@@ -4,7 +4,6 @@ import org.gradle.api.logging.Logger
 import org.pike.configuration.Configuration
 import org.pike.configurators.file.FileConfigurator
 
-
 abstract class CollectingConfiguration {
 
     protected HashMap<String, String> alreadyConfigured = new HashMap<String, String>()

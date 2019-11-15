@@ -44,6 +44,7 @@ class PikeExtension extends Configurable {
 
     void idea (Closure closure) {
         idea = new Idea()
+        idea.project = project
         project.configure(idea, closure)
 
         InstallIdeaTask installIdeaTask = project.tasks.register('installIdea', InstallIdeaTask).get()
@@ -58,6 +59,7 @@ class PikeExtension extends Configurable {
 
     void eclipse (Closure closure) {
         eclipse = new Eclipse()
+        eclipse.project = project
         project.configure(eclipse, closure)
 
         project.apply plugin: 'com.diffplug.gradle.oomph.ide' // because adding tasks to the graph is only allowed in configuration phase

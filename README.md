@@ -38,12 +38,14 @@ pike {
         version '2019.2.3'
         globalConfFolder 'IdeaIC2019.2'
         plugin 'https://plugins.jetbrains.com/files/6546/71101/EclipseFormatter.zip?updateId=71101&pluginId=6546&family=INTELLIJ'
+        xmx '2G'
     }
 
     eclipse {
         repo 'https://download.eclipse.org/releases/2019-09/'
         feature 'org.eclipse.egit'
         feature 'org.eclipse.buildship'
+        xmx '4G'
     }
 
     configuration {
@@ -74,20 +76,22 @@ Be aware that not all configurations are sensible at all locations, due to the I
 places. For example: If you define different encodings in your modules the configuration of your eclipse IDE will fail 
 with an exception because Eclipse saves the encoding once per workspace and must be unique across your project.
 
-| **Configuration**       | **Eclipse**  | **IntelliJ**   |  Description           |
-|-------------------------|--------------|------------|----------------------------|
-| encoding ('UTF-8')      |      x       |     x      | Encoding                   |
-| showMemory (true)       |      x       |     x      | Show memory indicator      |
-| showLineNumbers (true)  |      x       |     x      | Show line numbers          |
+| **Configuration**                  | **Eclipse**  | **IntelliJ**   |  Description                       |
+|------------------------------------|--------------|----------------|------------------------------------|
+| encoding ('UTF-8')                 |      x       |     x          | Encoding                           |
+| showMemory (true)                  |      x       |     x          | Show memory indicator              |
+| showLineNumbers (true)             |      x       |     x          | Show line numbers                  |
+| compareDialogWhitespaces(true)     |      x       |     -          | Show whitespaces in compar dialog  |
+| disableAutomaticXmlValidation()    |      x       |     -          | Disables xml validation on the fly |
+| sonarqubeUrl ('https://sonar.org') |      x       |     -          | Configure sonarqube url            |
 
-
-| **Formatter    **       | **Eclipse**  | **IntelliJ**    |   Description         |
-|-------------------------|--------------|------------|----------------------------|
-| name ('Some name')      |      x       |     x      | The name of the formatter  |
-| spacesForTabs (true)    |      x       |     x      | true: Spaces, false: Tabs  |
-| tabWidth (2)            |      x       |     x      | Tab Width                  |
-| indent (2)              |      x       |     x      | Indention level            |
-| lineSplit (80)          |      x       |     x      | Position of hard wrap line (preview margin |
+| **Formatter    **       | **Eclipse**  | **IntelliJ**            |   Description                     |
+|-------------------------|--------------|-------------------------|-----------------------------------|
+| name ('Some name')      |      x       |     x                   | The name of the formatter         |
+| spacesForTabs (true)    |      x       |     x                   | true: Spaces, false: Tabs         |
+| tabWidth (2)            |      x       |     x                   | Tab Width                         |
+| indent (2)              |      x       |     x                   | Indention level                   |
+| lineSplit (80)          |      x       |     x                   | Position of hard wrap line (preview margin) |
 
 
 

@@ -9,6 +9,4 @@ class Idea extends Tool {
         this.plugins.add(url)
     }
 
-
-
 }

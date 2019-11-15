@@ -6,9 +6,11 @@ import org.pike.configuration.Eclipse
 import org.pike.configuration.Idea
 import org.pike.configuration.OperatingSystem
 import org.pike.configuration.PikeExtension
+import org.pike.configurators.file.ReplaceLineConfigurator
 import org.pike.installers.ToolInstaller
 import org.pike.installers.ToolInstallerBuilder
 import org.pike.PikePlugin
+import org.pike.utils.FileUtils
 import org.pike.utils.PikeProperties
 
 
@@ -28,6 +30,8 @@ class InstallIdeaTask extends DefaultTask {
     ToolInstaller tool
 
     PikeProperties pikeProperties = new PikeProperties(project)
+
+    FileUtils fileUtils = new FileUtils()
 
     @TaskAction
     public void prepareIdea() {
@@ -53,6 +57,13 @@ class InstallIdeaTask extends DefaultTask {
         tool = toolBuilder.get(OperatingSystem.current)
         File installationPath = tool.install()
         pikeProperties.setProperty(IDEA_INSTALLPATH, installationPath.absolutePath)
+
+        if (idea.xmx) {
+            File vmoptionsFile = fileUtils.findFile(installationPath, 'idea.vmoptions')
+            logger.lifecycle("Set xmx " + idea.xmx + " in file " + vmoptionsFile.absolutePath)
+            ReplaceLineConfigurator configurator = new ReplaceLineConfigurator()
+            configurator.configure(logger, vmoptionsFile, "-Xmx", idea.xmx, false)
+        }
 
         for (String nextPlugin: idea.plugins) {
             logger.lifecycle("Install plugin " + nextPlugin)

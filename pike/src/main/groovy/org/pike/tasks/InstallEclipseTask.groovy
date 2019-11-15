@@ -1,8 +1,11 @@
 package org.pike.tasks
 
+import com.diffplug.gradle.eclipserunner.EclipseIni
 import com.diffplug.gradle.oomph.OomphIdeExtension
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.util.ClosureBackedAction
 import org.pike.PikePlugin
 import org.pike.configuration.Eclipse
 import org.pike.configuration.PikeExtension
@@ -33,16 +36,26 @@ class InstallEclipseTask extends DefaultTask {
         String javahomeBin = new File (System.getenv("JAVA_HOME"), 'bin').absolutePath
         logger.info("Set java home to " + javahomeBin)
         //set java vm path
-        this.oomphIdeExtension.eclipseIni {
-            set '-vm', javahomeBin
-        }
 
+
+
+        //set xmx
+        if (eclipse.xmx != null) {
+            this.oomphIdeExtension.eclipseIni {
+                vmargs("-Xmx${eclipse.xmx}".toString())
+                set '-vm', javahomeBin
+            }
+        }
+        else {
+            this.oomphIdeExtension.eclipseIni{
+                set '-vm', javahomeBin
+            }
+        }
 
         //Install features
         for (String nextFeature : eclipse.features) {
             this.oomphIdeExtension.feature nextFeature
         }
-
 
         //Import projects
         //TODO think about importing projects at once, but they have to be built before, .project must exist
