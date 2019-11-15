@@ -28,7 +28,7 @@ class Download {
     String name
 
 
-    private long processedBytes = 0;
+    long processedBytes = 0
 
 
 
@@ -69,13 +69,13 @@ class Download {
 
         InputStream inputStream = url.openStream()
         if (!cachedFile.exists()) {
-          project.logger.info("Fill cache...")
+          project.logger.lifecycle("Fill url " + source + " into cache...")
           if (!cachedFile.getParentFile().exists())
               cachedFile.getParentFile().mkdirs()
           stream(url, inputStream, cachedFile)
         }
         else
-            project.logger.info("Cached file exists, reusing downloaded file")
+            project.logger.lifecycle("Cached file exists, reusing downloaded file")
 
         if (! downloadedFile.exists()) {
             project.logger.lifecycle("Copy file " + downloadedFile.absolutePath + " from cache")

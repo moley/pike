@@ -39,10 +39,10 @@ class DmgInstaller extends AbstractInstaller {
     File install(File outputDir, File downloadedFile) {
 
         if (outputDir == null)
-            throw new IllegalStateException("Parameter 'outputDir' must be set")
+            throw new IllegalArgumentException("Parameter 'outputDir' must be set")
 
         if (downloadedFile == null)
-            throw new IllegalStateException("Parameter 'downloadedFile' must be set")
+            throw new IllegalArgumentException("Parameter 'downloadedFile' must be set")
 
         project.logger.lifecycle("Installing " + downloadedFile.name + " to " + outputDir.absolutePath)
 
