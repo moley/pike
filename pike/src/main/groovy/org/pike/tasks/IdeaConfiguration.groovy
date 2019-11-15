@@ -48,7 +48,7 @@ class IdeaConfiguration extends CollectingConfiguration {
         xmlPerLine.add('<component name="ProjectCodeStyleConfiguration">')
         xmlPerLine.add('  <code_scheme name="Project" version="173">')
         if (formatter.lineSplit) {
-          xmlPerLine.add('    <option name="RIGHT_MARGIN" value="' + formatter.previewLinePos.toString() + '" />')
+          xmlPerLine.add('    <option name="RIGHT_MARGIN" value="' + formatter.lineSplit.toString() + '" />')
         }
         xmlPerLine.add('    <codeStyleSettings language="JAVA">')
 

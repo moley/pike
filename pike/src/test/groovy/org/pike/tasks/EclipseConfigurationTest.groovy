@@ -22,7 +22,7 @@ class EclipseConfigurationTest {
         formatter.tabWidth(7)
         formatter.spacesForTabs(true)
         formatter.indent(8)
-        formatter.previewLineWidth (80)
+        formatter.lineSplit (80)
         EclipseConfiguration eclipseConfiguration = new EclipseConfiguration()
         String formatterString = eclipseConfiguration.getFormatterXml(formatter)
         println formatterString

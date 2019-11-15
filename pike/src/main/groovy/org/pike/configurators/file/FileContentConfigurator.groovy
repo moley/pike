@@ -15,7 +15,10 @@ class FileContentConfigurator implements FileConfigurator {
         if (dryRun)
             return
 
-        logger.lifecycle("Write content of length " + value.size() + " to file " + configFile.absolutePath)
+        if (logger)
+          logger.lifecycle("Write content of length " + value.size() + " to file " + configFile.absolutePath)
+
+        configFile.parentFile.mkdirs()
         FileWriter fileWriter = new FileWriter(configFile)
         try {
             fileWriter.write(value)

@@ -18,7 +18,7 @@ class IdeaConfigurationTest {
         Formatter formatter = new Formatter()
         formatter.name("MyFormatter")
         formatter.tabWidth(7)
-        formatter.previewLinePos(80)
+        formatter.lineSplit(80)
         formatter.spacesForTabs(true)
         IdeaConfiguration ideaConfiguration = new IdeaConfiguration()
         String formatterString = ideaConfiguration.getFormatterXml(formatter)
@@ -45,11 +45,12 @@ class IdeaConfigurationTest {
         configuration.encoding 'ISO-8859-15'
         configuration.showLineNumbers Boolean.TRUE
         configuration.showMemory Boolean.TRUE
-        configuration.tabWidth 2
-        configuration.spacesForTabs Boolean.TRUE
+
 
         Formatter formatter = new Formatter()
         formatter.name("MyFormatter")
+        formatter.tabWidth 2
+        formatter.spacesForTabs Boolean.TRUE
         configuration.formatter = formatter
 
         IdeaConfiguration ideaConfiguration = new IdeaConfiguration()

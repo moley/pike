@@ -47,7 +47,7 @@ pike {
             spacesForTabs true
             tabWidth 5
             indent 12
-            previewLinePos 78
+            lineSplit 78
         }
 
     }
