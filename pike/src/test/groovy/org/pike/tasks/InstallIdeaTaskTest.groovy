@@ -17,6 +17,9 @@ class InstallIdeaTaskTest {
     public void install () {
 
         File installPath = Files.createTempDir()
+        File vmoptionsFile = new File (installPath, 'somepath/idea.vmoptions')
+        vmoptionsFile.parentFile.mkdirs()
+        vmoptionsFile.text = '-Xmx 260M'
         def mockedToolInstaller = new MockFor(ToolInstaller)
         mockedToolInstaller.demand.setOperatingSystem{OperatingSystem a-> Assert.assertEquals (OperatingSystem.current, a)}
         mockedToolInstaller.demand.setToolInstallerBuilder{ToolInstallerBuilder a-> println "ToolInstallerBuilder: " + a} //IDEA itself
@@ -37,6 +40,7 @@ class InstallIdeaTaskTest {
                 idea {
                     version '2019.2'
                     plugin 'https://plugins.jetbrains.com/files/6546/71101/EclipseFormatter.zip?updateId=71101&pluginId=6546&family=INTELLIJ'
+                    xmx '2G'
                 }
             }
 

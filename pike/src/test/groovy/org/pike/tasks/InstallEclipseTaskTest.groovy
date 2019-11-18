@@ -17,6 +17,7 @@ class InstallEclipseTaskTest {
                 repo 'https://download.eclipse.org/releases/2019-09/'
                 feature 'org.eclipse.egit'
                 feature 'org.eclipse.buildship'
+                xmx '2G'
             }
         }
 
