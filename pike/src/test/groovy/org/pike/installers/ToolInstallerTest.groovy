@@ -37,7 +37,7 @@ class ToolInstallerTest {
                 Project project = ProjectBuilder.builder().build()
                 project.plugins.apply(PikePlugin)
                 ToolInstallerBuilder toolInstallerBuilder = new ToolInstallerBuilder(project, NAME, "version")
-                toolInstallerBuilder.all().url(SOURCE).installationPath(project.file('build/something'))
+                toolInstallerBuilder.all().url(SOURCE).installationPath(project.file('build/something')).filetype(FileType.ZIP)
                 ToolInstaller toolInstaller = toolInstallerBuilder.get(OperatingSystem.getCurrent())
                 File installedPath = toolInstaller.install()
                 Assert.assertEquals ("InstalledPath not valid", installPath, installedPath)
