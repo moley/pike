@@ -34,7 +34,7 @@ class Download {
 
     public void executeDownload () {
         if (source == null)
-            throw new IllegalStateException("You did not configure a source in download of " + name)
+            throw new IllegalArgumentException("You did not configure a source in download of " + name)
         processedBytes = 0;
 
         String name = source.substring(source.lastIndexOf("/") + 1)

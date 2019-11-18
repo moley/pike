@@ -16,11 +16,29 @@ class InstallEclipseTaskTest {
 
     @After
     public void after () {
-        System.setProperty("http.proxyHost", proxyHostSaved)
-        System.setProperty("https.proxyHost", proxyHostSaved)
-        System.setProperty("http.proxyPort", proxyPortSaved)
-        System.setProperty("https.proxyPort", proxyPortSaved)
-        System.setProperty("http.nonProxyHosts", nonProxyHosts)
+        if (proxyHostSaved != null) {
+            System.setProperty("http.proxyHost", proxyHostSaved)
+            System.setProperty("https.proxyHost", proxyHostSaved)
+        }
+        else {
+            System.clearProperty("http.proxyHost")
+            System.clearProperty("https.proxyHost")
+        }
+
+        if (proxyPortSaved != null) {
+            System.setProperty("http.proxyPort", proxyPortSaved)
+            System.setProperty("https.proxyPort", proxyPortSaved)
+        }
+        else {
+            System.clearProperty("http.proxyPort")
+            System.clearProperty("https.proxyPort")
+
+        }
+
+        if (nonProxyHosts != null)
+          System.setProperty("http.nonProxyHosts", nonProxyHosts)
+        else
+          System.clearProperty("http.nonProxyHosts")
     }
 
     @Test

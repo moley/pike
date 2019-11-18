@@ -31,4 +31,24 @@ class DownloadTest {
 
 
     }
+
+    @Test(expected = IllegalArgumentException)
+    public void noSource () {
+
+        Project project = ProjectBuilder.builder().build()
+
+        File toDir = Files.createTempDir()
+        File cacheDir = Files.createTempDir()
+
+
+        Download download = new Download()
+        download.project = project
+        download.cacheDir = cacheDir
+        download.toDir = toDir
+        download.executeDownload()
+
+
+
+
+    }
 }
