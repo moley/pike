@@ -2,6 +2,7 @@ package org.pike.tasks
 
 import groovy.mock.interceptor.MockFor
 import org.eclipse.jgit.api.CloneCommand
+import org.eclipse.jgit.api.PullCommand
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
@@ -89,5 +90,56 @@ class CloneGitTaskTest {
 
 
 
+    }
+
+    @Test
+    public void executeCloneOnExistingPathNoForce () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+        project.pike {
+            git {
+                gitmodule ('pike', 'https://github.com/moley/pike.git')
+            }
+
+            configuration {
+                encoding 'ISO-8859-15'
+                basepath 'build/basepath'
+            }
+        }
+        project.file('build/basepath/pike').mkdirs()
+        project.evaluate()
+        CloneGitTask cloneGitTaskPike = project.tasks.findByName("clonePike")
+        PullCommand pullCommand = new PullCommand()
+        def mockForPullCommand = new MockFor(PullCommand)
+        mockForPullCommand.use {
+            cloneGitTaskPike.cloneGitModule()
+        }
+    }
+
+    @Test
+    public void executeCloneOnExistingPathforce () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+        project.pike {
+            git {
+                gitmodule ('pike', 'https://github.com/moley/pike.git')
+            }
+
+            configuration {
+                encoding 'ISO-8859-15'
+                basepath 'build/basepath'
+            }
+        }
+        project.file('build/basepath/pike').mkdirs()
+        project.evaluate()
+        CloneGitTask cloneGitTaskPike = project.tasks.findByName("clonePike")
+        cloneGitTaskPike.force true
+        def mockForPullCommand = new MockFor(PullCommand)
+        mockForPullCommand.demand.call {}
+        mockForPullCommand.use {
+            PullCommand pullCommand = new PullCommand()
+            cloneGitTaskPike.pullCommand = pullCommand
+            cloneGitTaskPike.cloneGitModule()
+        }
     }
 }
