@@ -23,6 +23,8 @@ class StartIdeaTask extends DefaultTask{
 
     PikeProperties pikeProperties = new PikeProperties(project)
 
+    OperatingSystem operatingSystem = OperatingSystem.current
+
     @TaskAction
     public void startIdea () {
 
@@ -31,10 +33,10 @@ class StartIdeaTask extends DefaultTask{
             throw new IllegalStateException("No installation dir for idea set, please call task installIdea before")
 
         File startFile = null
-        if (OperatingSystem.current.equals(OperatingSystem.MACOS)) {
+        if (operatingSystem.equals(OperatingSystem.MACOS)) {
             startFile = new File(installationDir, "Contents/MacOS/idea")
         }
-        else if (OperatingSystem.current.equals(OperatingSystem.LINUX)) {
+        else if (operatingSystem.equals(OperatingSystem.LINUX)) {
             startFile = new File (installationDir, 'bin/idea.sh')
         }
 
@@ -43,7 +45,7 @@ class StartIdeaTask extends DefaultTask{
         String [] commands = [startFile.absolutePath, project.projectDir.absolutePath]
             ProcessResult result = processWrapper.execute(commands)
             if (result.resultCode != 0)
-                throw new IllegalStateException("Could not start idea " + result.error)
+                throw new IllegalStateException("Could not start idea (" + result.error + ")")
 
     }
 }

@@ -12,6 +12,7 @@ import org.pike.configuration.Module
 import org.pike.configuration.PikeExtension
 import org.pike.exceptions.MissingConfigurationException
 import org.pike.utils.ConfigureUtils
+import org.pike.utils.PikeProgressMonitor
 import org.pike.utils.ProgressLoggerWrapper
 
 class CloneGitTask extends DefaultTask {
@@ -58,41 +59,7 @@ class CloneGitTask extends DefaultTask {
         }
         else {
             final ProgressLoggerWrapper progressLoggerWrapper = new ProgressLoggerWrapper(project, "Cloning " + module.cloneUrl)
-            cloneCommand = cloneCommand.setProgressMonitor(new ProgressMonitor() {
-
-                private int totalWork
-                private int currentWork
-
-                private String currentTask
-
-                @Override
-                void start(int totalTasks) {
-                }
-
-                @Override
-                void beginTask(String title, int totalWork) {
-                    this.currentTask = title
-                    this.currentWork = 0
-                    this.totalWork = totalWork
-                    progressLoggerWrapper.progress(progressLoggerWrapper.getDescription() + ":  " + currentTask + "(" + currentWork + " of " + totalWork + " finished)")
-                }
-
-                @Override
-                void update(int completed) {
-                    currentWork += completed
-                    progressLoggerWrapper.progress(progressLoggerWrapper.getDescription() + ":  " + currentTask + "(" + currentWork + " of " + totalWork + " finished)")
-                }
-
-                @Override
-                void endTask() {
-
-                }
-
-                @Override
-                boolean isCancelled() {
-                    return false
-                }
-            })
+            cloneCommand = cloneCommand.setProgressMonitor(new PikeProgressMonitor(progressLoggerWrapper))
             cloneCommand = cloneCommand.setURI(module.cloneUrl)
             if (module.branch != null)
                 cloneCommand = cloneCommand.setBranch(module.branch)

@@ -67,6 +67,8 @@ class EclipseConfigurationTest {
         configuration.encoding 'ISO-8859-15'
         configuration.showLineNumbers Boolean.TRUE
         configuration.showMemory Boolean.TRUE
+        configuration.disableAutomaticXmlValidation()
+        configuration.sonarqubeUrl("http://sonarqube.pike.org")
 
         Formatter formatter = new Formatter()
         formatter.name 'MyFormatter'
