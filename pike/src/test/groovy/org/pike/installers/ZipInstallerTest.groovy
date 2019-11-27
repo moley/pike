@@ -43,5 +43,12 @@ class ZipInstallerTest {
         zipInstaller.install(new File ("output"), null)
     }
 
+    @Test(expected = IllegalArgumentException)
+    public void nonExisting ( ){
+        ZipInstaller zipInstaller = new ZipInstaller()
+        zipInstaller.getSingleRootPath(null, new File("nonExisting.tgz"))
+
+    }
+
 
 }

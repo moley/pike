@@ -13,6 +13,15 @@ import java.nio.charset.Charset
 class IdeaConfigurationTest {
 
 
+    @Test(expected = IllegalStateException)
+    public void formatterWithoutName () {
+        Formatter formatter = new Formatter()
+        formatter.tabWidth(7)
+        IdeaConfiguration ideaConfiguration = new IdeaConfiguration()
+        ideaConfiguration.getFormatterXml(formatter)
+
+    }
+
     @Test
     public void formatter () {
         Formatter formatter = new Formatter()

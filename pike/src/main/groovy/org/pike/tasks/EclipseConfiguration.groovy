@@ -114,7 +114,7 @@ class EclipseConfiguration extends CollectingConfiguration {
 
     }
 
-    public void project(String file, String key, Object value, boolean dryRun, Class<? extends FileConfigurator> clazz) {
+    /**public void project(String file, String key, Object value, boolean dryRun, Class<? extends FileConfigurator> clazz) {
         if (value == null)
             return
 
@@ -127,5 +127,5 @@ class EclipseConfiguration extends CollectingConfiguration {
             FileConfigurator configurator = getFileConfigurator(clazz)
             configurator.configure(logger, configFile, key, value.toString(), dryRun)
         }
-    }
+    }**/
 }

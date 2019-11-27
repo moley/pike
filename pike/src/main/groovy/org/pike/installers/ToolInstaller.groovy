@@ -45,7 +45,7 @@ class ToolInstaller {
 
 
     public File getInstallationPathOrDefault() {
-        File installationPath = operatingSystemPlatformBuilder.installationPath
+        File installationPath = operatingSystemPlatformBuilder?.installationPath
         if (installationPath == null) {
             return project.file('build/pike/tools/' + name)
         }

@@ -45,4 +45,27 @@ class ToolInstallerTest {
         }
 
     }
+
+    @Test(expected = IllegalStateException)
+    public void setToolInstallerBuilderNull () {
+        ToolInstaller toolInstaller = new ToolInstaller();
+        toolInstaller.setToolInstallerBuilder(null);
+    }
+
+    @Test(expected = IllegalStateException)
+    public void setOperatingSystemNull () {
+        ToolInstaller toolInstaller = new ToolInstaller();
+        toolInstaller.setOperatingSystem(null);
+    }
+
+    @Test
+    public void getInstallationPath () {
+        ToolInstaller toolInstaller = new ToolInstaller();
+        toolInstaller.project = ProjectBuilder.builder().build()
+        File path = toolInstaller.getInstallationPathOrDefault()
+        println path.absolutePath
+
+
+
+    }
 }

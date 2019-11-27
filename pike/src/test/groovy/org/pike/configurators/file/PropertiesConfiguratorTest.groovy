@@ -1,5 +1,6 @@
 package org.pike.configurators.file
 
+import org.gradle.api.logging.Logger
 import org.junit.Assert
 import org.junit.Test
 
@@ -30,10 +31,12 @@ class PropertiesConfiguratorTest {
     @Test
     public void patchExistingFile () {
 
+        def logger = {} as Logger
+
         File propertiesFile = Files.createTempFile(getClass().simpleName, 'patchExistingFile').toFile()
         org.apache.commons.io.FileUtils.write(propertiesFile, "key=oldValue", Charset.defaultCharset())
 
-        propertiesConfigurator.configure(null, propertiesFile, 'key', 'value', false)
+        propertiesConfigurator.configure(logger, propertiesFile, 'key', 'value', false)
 
         Assert.assertEquals ("value", key(propertiesFile, 'key') )
 

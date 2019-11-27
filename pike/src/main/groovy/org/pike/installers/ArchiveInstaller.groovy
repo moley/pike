@@ -12,7 +12,7 @@ abstract class ArchiveInstaller extends AbstractInstaller {
      * @param downloadedFile  downloadedFile
      * @return
      */
-    protected String getSingleRootPath (final Archiver archiver, final File downloadedFile) {
+    String getSingleRootPath (final Archiver archiver, final File downloadedFile) {
 
         if (! downloadedFile.exists())
             throw new IllegalArgumentException("Argument 'downloadedFile' is a non existing file")
