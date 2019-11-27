@@ -9,6 +9,73 @@ import org.pike.PikePlugin
 public class PikeExtensionTest {
 
 
+    @Test(expected = IllegalStateException)
+    public void overlappingConfigurations () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+        project.pike {
+            eclipse {}
+            idea {}
+            git {
+                gitmodule ('gradle-java-apidoc-plugin', 'https://github.com/moley/gradle-java-apidoc-plugin') {
+                    configuration {
+                        encoding 'ISO-8859-15'
+                    }
+
+                }
+                gitmodule ('leguan', 'https://github.com/moley/leguan') {
+                    configuration {
+                        encoding 'UTF-8'
+                    }
+                }
+            }
+
+        }
+
+        PikeExtension pikeExtension = project.extensions.pike
+        pikeExtension.checkOverlappingConfigurations()
+
+
+
+    }
+
+    @Test
+    public void overlappingConfigurationsNoIde () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+        project.pike {
+            git {
+                gitmodule ('gradle-java-apidoc-plugin', 'https://github.com/moley/gradle-java-apidoc-plugin') {
+                    configuration {
+                        encoding 'ISO-8859-15'
+                    }
+
+                }
+                gitmodule ('leguan', 'https://github.com/moley/leguan') {
+                    configuration {
+                        encoding 'UTF-8'
+                    }
+                }
+            }
+
+        }
+
+        PikeExtension pikeExtension = project.extensions.pike
+        pikeExtension.checkOverlappingConfigurations()
+
+
+
+    }
+
+    @Test
+    public void overlappingConfigurationsNoGit () {
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply(PikePlugin)
+
+        PikeExtension pikeExtension = project.extensions.pike
+        pikeExtension.checkOverlappingConfigurations()
+    }
+
     @Test
     public void formatter () {
         Project project = ProjectBuilder.builder().build()

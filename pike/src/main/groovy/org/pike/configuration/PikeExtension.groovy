@@ -1,16 +1,8 @@
 package org.pike.configuration
 
 import org.gradle.api.Project
-import org.pike.tasks.ConfigureEclipseTask
-import org.pike.tasks.ConfigureIdeaTask
-import org.pike.tasks.EclipseConfiguration
-import org.pike.tasks.IdeaConfiguration
-import org.pike.tasks.InstallEclipseTask
-import org.pike.tasks.InstallIdeaTask
-import org.pike.tasks.StartEclipseTask
-import org.pike.tasks.StartIdeaTask
+import org.pike.tasks.*
 import org.pike.utils.ObjectMergeUtil
-
 
 class PikeExtension extends Configurable {
 
@@ -24,22 +16,12 @@ class PikeExtension extends Configurable {
 
     Idea idea
 
-    VsCode vsCode
-
     List<String> initialBuildTasks = ['testClasses']
 
     ObjectMergeUtil<Configuration> configurationMergeUtil = new ObjectMergeUtil<Configuration>()
 
     public PikeExtension (final Project project) {
         this.project = project
-    }
-
-    void vscode (Closure closure) {
-        vsCode = new VsCode()
-        project.configure(vsCode, closure)
-
-        //TODO
-
     }
 
     void idea (Closure closure) {
@@ -108,10 +90,6 @@ class PikeExtension extends Configurable {
             if (idea) {
                 IdeaConfiguration ideaConfiguration = new IdeaConfiguration()
                 ideaConfiguration.check(configurations)
-            }
-
-            if (vsCode) {
-                //TODO
             }
         }
 

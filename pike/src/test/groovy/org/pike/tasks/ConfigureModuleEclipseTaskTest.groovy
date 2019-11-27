@@ -27,8 +27,29 @@ class ConfigureModuleEclipseTaskTest {
 
     }
 
-    @Test
-    public void getWorkspacePath () {
+    @Test(expected = IllegalStateException)
+    public void getWorkspacePathDoesNoDirectory () {
+
+        Project project = ProjectBuilder.builder().build()
+        File userHomePath = new File (project.projectDir, 'user-home')
+        System.setProperty('user.home', userHomePath.absolutePath)
+        File workspacesPath = new File (userHomePath, '.goomph/ide-workspaces')
+        workspacesPath.mkdirs()
+        File goomphPath = new File (workspacesPath, 'bla')
+        goomphPath.createNewFile()
+
+        File localGoomph = project.file("build/somepath")
+        new File (workspacesPath, 'bla-owner').text = localGoomph.absolutePath
+
+        ConfigureModuleEclipseTask configureModuleEclipseTask = project.tasks.create('configureModule', ConfigureModuleEclipseTask)
+        File workspace = configureModuleEclipseTask.workspacePath
+        Assert.assertEquals ("Invalid directory", new File(goomphPath, 'bla'), workspace)
+
+
+    }
+
+    @Test(expected = IllegalStateException)
+    public void getWorkspacePathDoesNotExist () {
 
         Project project = ProjectBuilder.builder().build()
         File userHomePath = new File (project.projectDir, 'user-home')
@@ -37,13 +58,32 @@ class ConfigureModuleEclipseTaskTest {
         goomphPath.mkdirs()
 
         File localGoomph = project.file("build/somepath")
-        localGoomph.mkdirs()
-
         new File (goomphPath, 'bla-owner').text = localGoomph.absolutePath
 
         ConfigureModuleEclipseTask configureModuleEclipseTask = project.tasks.create('configureModule', ConfigureModuleEclipseTask)
         File workspace = configureModuleEclipseTask.workspacePath
         Assert.assertEquals ("Invalid directory", new File(goomphPath, 'bla'), workspace)
+
+
+    }
+
+    @Test
+    public void getWorkspacePath () {
+
+        Project project = ProjectBuilder.builder().build()
+        File userHomePath = new File (project.projectDir, 'user-home')
+        System.setProperty('user.home', userHomePath.absolutePath)
+        File workspacesPath = new File (userHomePath, '.goomph/ide-workspaces')
+        workspacesPath.mkdirs()
+        File goomphPath = new File (workspacesPath, 'bla')
+        goomphPath.mkdirs()
+
+        File localGoomph = project.file("build/somepath")
+        new File (workspacesPath, 'bla-owner').text = localGoomph.absolutePath
+
+        ConfigureModuleEclipseTask configureModuleEclipseTask = project.tasks.create('configureModule', ConfigureModuleEclipseTask)
+        File workspace = configureModuleEclipseTask.workspacePath
+        Assert.assertEquals ("Invalid directory", goomphPath, workspace)
 
 
     }

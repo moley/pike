@@ -37,9 +37,9 @@ class ConfigureModuleEclipseTask extends DefaultTask {
                 String home = FileUtils.readFileToString(next, Charset.defaultCharset())
                 if (home.startsWith(buildDirPath)) {
                     File workspacePath = new File(next.parentFile, next.name.substring(0, next.name.length() - 6))
-                    if (!workspacesPath.exists())
+                    if (!workspacePath.exists())
                         throw new IllegalStateException("Workspace configuration path " + workspacesPath.absolutePath + " does not exist")
-                    if (!workspacesPath.isDirectory())
+                    if (!workspacePath.isDirectory())
                         throw new IllegalStateException("Workspace configuration path " + workspacesPath.absolutePath + " is no directory")
 
                     project.logger.info("Found workspace config path " + workspacesPath.absolutePath)
