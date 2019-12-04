@@ -46,13 +46,13 @@ class ToolInstallerTest {
 
     }
 
-    @Test(expected = IllegalStateException)
+    @Test(expected = IllegalArgumentException)
     public void setToolInstallerBuilderNull () {
         ToolInstaller toolInstaller = new ToolInstaller();
         toolInstaller.setToolInstallerBuilder(null);
     }
 
-    @Test(expected = IllegalStateException)
+    @Test(expected = IllegalArgumentException)
     public void setOperatingSystemNull () {
         ToolInstaller toolInstaller = new ToolInstaller();
         toolInstaller.setOperatingSystem(null);
