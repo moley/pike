@@ -7,7 +7,7 @@ class StartEclipseTask extends DefaultTask{
 
     {
         group = PikePlugin.PIKE_GROUP
-        description = 'Starts an IntelliJ instance for the given project'
+        description = 'Starts an Eclipse instance for the given project'
     }
 
 

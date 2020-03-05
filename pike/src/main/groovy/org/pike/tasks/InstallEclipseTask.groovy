@@ -1,11 +1,9 @@
 package org.pike.tasks
 
-import com.diffplug.gradle.eclipserunner.EclipseIni
+
 import com.diffplug.gradle.oomph.OomphIdeExtension
-import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.ClosureBackedAction
 import org.pike.PikePlugin
 import org.pike.configuration.Eclipse
 import org.pike.configuration.PikeExtension
@@ -33,7 +31,15 @@ class InstallEclipseTask extends DefaultTask {
             this.oomphIdeExtension.repo nextRepo
         }
 
-        String javahomeBin = new File (System.getenv("JAVA_HOME"), 'bin').absolutePath
+        String javahome = System.getProperty('java.home')
+        File javaHomeAsFile = new File (javahome).getAbsoluteFile()
+        if (! javaHomeAsFile.exists())
+            throw new IllegalStateException("Java_home " + javaHomeAsFile.getAbsolutePath() + " does not exist");
+
+        if (javaHomeAsFile.getName().equals("jre"))
+            javaHomeAsFile = javaHomeAsFile.getParentFile();
+
+        String javahomeBin = new File (javaHomeAsFile, 'bin').absolutePath
         logger.info("Set java home to " + javahomeBin)
         //set java vm path
 
