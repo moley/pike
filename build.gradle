@@ -15,9 +15,12 @@ allprojects {
 
 subprojects {
 
+    def mavenUrl = System.getProperty("maven.url")
+    def mavenUser = System.getProperty("maven.user")
+    def mavenPwd = System.getProperty("maven.password")
+
     apply plugin: 'groovy'
     apply plugin: 'jacoco'
-    apply plugin: 'com.jfrog.bintray'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -52,6 +55,49 @@ subprojects {
         reports {
             xml.enabled = true
             html.enabled = true
+        }
+    }
+
+    project.plugins.withId('maven-publish') {
+        publishing {
+            repositories {
+                maven {
+                    credentials {
+                        username mavenUser
+                        password mavenPwd
+                    }
+                    url mavenUrl
+                }
+            }
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+                }
+            }
+        }
+    }
+
+    project.plugins.withId('com.jfrog.bintray') {
+        bintray {
+            user = System.properties['bintray.username']
+            key = System.properties['bintray.password']
+
+            println user + "-" + key
+
+            publications = ['mavenJava']
+            pkg {
+                repo = 'pike'
+                name = "${project.name}"
+                desc = 'collection of gradle tasks to do administrational things'
+                websiteUrl = 'https://github.com/moley/pike'
+                issueTrackerUrl = 'https://github.com/moley/pike'
+                vcsUrl = 'https://github.com/moley/pike.git'
+                licenses = ['Apache-2.0']
+                labels = ['pike', 'gradle', 'gorilla']
+                attributes = ['plat': ['win', 'linux', 'osx']]
+                publicDownloadNumbers = true
+                version.attributes = ['gradle-plugin': "org.pike.${project.name}:org.pike:${project.name}"]
+            }
         }
     }
 
