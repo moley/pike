@@ -1,16 +1,5 @@
-buildscript {
-  repositories {
-     mavenLocal()
-     jcenter()
-  }
-  dependencies {
-     classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5"
-  }
-}
-
-
-allprojects {
-    apply plugin: 'idea'
+plugins {
+    id "com.jfrog.bintray" version "1.8.3"
 }
 
 subprojects {
@@ -38,10 +27,12 @@ subprojects {
         jcenter()
     }
 
-    group = 'org.pike'
-    version = '0.9'
+    tasks.create('sourceJar', Jar) {
+        from sourceSets.main.allGroovy
+    }
 
-    println("Configuring for $project.name with version $project.version")
+    group = 'org.pike'
+    version = project.rootProject.file('releasenotes.md').text.split("\n").first().replaceAll("\\*", "").trim()
 
     test {
         testLogging {
@@ -70,21 +61,25 @@ subprojects {
                 }
             }
             publications {
-                mavenJava(MavenPublication) {
+                maven(MavenPublication) {
                     from components.java
+                    artifact project.sourceJar {
+                        classifier 'sources'
+                    }
                 }
             }
         }
     }
 
     project.plugins.withId('com.jfrog.bintray') {
+        println "Name: " + project.name
         bintray {
             user = System.properties['bintray.username']
             key = System.properties['bintray.password']
 
             println user + "-" + key
 
-            publications = ['mavenJava']
+            publications = ['maven']
             pkg {
                 repo = 'pike'
                 name = "${project.name}"
@@ -96,7 +91,7 @@ subprojects {
                 labels = ['pike', 'gradle', 'gorilla']
                 attributes = ['plat': ['win', 'linux', 'osx']]
                 publicDownloadNumbers = true
-                version.attributes = ['gradle-plugin': "org.pike.${project.name}:org.pike:${project.name}"]
+                version.attributes = ['gradle-plugin': "org.pike.${name}:org.pike:${name}"]
             }
         }
     }

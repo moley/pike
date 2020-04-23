@@ -16,10 +16,4 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
-publishing {
-  publications {
-    maven(MavenPublication) {
-      from components.java
-    }
-  }
-}
+
