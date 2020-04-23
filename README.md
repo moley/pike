@@ -15,7 +15,7 @@ configurations which override this common configurations were useful.
 Pike is installed by running the following command in your terminal. 
 
 ```
-sh -c "$(wget -O- https://github.com/moley/pike/blob/master/bootstrap/install.sh)"
+sh -c "$(wget -O- https://raw.githubusercontent.com/moley/pike/master/bootstrap/install.sh)"
 ```
 
 
