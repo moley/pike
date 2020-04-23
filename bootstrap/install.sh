@@ -18,4 +18,4 @@ clear
 
 echo "Pike is installed in path `pwd`."
 echo "Take a look at https://github.com/moley/pike/blob/master/README.md or start your first build with ./gradlew tasks to analyze the available tasks"
-echo "Happy coding"
+echo "Happy piking"
