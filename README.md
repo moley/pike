@@ -10,7 +10,16 @@ server provisioning but on provisioning your development machine. This means hav
 development environment for all users of a project. As well you can define user specific 
 configurations which override this common configurations were useful. 
 
-## First steps 
+## Installation
+
+Pike is installed by running the following command in your terminal. 
+
+```
+sh -c "$(wget -O- https://github.com/moley/pike/blob/master/bootstrap/install.sh)"
+```
+
+
+## First build 
 
 Starting pike the first time is very easy. It is all about creating a gradle buildfile which 
 contains the configurations. A simple buildfile could be like: 
