@@ -11,6 +11,8 @@ public class ToolInstallerBuilder {
 
     String version
 
+    boolean force
+
     boolean installationPathMustExist
 
     private ToolInstallerPlatformBuilder allPlatformInstallerBuilder = new ToolInstallerPlatformBuilder()
@@ -34,6 +36,11 @@ public class ToolInstallerBuilder {
         }
 
         return platformBuilder
+    }
+
+    public ToolInstallerBuilder force () {
+        this.force = true
+        return this
     }
 
     public ToolInstallerPlatformBuilder all () {

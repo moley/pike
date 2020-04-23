@@ -2,6 +2,7 @@ package org.pike.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.pike.configuration.Eclipse
 import org.pike.configuration.Idea
 import org.pike.configuration.OperatingSystem
@@ -14,7 +15,7 @@ import org.pike.utils.FileUtils
 import org.pike.utils.PikeProperties
 
 
-class InstallIdeaTask extends DefaultTask {
+class InstallIdeaTask extends ForcableTask {
 
     {
         group = PikePlugin.PIKE_GROUP
@@ -32,6 +33,7 @@ class InstallIdeaTask extends DefaultTask {
     PikeProperties pikeProperties = new PikeProperties(project)
 
     FileUtils fileUtils = new FileUtils()
+
 
     @TaskAction
     public void prepareIdea() {

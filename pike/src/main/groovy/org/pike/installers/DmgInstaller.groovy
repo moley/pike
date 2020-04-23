@@ -49,6 +49,7 @@ class DmgInstaller extends AbstractInstaller {
         //Mount
         project.logger.info("Mounting " + downloadedFile.absolutePath)
         String[] mountCommand = ['hdiutil', 'mount', downloadedFile.absolutePath]
+        project.logger.info("-Command: " + String.join(" ", mountCommand))
         ProcessResult resultMount = processWrapper.execute(mountCommand)
         if (resultMount.resultCode != 0)
             throw new IllegalStateException("Could not mount the dmg file ${downloadedFile.absolutePath}. Command $mountCommand results in error: " + resultMount.error)
@@ -59,8 +60,8 @@ class DmgInstaller extends AbstractInstaller {
         File appFolderInstalled = new File (outputDir, appFolderOrigin.name)
 
         if (!appFolderInstalled.exists()) {
-            project.logger.lifecycle("Copy " + volumePath + " to " + outputDir.absolutePath)
-            FileUtils.copyDirectory(appFolderOrigin, outputDir)
+            project.logger.lifecycle("Copy " + volumePath + " to " + appFolderInstalled.absolutePath + "(outputdir = " + outputDir.getAbsolutePath() + ")")
+            FileUtils.copyDirectory(appFolderOrigin, appFolderInstalled)
         }
         else
             project.logger.lifecycle("Installation dir " + appFolderInstalled.absolutePath + " already exists")
@@ -68,6 +69,8 @@ class DmgInstaller extends AbstractInstaller {
         //Unmount
         project.logger.info("Unmounting " + volumePath)
         String[] unmountCommand = ['hdiutil', 'unmount', volumePath]
+        project.logger.info("-Command: " + String.join(" ", unmountCommand))
+
         ProcessResult resultUnmount = processWrapper.execute(unmountCommand)
         if (resultUnmount.resultCode != 0)
             throw new IllegalStateException("Could not unmount the dmg file ${volumePath}. Command $unmountCommand results in error: " + resultUnmount.error)

@@ -10,8 +10,6 @@ class PikeExtension extends Configurable {
 
     Git git
 
-    boolean force
-
     Eclipse eclipse
 
     Idea idea
@@ -20,7 +18,7 @@ class PikeExtension extends Configurable {
 
     ObjectMergeUtil<Configuration> configurationMergeUtil = new ObjectMergeUtil<Configuration>()
 
-    public PikeExtension (final Project project) {
+    PikeExtension (final Project project) {
         this.project = project
     }
 

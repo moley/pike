@@ -17,6 +17,8 @@ class ToolInstaller {
 
     OperatingSystem operatingSystem
 
+    boolean force
+
     Download download = new Download()
 
     ToolInstallerPlatformBuilder operatingSystemPlatformBuilder
@@ -35,6 +37,7 @@ class ToolInstaller {
         this.operatingSystemPlatformBuilder = toolInstallerPlatformBuilderObjectMergeUtil.merge(toolInstallerBuilder.all(), toolInstallerBuilder.platform(operatingSystem))
         this.installationPathMustExist = toolInstallerBuilder.installationPathMustExist
     }
+
 
     public void setOperatingSystem (final OperatingSystem operatingSystem) {
         if (operatingSystem == null)
@@ -57,14 +60,12 @@ class ToolInstaller {
 
         project.logger.info("Install " + name + " on operatingsystem " + operatingSystem.name())
 
-        PikeExtension pikeExtension = project.extensions.pike
-
         download.name = name
         download.project = project
         download.source = operatingSystemPlatformBuilder.url
         download.fileType = operatingSystemPlatformBuilder.fileType
         download.toDir = project.file('build/pike/tools/' + name + 'Downloaded')
-        download.force = pikeExtension.force
+        download.force = force
         download.executeDownload()
 
         File downloadedFile = download.downloadedFile

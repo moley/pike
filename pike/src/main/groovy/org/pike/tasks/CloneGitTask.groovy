@@ -15,7 +15,7 @@ import org.pike.utils.ConfigureUtils
 import org.pike.utils.PikeProgressMonitor
 import org.pike.utils.ProgressLoggerWrapper
 
-class CloneGitTask extends DefaultTask {
+class CloneGitTask extends ForcableTask {
 
     {
         group = PikePlugin.PIKE_GROUP
@@ -30,17 +30,10 @@ class CloneGitTask extends DefaultTask {
 
     PullCommand pullCommand = null
 
-    @Option(option = "force", description = "Makes a clean configuration (e.g. pull on existing git clones)")
-    public void setForce(boolean enabled) {
-        PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
-        pikeExtension.force = enabled
-    }
+
 
     @TaskAction
     public void cloneGitModule () {
-        PikeExtension pikeExtension = project.extensions.findByName(PikeExtension.NAME)
-
-
         if (module.name == null)
             throw new MissingConfigurationException("No modulename configured")
 
@@ -48,7 +41,7 @@ class CloneGitTask extends DefaultTask {
         File clonePath = new File(basePath, module.name)
 
         if (clonePath.exists()) {
-            if (pikeExtension.force) {
+            if (force) {
                 if (pullCommand == null)
                     pullCommand = Git.open(clonePath).pull()
                 pullCommand.call()

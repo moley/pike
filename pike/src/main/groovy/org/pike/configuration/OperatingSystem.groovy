@@ -1,5 +1,7 @@
 package org.pike.configuration
 
+import org.pike.utils.StringUtils
+
 enum OperatingSystem {
     WINDOWS,
     LINUX,
@@ -13,5 +15,10 @@ enum OperatingSystem {
             return MACOS
         else
             return LINUX
+    }
+
+    String getDisplayName () {
+        StringUtils stringUtils = new StringUtils()
+        return stringUtils.getFirstUpper(name())
     }
 }
