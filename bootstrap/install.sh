@@ -1,8 +1,8 @@
 mkdir -p gradle/wrapper
 
 wget --quiet --directory-prefix=gradle/wrapper https://github.com/moley/pike/blob/master/gradle/wrapper/gradle-wrapper.jar
-wget --quiet --directory-prefix=gradle/wrapper https://github.com/moley/pike/blob/master/gradle/wrapper/gradle-wrapper.properties
-wget --quiet https://github.com/moley/pike/blob/master/gradlew
+wget --quiet --directory-prefix=gradle/wrapper https://raw.githubusercontent.com/moley/pike/master/gradle/wrapper/gradle-wrapper.properties
+wget --quiet https://raw.githubusercontent.com/moley/pike/master/gradlew
 chmod 777 gradlew
 echo """ buildscript {
    repository {
