@@ -1,4 +1,4 @@
-**0.10**
+**0.11**
 - uploaded sources to bintray
 
 **0.9**
