@@ -16,7 +16,6 @@ import org.pike.utils.StringUtils
 
 public class PikeEclipsePlugin implements Plugin<Project> {
 
-    public final static String DSL = "pikeeclipse"
     public final static String PIKE_ECLIPSE_GROUP = 'Pike Eclipse'
 
     private StringUtils stringUtils = new StringUtils()
