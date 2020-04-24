@@ -5,3 +5,6 @@ dependencies {
 tasks.test.dependsOn project.rootProject.getTasksByName('publishToMavenLocal', true)
 tasks.test.outputs.upToDateWhen {false}
 
+//TODO
+tasks.test.enabled(false)
+

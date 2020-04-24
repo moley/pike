@@ -1,24 +1,19 @@
 package org.pike.integrationtests
 
-import org.gradle.tooling.BuildLauncher
-import org.gradle.tooling.GradleConnectionException
-import org.gradle.tooling.GradleConnector
-import org.gradle.tooling.ProjectConnection
-import org.gradle.tooling.ResultHandler
+import org.gradle.tooling.*
 import org.junit.Test
 
-
-class HelloWorldTest {
+class MirrorEclipseTest {
 
     @Test
-    public void buildHelloWorld () {
+    public void buildDevelopment () {
         File rootPath = TestUtils.getRootProject()
         File gradleWrapperProperties = new File (rootPath, 'gradle/wrapper/gradle-wrapper.properties')
         Properties properties = new Properties()
         properties.load(new FileInputStream(gradleWrapperProperties))
         String distributionUrl = properties.get("distributionUrl")
         GradleConnector gradleConnector = GradleConnector.newConnector()
-        gradleConnector.forProjectDirectory(new File (rootPath, 'testprojects/helloworld'))
+        gradleConnector.forProjectDirectory(new File (rootPath, 'testprojects/eclipseAdmin'))
         gradleConnector.useDistribution(URI.create(distributionUrl))
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
@@ -27,7 +22,7 @@ class HelloWorldTest {
 
         //if you use a different than usual build file name:
         BuildLauncher build = projectConnection.newBuild()
-        build.forTasks('clean', 'installEclipse', 'configureEclipse', 'installIdea', 'configureIdea')
+        build.forTasks('clean', 'mirrorEclipse')
         build.addArguments('-s')
 
         try {

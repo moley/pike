@@ -1,4 +1,4 @@
-include 'pike'
+include 'pike-base'
 include 'pike-eclipse'
 include 'integrationtests'
 rootProject.name = 'pike'

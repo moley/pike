@@ -4,7 +4,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.pike:pike-eclipse:0.9'
+        classpath 'org.pike:pike-eclipse:0.11'
+        classpath 'org.pike:pike-base:0.11'
     }
 }
 
@@ -13,30 +14,15 @@ apply {
 }
 
 pikeeclipse {
-    installationDir file('build/mirror')
+    installationDir file('build/mirror')                            //path to install the mirror to
 
-    version '2020-03'
+    version '2020-03'                                               //version is used as subdirectory
 
-    osToken 'linux', 'linux-gtk-x86_64.tar.gz'
-    osToken 'macos', 'macosx-cocoa-x86_64.dmg'
-    osToken 'windows', 'win32-x86_64.zip'
+    osToken 'linux', 'linux-gtk-x86_64.tar.gz'                      //file used for linux distribution
+    osToken 'macos', 'macosx-cocoa-x86_64.dmg'                      //file used for mac distribution
+    osToken 'windows', 'win32-x86_64.zip'                           //file used for win distribution
 
 
-    updatesite 'http://moreunit.sourceforge.net/update-site', 'moreunit'
-   /** updatesite 'http://dist.springsource.org/snapshot/GRECLIPSE/e4.15', 'groovy'
-    updatesite 'http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.17.0', 'xtext'
-    updatesite 'http://jautodoc.sourceforge.net/update/', 'jautodoc'
-    updatesite 'https://download.eclipse.org/linuxtools/update-docker-4.6.0/', 'dockertooling'
-    updatesite 'http://download.eclipse.org/linuxtools/update-7.5.0', 'linuxtools'
-    updatesite 'https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates', 'pmd'
-    updatesite 'http://findbugs.cs.umd.edu/eclipse', 'findbugs'
-    updatesite 'https://checkstyle.org/eclipse-cs/update', 'checkstyle'
-    updatesite 'http://andrei.gmxhome.de/eclipse', 'anyedit'
-    updatesite "http://download.eclipse.org/releases/${pikeeclipse.version}", pikeeclipse.version
-    updatesite 'http://downloads.sonarsource.com/eclipse/eclipse/', 'sonar'
-    updatesite 'http://eclipse.sonarlint.org', 'sonarlint'
-    updatesite 'http://download.eclipse.org/technology/swtbot/releases/latest', 'swtbot'
-    updatesite 'http://download.eclipse.org/buildship/updates/e411/releases/3.x/', 'buildship'
-    updatesite 'https://dl.bintray.com/de-jcup/jenkinseditor', 'jenkinseditor'**/
+    updatesite 'http://moreunit.sourceforge.net/update-site', 'moreunit'        //add this updatesites to your mirror
     updatesite 'http://download.eclipse.org/mylyn/releases/latest/', 'mylynbuild'
 }

@@ -10,7 +10,7 @@ server provisioning but on provisioning your development machine. This means hav
 development environment for all users of a project. As well you can define user specific 
 configurations which override this common configurations were useful. 
 
-## Installation
+# Installation
 
 Pike is installed by running the following command in your terminal. 
 
@@ -18,57 +18,21 @@ Pike is installed by running the following command in your terminal.
 sh -c "$(wget -O- https://raw.githubusercontent.com/moley/pike/master/bootstrap/install.sh)"
 ```
 
+# First build 
 
-## First build 
-
-Starting pike the first time is very easy. It is all about creating a gradle buildfile which 
-contains the configurations. A simple buildfile could be like: 
+After you have installed pike with the upper command you can start it by simply calling 
 ```
-buildscript {
-    repositories {  mavenCentral() }
-    dependencies { classpath 'org.pike:pike:0.9' }
-}
-
-apply {
-    plugin 'pike'
-}
-
-pike {
-    git {
-        gitmodule ('pike', 'https://github.com/moley/pike.git') {
-            configuration {
-                encoding 'UTF-8' //would lead to error in eclipse because workspace wide configuration  
-            }
-        }
-        gitmodule ('leguan', 'https://github.com/moley/leguan.git')
-    }
-
-    idea {
-        version '2019.2.3'
-        globalConfFolder 'IdeaIC2019.2'
-        plugin 'https://plugins.jetbrains.com/files/6546/71101/EclipseFormatter.zip?updateId=71101&pluginId=6546&family=INTELLIJ'
-        xmx '2G'
-    }
-
-    eclipse {
-        repo 'https://download.eclipse.org/releases/2019-09/'
-        feature 'org.eclipse.egit'
-        feature 'org.eclipse.buildship'
-        xmx '4G'
-    }
-
-    configuration {
-        encoding 'ISO-8859-15'
-    }
-}
+./gradlew tasks
 ```
-This example configures that your project contains two submodules (pike and leguan) and
-defines to be able to use **Eclipse** as well as **IntelliJ**. Tasks are created to 
-* checkout the project (clone, cloneLeguan, clonePike)
-* execute an initial build (buildLeguan, buildPike)
-* delete the checked out modules (delete, deleteLeguan, deletePike)
-* install, configure and start Eclipse (installEclipse, configureEclipse, startEclipse)
-* install, configure and start IntelliJ (installIdea, configureIdea, startIdea)
+Afterwards you see all the tasks which can be called in this installation.
+
+
+# Use cases
+
+# Creating an equal development environment for every user
+
+You can use **pike** to configure your development environment in a equal manner for any developer. 
+You can find an example buildfile in testproject [development](testprojects/development/build.gradle)
 
 ## Configurations
 
@@ -101,6 +65,15 @@ with an exception because Eclipse saves the encoding once per workspace and must
 | tabWidth (2)            |      x       |     x                   | Tab Width                         |
 | indent (2)              |      x       |     x                   | Indention level                   |
 | lineSplit (80)          |      x       |     x                   | Position of hard wrap line (preview margin) |
+ 
+
+# Mirror eclipse versions on a company wide mirror server
+If you want to setup a mirror for a certain eclipse version you can setup your build like 
+shown in testproject [eclipseAdmin](testprojects/eclipseAdmin/build.gradle)
+
+ 
+
+
 
 
 

@@ -4,5 +4,5 @@ plugins {
 apply plugin: 'com.jfrog.bintray'
 
 dependencies {
-    compile project (':pike')
+    compile project (':pike-base')
 }

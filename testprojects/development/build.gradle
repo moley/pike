@@ -4,14 +4,24 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.pike:pike:0.9'
+        classpath 'org.pike:pike-base:0.11'
     }
 }
 
 apply {
-    plugin 'pike'
+    plugin 'pike-base'
 }
 
+
+/**
+ * This example configures that your project contains two submodules (pike and leguan) and
+ * defines to be able to use **Eclipse** as well as **IntelliJ**. Tasks are created to
+ * - checkout the project (clone, cloneLeguan, clonePike)
+ * - execute an initial build (buildLeguan, buildPike)
+ * - delete the checked out modules (delete, deleteLeguan, deletePike)
+ * - install, configure and start Eclipse (installEclipse, configureEclipse, startEclipse)
+ * - install, configure and start IntelliJ (installIdea, configureIdea, startIdea)
+ */
 pike {
     git {
         gitmodule ('gradle-java-apidoc-plugin', 'https://github.com/moley/gradle-java-apidoc-plugin') {
