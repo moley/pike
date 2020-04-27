@@ -41,18 +41,18 @@ class MirrorUpdatesiteTask extends ForcableTask {
             ProgressLoggerWrapper progressLoggerWrapper = new ProgressLoggerWrapper(project, progressLoggerPrefix)
             progressLoggerWrapper.progress("Installing tooling...")
 
-            File installDir = toolInstaller.install()
-            File mirrorWorkingDir = eclipsePaths.getWorkingDir(installDir)
+            File mirrorInstallDir = toolInstaller.install()
+            File mirrorWorkingDir = eclipsePaths.getWorkingDir(mirrorInstallDir)
             File mirroredUpdatesitesBaseDir = new File(mirrorWorkingDir, 'updatesites')
             File mirroredUpdatesiteDir = new File (mirroredUpdatesitesBaseDir, localname)
 
-            File configDir = eclipsePaths.getConfigurationDir(installDir)
+            File mirrorConfigDir = eclipsePaths.getConfigurationDir(mirrorInstallDir)
 
-            project.logger.lifecycle("Using installDir " + installDir.absolutePath)
-            project.logger.lifecycle("Using workingDir " + workingDir.absolutePath)
-            project.logger.lifecycle("Using configDir " + configDir.absolutePath)
+            project.logger.lifecycle("Using installDir " + mirrorInstallDir.absolutePath)
+            project.logger.lifecycle("Using workingDir " + mirrorWorkingDir.absolutePath)
+            project.logger.lifecycle("Using configDir " + mirrorConfigDir.absolutePath)
 
-            File proxySettings = new File(configDir, '.settings/org.eclipse.core.net.prefs')
+            File proxySettings = new File(mirrorConfigDir, '.settings/org.eclipse.core.net.prefs')
             if (System.getProperty("http.proxyHost") != null) {
                 logger.lifecycle("Configure proxy in file " + proxySettings.absolutePath)
                 String httpProxyHost = System.getProperty("http.proxyHost")

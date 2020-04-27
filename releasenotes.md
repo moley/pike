@@ -1,5 +1,6 @@
-**0.13**
+**0.19**
 - improved logging MirrorUpdatesite
+- fixed paths in linux
 
 **0.12**
 - removed pike to pike-base
