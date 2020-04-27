@@ -1,3 +1,6 @@
+**0.13**
+- improved logging MirrorUpdatesite
+
 **0.12**
 - removed pike to pike-base
 

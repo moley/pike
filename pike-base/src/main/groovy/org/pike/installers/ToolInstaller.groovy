@@ -80,6 +80,10 @@ class ToolInstaller {
         if (installationPathMustExist && ! installationPath.exists())
             throw new IllegalStateException("Installation path " + installationPath.absolutePath + " is expected to exist, check configuration")
 
-        return installer.install(installationPath, downloadedFile)
+        try {
+            return installer.install(installationPath, downloadedFile)
+        } catch (Exception e) {
+            project.logger.error("Error installing ${downloadedFile.getAbsolutePath()} in ${installationPath.absolutePath}", e.getLocalizedMessage(), e)
+        }
     }
 }

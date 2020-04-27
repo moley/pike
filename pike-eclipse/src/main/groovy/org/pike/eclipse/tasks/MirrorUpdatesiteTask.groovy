@@ -2,6 +2,7 @@ package org.pike.eclipse.tasks
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.tasks.TaskAction
+import org.pike.configuration.OperatingSystem
 import org.pike.eclipse.utils.CreateUpdatesiteMetadata
 import org.pike.installers.ToolInstaller
 import org.pike.tasks.ForcableTask
@@ -18,6 +19,8 @@ class MirrorUpdatesiteTask extends ForcableTask {
     File toPath
 
     ToolInstaller toolInstaller
+
+    EclipsePaths eclipsePaths = new EclipsePaths()
 
     @TaskAction
     public void mirror() {
@@ -39,14 +42,19 @@ class MirrorUpdatesiteTask extends ForcableTask {
             progressLoggerWrapper.progress("Installing tooling...")
 
             File installDir = toolInstaller.install()
-            File mirrorWorkingDir = new File(installDir, 'Contents/MacOS')
+            File mirrorWorkingDir = eclipsePaths.getWorkingDir(installDir)
             File mirroredUpdatesitesBaseDir = new File(mirrorWorkingDir, 'updatesites')
             File mirroredUpdatesiteDir = new File (mirroredUpdatesitesBaseDir, localname)
 
-            File configDir = new File(installDir, 'Contents/Eclipse/configuration')
+            File configDir = eclipsePaths.getConfigurationDir(installDir)
+
+            project.logger.lifecycle("Using installDir " + installDir.absolutePath)
+            project.logger.lifecycle("Using workingDir " + workingDir.absolutePath)
+            project.logger.lifecycle("Using configDir " + configDir.absolutePath)
 
             File proxySettings = new File(configDir, '.settings/org.eclipse.core.net.prefs')
             if (System.getProperty("http.proxyHost") != null) {
+                logger.lifecycle("Configure proxy in file " + proxySettings.absolutePath)
                 String httpProxyHost = System.getProperty("http.proxyHost")
                 String httpProxyPort = System.getProperty("http.proxyHost")
                 String httpsProxyHost = System.getProperty("https.proxyHost")
