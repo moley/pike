@@ -120,7 +120,7 @@ systemProxiesEnabled=false"""
 
 
             FileUtils.moveDirectory(mirroredUpdatesiteDir, updatesiteToDir)
-            if (mirroredUpdatesitesBaseDir.exists() && !mirroredUpdatesitesBaseDir.delete()) {
+            if (mirroredUpdatesitesBaseDir.exists() && !mirroredUpdatesitesBaseDir.deleteDir()) {
                 throw new IllegalStateException("Could not remove dir $mirroredUpdatesitesBaseDir.absolutePath")
             }
 
