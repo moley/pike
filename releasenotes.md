@@ -1,3 +1,6 @@
+**0.20**
+- bugfixes
+
 **0.19**
 - improved logging MirrorUpdatesite
 - fixed paths in linux
